@@ -1,0 +1,14 @@
+{
+  "judgebench": {
+    "n": 620,
+    "path": "data/realistic/judgebench.jsonl"
+  },
+  "lmarena": {
+    "n": 0,
+    "path": "data/realistic/lmarena.jsonl"
+  },
+  "tldr": {
+    "n": 300,
+    "path": "data/realistic/tldr.jsonl"
+  }
+}
