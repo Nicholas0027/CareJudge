@@ -1,0 +1,58 @@
+[
+  {
+    "signal_group": "position_consistent",
+    "n": 107,
+    "accuracy": 0.7289719626168224,
+    "error_rate": 0.2710280373831776,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "position_inconsistent",
+    "n": 193,
+    "accuracy": 0.9637305699481865,
+    "error_rate": 0.03626943005181349,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "rubric_stable",
+    "n": 250,
+    "accuracy": 0.932,
+    "error_rate": 0.06799999999999995,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "rubric_unstable",
+    "n": 50,
+    "accuracy": 0.62,
+    "error_rate": 0.38,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "self_high_agree",
+    "n": 204,
+    "accuracy": 0.8578431372549019,
+    "error_rate": 0.1421568627450981,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "self_low_agree",
+    "n": 96,
+    "accuracy": 0.9270833333333334,
+    "error_rate": 0.07291666666666663,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "sim_high_agree",
+    "n": 172,
+    "accuracy": 0.8837209302325582,
+    "error_rate": 0.11627906976744184,
+    "dataset": "tldr"
+  },
+  {
+    "signal_group": "sim_low_agree",
+    "n": 128,
+    "accuracy": 0.875,
+    "error_rate": 0.125,
+    "dataset": "tldr"
+  }
+]

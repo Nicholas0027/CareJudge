@@ -1,0 +1,58 @@
+[
+  {
+    "signal_group": "position_consistent",
+    "n": 182,
+    "accuracy": 0.554945054945055,
+    "error_rate": 0.44505494505494503,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "position_inconsistent",
+    "n": 438,
+    "accuracy": 0.4726027397260274,
+    "error_rate": 0.5273972602739726,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "rubric_stable",
+    "n": 447,
+    "accuracy": 0.4720357941834452,
+    "error_rate": 0.5279642058165548,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "rubric_unstable",
+    "n": 173,
+    "accuracy": 0.5606936416184971,
+    "error_rate": 0.4393063583815029,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "self_high_agree",
+    "n": 419,
+    "accuracy": 0.4988066825775656,
+    "error_rate": 0.5011933174224343,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "self_low_agree",
+    "n": 201,
+    "accuracy": 0.4925373134328358,
+    "error_rate": 0.5074626865671642,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "sim_high_agree",
+    "n": 331,
+    "accuracy": 0.5015105740181269,
+    "error_rate": 0.49848942598187307,
+    "dataset": "judgebench"
+  },
+  {
+    "signal_group": "sim_low_agree",
+    "n": 289,
+    "accuracy": 0.4913494809688581,
+    "error_rate": 0.5086505190311419,
+    "dataset": "judgebench"
+  }
+]
