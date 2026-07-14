@@ -1,0 +1,90 @@
+--- deepseek-chat / judgebench ---
+
+============================================================
+Dataset: deepseek-chat_judgebench  N=620  seeds=10
+============================================================
+  logistic_fusion         cov=0.016  acc=0.897  auroc=0.565  ece=0.096
+  best_single_signal      cov=0.060  acc=0.875  auroc=0.595  ece=0.208
+  max_signal              cov=0.000  acc=0.000  auroc=0.499  ece=0.325
+  rubric_only             cov=0.000  acc=0.000  auroc=0.529  ece=0.286
+  swap_only               cov=0.000  acc=0.000  auroc=0.567  ece=0.378
+  self_only               cov=0.000  acc=0.000  auroc=0.516  ece=0.290
+  raw                     cov=1.000  acc=0.674  auroc=0.500  ece=0.174
+
+  Signal rates:
+    rubric_stable           n= 520  acc=0.700
+    rubric_unstable         n= 100  acc=0.540
+    position_consistent     n= 428  acc=0.713
+    position_inconsistent   n= 192  acc=0.589
+    self_high               n= 532  acc=0.688
+    self_low                n=  88  acc=0.591
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.010  acc=0.947
+    alpha= 0.12  cov=0.010  acc=0.947
+    alpha= 0.15  cov=0.016  acc=0.897
+    alpha=  0.2  cov=0.032  acc=0.860
+    alpha= 0.25  cov=0.065  acc=0.740
+    alpha=  0.3  cov=0.123  acc=0.674
+--- deepseek-chat / tldr ---
+
+============================================================
+Dataset: deepseek-chat_tldr  N=300  seeds=10
+============================================================
+  logistic_fusion         cov=0.113  acc=0.822  auroc=0.766  ece=0.107
+  best_single_signal      cov=0.000  acc=0.000  auroc=0.672  ece=0.241
+  max_signal              cov=0.000  acc=0.000  auroc=0.522  ece=0.336
+  rubric_only             cov=0.000  acc=0.000  auroc=0.541  ece=0.284
+  swap_only               cov=0.000  acc=0.000  auroc=0.714  ece=0.222
+  self_only               cov=0.000  acc=0.000  auroc=0.533  ece=0.299
+  raw                     cov=1.000  acc=0.652  auroc=0.500  ece=0.152
+
+  Signal rates:
+    rubric_stable           n= 235  acc=0.689
+    rubric_unstable         n=  65  acc=0.538
+    position_consistent     n= 230  acc=0.783
+    position_inconsistent   n=  70  acc=0.243
+    self_high               n= 255  acc=0.671
+    self_low                n=  45  acc=0.578
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.000  acc=0.000
+    alpha= 0.12  cov=0.023  acc=0.810
+    alpha= 0.15  cov=0.113  acc=0.822
+    alpha=  0.2  cov=0.211  acc=0.814
+    alpha= 0.25  cov=0.406  acc=0.790
+    alpha=  0.3  cov=0.577  acc=0.792
+--- deepseek-chat / mtbench_human ---
+
+============================================================
+Dataset: deepseek-chat_mtbench_human  N=300  seeds=10
+============================================================
+  logistic_fusion         cov=0.000  acc=0.000  auroc=0.617  ece=0.127
+  best_single_signal      cov=0.000  acc=0.000  auroc=0.637  ece=0.194
+  max_signal              cov=0.000  acc=0.000  auroc=0.515  ece=0.293
+  rubric_only             cov=0.000  acc=0.000  auroc=0.546  ece=0.265
+  swap_only               cov=0.000  acc=0.000  auroc=0.591  ece=0.320
+  self_only               cov=0.000  acc=0.000  auroc=0.515  ece=0.280
+  raw                     cov=1.000  acc=0.696  auroc=0.500  ece=0.196
+
+  Signal rates:
+    rubric_stable           n= 257  acc=0.712
+    rubric_unstable         n=  43  acc=0.558
+    position_consistent     n= 228  acc=0.746
+    position_inconsistent   n=  72  acc=0.514
+    self_high               n= 271  acc=0.697
+    self_low                n=  29  acc=0.621
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.000  acc=0.000
+    alpha= 0.12  cov=0.000  acc=0.000
+    alpha= 0.15  cov=0.000  acc=0.000
+    alpha=  0.2  cov=0.062  acc=0.695
+    alpha= 0.25  cov=0.141  acc=0.748
+    alpha=  0.3  cov=0.367  acc=0.745
