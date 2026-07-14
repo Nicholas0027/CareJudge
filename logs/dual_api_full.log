@@ -1,0 +1,319 @@
+========================================
+Dual-API Full Formal Experiment
+Start: Tue Jul 14 03:27:55 UTC 2026
+========================================
+[COLLECT] deepseek-chat/judgebench Tue Jul 14 03:27:55 UTC 2026
+20/620 elapsed=21s
+40/620 elapsed=33s
+60/620 elapsed=46s
+80/620 elapsed=61s
+100/620 elapsed=77s
+120/620 elapsed=91s
+140/620 elapsed=105s
+160/620 elapsed=118s
+180/620 elapsed=134s
+200/620 elapsed=148s
+220/620 elapsed=164s
+240/620 elapsed=177s
+260/620 elapsed=193s
+280/620 elapsed=207s
+300/620 elapsed=220s
+320/620 elapsed=233s
+340/620 elapsed=249s
+360/620 elapsed=263s
+380/620 elapsed=278s
+400/620 elapsed=292s
+420/620 elapsed=307s
+440/620 elapsed=321s
+460/620 elapsed=337s
+480/620 elapsed=351s
+500/620 elapsed=365s
+520/620 elapsed=381s
+540/620 elapsed=397s
+560/620 elapsed=411s
+580/620 elapsed=426s
+600/620 elapsed=442s
+620/620 elapsed=458s
+wrote 620 rows to outputs/dual_api_full/deepseek-chat_judgebench_features.jsonl in 458s
+[COLLECT] deepseek-chat/tldr Tue Jul 14 03:35:33 UTC 2026
+20/300 elapsed=21s
+40/300 elapsed=33s
+60/300 elapsed=46s
+80/300 elapsed=59s
+100/300 elapsed=77s
+120/300 elapsed=88s
+140/300 elapsed=100s
+160/300 elapsed=113s
+180/300 elapsed=130s
+200/300 elapsed=143s
+220/300 elapsed=155s
+240/300 elapsed=170s
+260/300 elapsed=183s
+280/300 elapsed=197s
+300/300 elapsed=210s
+wrote 300 rows to outputs/dual_api_full/deepseek-chat_tldr_features.jsonl in 210s
+[COLLECT] deepseek-chat/mtbench_human Tue Jul 14 03:39:03 UTC 2026
+20/300 elapsed=20s
+40/300 elapsed=31s
+60/300 elapsed=44s
+80/300 elapsed=55s
+100/300 elapsed=74s
+120/300 elapsed=87s
+140/300 elapsed=100s
+160/300 elapsed=115s
+180/300 elapsed=129s
+200/300 elapsed=142s
+220/300 elapsed=156s
+240/300 elapsed=168s
+260/300 elapsed=184s
+280/300 elapsed=196s
+300/300 elapsed=209s
+wrote 300 rows to outputs/dual_api_full/deepseek-chat_mtbench_human_features.jsonl in 209s
+[COLLECT] gpt-5_5/judgebench Tue Jul 14 03:42:32 UTC 2026
+20/620 elapsed=278s
+40/620 elapsed=463s
+60/620 elapsed=719s
+80/620 elapsed=1030s
+100/620 elapsed=1234s
+120/620 elapsed=1464s
+140/620 elapsed=1704s
+160/620 elapsed=1926s
+180/620 elapsed=2127s
+200/620 elapsed=2342s
+220/620 elapsed=2531s
+240/620 elapsed=2735s
+260/620 elapsed=2977s
+280/620 elapsed=3155s
+300/620 elapsed=3334s
+320/620 elapsed=3561s
+340/620 elapsed=3780s
+360/620 elapsed=3989s
+380/620 elapsed=4161s
+400/620 elapsed=4404s
+420/620 elapsed=4551s
+440/620 elapsed=4733s
+460/620 elapsed=4948s
+480/620 elapsed=5199s
+500/620 elapsed=5372s
+520/620 elapsed=5588s
+540/620 elapsed=5822s
+560/620 elapsed=6094s
+580/620 elapsed=6310s
+600/620 elapsed=6485s
+620/620 elapsed=6947s
+wrote 620 rows to outputs/dual_api_full/gpt-5_5_judgebench_features.jsonl in 6947s
+[COLLECT] gpt-5_5/tldr Tue Jul 14 05:38:19 UTC 2026
+20/300 elapsed=211s
+40/300 elapsed=284s
+60/300 elapsed=412s
+80/300 elapsed=494s
+100/300 elapsed=585s
+120/300 elapsed=749s
+140/300 elapsed=906s
+160/300 elapsed=997s
+180/300 elapsed=1117s
+200/300 elapsed=1212s
+220/300 elapsed=1314s
+240/300 elapsed=1419s
+260/300 elapsed=1531s
+280/300 elapsed=1617s
+300/300 elapsed=1866s
+wrote 300 rows to outputs/dual_api_full/gpt-5_5_tldr_features.jsonl in 1866s
+[COLLECT] gpt-5_5/mtbench_human Tue Jul 14 06:09:25 UTC 2026
+20/300 elapsed=109s
+40/300 elapsed=262s
+60/300 elapsed=358s
+80/300 elapsed=444s
+100/300 elapsed=537s
+120/300 elapsed=606s
+140/300 elapsed=690s
+160/300 elapsed=767s
+180/300 elapsed=817s
+200/300 elapsed=870s
+220/300 elapsed=944s
+240/300 elapsed=1024s
+260/300 elapsed=1103s
+280/300 elapsed=1152s
+300/300 elapsed=1277s
+wrote 300 rows to outputs/dual_api_full/gpt-5_5_mtbench_human_features.jsonl in 1277s
+[EXPERIMENT] deepseek-chat/judgebench Tue Jul 14 06:30:43 UTC 2026
+
+============================================================
+Dataset: deepseek-chat_judgebench  N=620  seeds=10
+============================================================
+  logistic_fusion         cov=0.016  acc=0.897  auroc=0.565  ece=0.096
+  best_single_signal      cov=0.060  acc=0.875  auroc=0.595  ece=0.208
+  max_signal              cov=0.000  acc=0.000  auroc=0.499  ece=0.325
+  rubric_only             cov=0.000  acc=0.000  auroc=0.529  ece=0.286
+  swap_only               cov=0.000  acc=0.000  auroc=0.567  ece=0.378
+  self_only               cov=0.000  acc=0.000  auroc=0.516  ece=0.290
+  raw                     cov=1.000  acc=0.674  auroc=0.500  ece=0.174
+
+  Signal rates:
+    rubric_stable           n= 520  acc=0.700
+    rubric_unstable         n= 100  acc=0.540
+    position_consistent     n= 428  acc=0.713
+    position_inconsistent   n= 192  acc=0.589
+    self_high               n= 532  acc=0.688
+    self_low                n=  88  acc=0.591
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.010  acc=0.947
+    alpha= 0.12  cov=0.010  acc=0.947
+    alpha= 0.15  cov=0.016  acc=0.897
+    alpha=  0.2  cov=0.032  acc=0.860
+    alpha= 0.25  cov=0.065  acc=0.740
+    alpha=  0.3  cov=0.123  acc=0.674
+[EXPERIMENT] deepseek-chat/tldr Tue Jul 14 06:33:13 UTC 2026
+
+============================================================
+Dataset: deepseek-chat_tldr  N=300  seeds=10
+============================================================
+  logistic_fusion         cov=0.113  acc=0.822  auroc=0.766  ece=0.107
+  best_single_signal      cov=0.000  acc=0.000  auroc=0.672  ece=0.241
+  max_signal              cov=0.000  acc=0.000  auroc=0.522  ece=0.336
+  rubric_only             cov=0.000  acc=0.000  auroc=0.541  ece=0.284
+  swap_only               cov=0.000  acc=0.000  auroc=0.714  ece=0.222
+  self_only               cov=0.000  acc=0.000  auroc=0.533  ece=0.299
+  raw                     cov=1.000  acc=0.652  auroc=0.500  ece=0.152
+
+  Signal rates:
+    rubric_stable           n= 235  acc=0.689
+    rubric_unstable         n=  65  acc=0.538
+    position_consistent     n= 230  acc=0.783
+    position_inconsistent   n=  70  acc=0.243
+    self_high               n= 255  acc=0.671
+    self_low                n=  45  acc=0.578
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.000  acc=0.000
+    alpha= 0.12  cov=0.023  acc=0.810
+    alpha= 0.15  cov=0.113  acc=0.822
+    alpha=  0.2  cov=0.211  acc=0.814
+    alpha= 0.25  cov=0.406  acc=0.790
+    alpha=  0.3  cov=0.577  acc=0.792
+[EXPERIMENT] deepseek-chat/mtbench_human Tue Jul 14 06:34:11 UTC 2026
+
+============================================================
+Dataset: deepseek-chat_mtbench_human  N=300  seeds=10
+============================================================
+  logistic_fusion         cov=0.000  acc=0.000  auroc=0.617  ece=0.127
+  best_single_signal      cov=0.000  acc=0.000  auroc=0.637  ece=0.194
+  max_signal              cov=0.000  acc=0.000  auroc=0.515  ece=0.293
+  rubric_only             cov=0.000  acc=0.000  auroc=0.546  ece=0.265
+  swap_only               cov=0.000  acc=0.000  auroc=0.591  ece=0.320
+  self_only               cov=0.000  acc=0.000  auroc=0.515  ece=0.280
+  raw                     cov=1.000  acc=0.696  auroc=0.500  ece=0.196
+
+  Signal rates:
+    rubric_stable           n= 257  acc=0.712
+    rubric_unstable         n=  43  acc=0.558
+    position_consistent     n= 228  acc=0.746
+    position_inconsistent   n=  72  acc=0.514
+    self_high               n= 271  acc=0.697
+    self_low                n=  29  acc=0.621
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.000  acc=0.000
+    alpha= 0.12  cov=0.000  acc=0.000
+    alpha= 0.15  cov=0.000  acc=0.000
+    alpha=  0.2  cov=0.062  acc=0.695
+    alpha= 0.25  cov=0.141  acc=0.748
+    alpha=  0.3  cov=0.367  acc=0.745
+[EXPERIMENT] gpt-5_5/judgebench Tue Jul 14 06:35:11 UTC 2026
+
+============================================================
+Dataset: gpt-5_5_judgebench  N=620  seeds=10
+============================================================
+  logistic_fusion         cov=0.646  acc=0.929  auroc=0.815  ece=0.046
+  best_single_signal      cov=0.990  acc=0.916  auroc=0.822  ece=0.048
+  max_signal              cov=0.996  acc=0.914  auroc=0.503  ece=0.087
+  rubric_only             cov=0.968  acc=0.924  auroc=0.648  ece=0.065
+  swap_only               cov=0.938  acc=0.921  auroc=0.571  ece=0.147
+  self_only               cov=0.976  acc=0.916  auroc=0.523  ece=0.088
+  raw                     cov=1.000  acc=0.913  auroc=0.500  ece=0.413
+
+  Signal rates:
+    rubric_stable           n= 514  acc=0.936
+    rubric_unstable         n= 106  acc=0.811
+    position_consistent     n= 561  acc=0.927
+    position_inconsistent   n=  59  acc=0.797
+    self_high               n= 599  acc=0.920
+    self_low                n=  21  acc=0.762
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.429  acc=0.982
+    alpha= 0.08  cov=0.752  acc=0.965
+    alpha=  0.1  cov=0.834  acc=0.948
+    alpha= 0.12  cov=0.800  acc=0.926
+    alpha= 0.15  cov=0.646  acc=0.929
+    alpha=  0.2  cov=0.995  acc=0.916
+    alpha= 0.25  cov=0.995  acc=0.916
+    alpha=  0.3  cov=0.995  acc=0.916
+[EXPERIMENT] gpt-5_5/tldr Tue Jul 14 06:37:06 UTC 2026
+
+============================================================
+Dataset: gpt-5_5_tldr  N=300  seeds=10
+============================================================
+  logistic_fusion         cov=0.063  acc=0.812  auroc=0.666  ece=0.128
+  best_single_signal      cov=0.176  acc=0.870  auroc=0.685  ece=0.115
+  max_signal              cov=0.000  acc=0.000  auroc=0.511  ece=0.253
+  rubric_only             cov=0.000  acc=0.000  auroc=0.610  ece=0.222
+  swap_only               cov=0.000  acc=0.000  auroc=0.592  ece=0.239
+  self_only               cov=0.000  acc=0.000  auroc=0.539  ece=0.238
+  raw                     cov=1.000  acc=0.746  auroc=0.500  ece=0.246
+
+  Signal rates:
+    rubric_stable           n= 271  acc=0.775
+    rubric_unstable         n=  29  acc=0.345
+    position_consistent     n= 269  acc=0.773
+    position_inconsistent   n=  31  acc=0.387
+    self_high               n= 288  acc=0.750
+    self_low                n=  12  acc=0.333
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.000  acc=0.000
+    alpha= 0.12  cov=0.016  acc=0.857
+    alpha= 0.15  cov=0.063  acc=0.812
+    alpha=  0.2  cov=0.162  acc=0.817
+    alpha= 0.25  cov=0.382  acc=0.802
+    alpha=  0.3  cov=0.643  acc=0.795
+[EXPERIMENT] gpt-5_5/mtbench_human Tue Jul 14 06:38:07 UTC 2026
+
+============================================================
+Dataset: gpt-5_5_mtbench_human  N=300  seeds=10
+============================================================
+  logistic_fusion         cov=0.000  acc=0.000  auroc=0.557  ece=0.146
+  best_single_signal      cov=0.000  acc=0.000  auroc=0.603  ece=0.173
+  max_signal              cov=0.000  acc=0.000  auroc=0.506  ece=0.350
+  rubric_only             cov=0.000  acc=0.000  auroc=0.518  ece=0.315
+  swap_only               cov=0.000  acc=0.000  auroc=0.530  ece=0.359
+  self_only               cov=0.000  acc=0.000  auroc=0.504  ece=0.344
+  raw                     cov=1.000  acc=0.649  auroc=0.500  ece=0.149
+
+  Signal rates:
+    rubric_stable           n= 260  acc=0.677
+    rubric_unstable         n=  40  acc=0.575
+    position_consistent     n= 264  acc=0.689
+    position_inconsistent   n=  36  acc=0.472
+    self_high               n= 286  acc=0.668
+    self_low                n=  14  acc=0.571
+
+  Alpha sweep (logistic_fusion):
+    alpha= 0.05  cov=0.000  acc=0.000
+    alpha= 0.08  cov=0.000  acc=0.000
+    alpha=  0.1  cov=0.000  acc=0.000
+    alpha= 0.12  cov=0.000  acc=0.000
+    alpha= 0.15  cov=0.000  acc=0.000
+    alpha=  0.2  cov=0.000  acc=0.000
+    alpha= 0.25  cov=0.023  acc=0.619
+    alpha=  0.3  cov=0.212  acc=0.713
+[PUSH] Tue Jul 14 06:39:09 UTC 2026
