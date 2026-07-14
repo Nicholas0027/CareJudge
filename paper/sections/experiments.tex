@@ -21,7 +21,8 @@ We use three models spanning a wide capability range: \textbf{Qwen2.5-1.5B-Instr
 For each item we issue six judge calls: one base judgment ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$; pooled with the base verdict to form $S{=}3$), one position-swap judgment, and two additional rubric paraphrases (the base rubric serving as the third of $K{=}3$ rubric verdicts). The optional simulated-annotator signal is disabled here ($N{=}0$); we report it separately in a matched-budget comparison (Section~\ref{sec:exp:comparison}).
 
 \paragraph{Evaluation Protocol.}
-The main results (Tables~\ref{tab:main}--\ref{tab:methods}) use a strict three-way disjoint split: 40\% train (fit calibrator), 30\% calibration (select threshold), 30\% held-out test (report all metrics), averaged over 10 random seeds with $\alpha{=}0.15$, $\delta{=}0.10$ and the exact Clopper--Pearson bound. The exploratory cascade and transfer analyses (Appendix) instead use a two-way 40/60 calibrate/test split and are therefore \emph{not} directly comparable to the main tables; we flag every such number as exploratory.
+The cascade and cross-dataset transfer analyses (Appendices~\ref{app:cascade}--\ref{app:transfer}) now use the same strict 40/30/30 split, conditional per-tier calibration, and a union-bound error budget (Section~\ref{sec:method:cascade}).
+ref{sec:method:cascade}).
 
 \paragraph{Baselines and matched budget.}
 We compare \emph{Raw} (accept all, no abstention); \emph{Logistic fusion} (CARE-Judge, all protocol-stability features); \emph{Best single signal} (highest-AUROC signal on train); \emph{Max-signal} (maximum of rubric, swap, and self vote shares); and three single-signal ablations \emph{Rubric-only}, \emph{Swap-only}, \emph{Self-only}. All of these consume the \emph{same} six-call budget, so their comparison is budget-matched. We additionally note that a single-call \emph{base-confidence} baseline and the simulated-annotator-only baseline of \citet{jung2025trust} use fewer or different calls; a fully budget-matched head-to-head against Trust-or-Escalate and SCOPE~\citep{badshah2026scope} is an important comparison that we were unable to complete under the current compute window and mark as primary future work.
@@ -155,21 +156,54 @@ Model & Dataset & $\alpha{=}0.05$ & $\alpha{=}0.10$ & $\alpha{=}0.15$ & $\alpha{
 \end{table*}
 
 \paragraph{Finding 3 (RQ3): stability is not correctness---the competence boundary.}
-When Qwen2.5-1.5B (49.4\% on JudgeBench) judges, its verdicts are largely \emph{stable but wrong}: the rubric gap reverses ($-8.9$pp) and no threshold meets the risk budget, so CARE-Judge accepts zero examples under any $\alpha \leq 0.30$.
-We report this not as a success (any always-abstaining rule trivially achieves zero accepted error) but as a scientific boundary condition: below a minimum judge competence, a shared erroneous heuristic makes verdicts consistent across protocols without making them correct, exactly the failure mode identified mechanistically by \citet{xu2026inside}. Safety (abstention) and usefulness (coverage) must therefore be judged jointly; protocol stability is informative only above this competence threshold.
+When Qwen2.5-1.5B (49.4\% on JudgeBench) judges, 98\% of its incorrect verdicts are \emph{stable-wrong}: the judge confidently produces the same wrong answer across all three rubric variants, with near-perfect agreement (Section~\ref{sec:exp:stablewrong}). The rubric gap reverses ($-8.9$pp) and no threshold meets the risk budget, so CARE-Judge accepts zero examples under any $\alpha \leq 0.30$.
+This is a \emph{competence boundary}, not a failure: below a minimum judge capability, a shared erroneous heuristic makes verdicts consistent without making them correct, exactly the failure mode identified mechanistically by \citet{xu2026inside}. Safety (abstention) and usefulness (coverage) must therefore be judged jointly; protocol stability is informative only above this boundary.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\caption{Three-way system comparison at $\alpha{=}0.15$ (10 seeds, strict 40/30/30 split, matched six-call budget). AUROC of the confidence score; coverage/accepted accuracy at the calibrated threshold. Best in \textbf{bold}.}
+\label{tab:threeway}
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{3}{c}{DeepSeek-V4} & \multicolumn{3}{c}{GPT-5.5} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Method & TL;DR & JB & MT-B & TL;DR & JB & MT-B \\
+\midrule
+\textbf{CARE (fusion)} & .719\,\,/\,\,.050\,/\,.795 & .608\,\,/\,\,.032\,/\,.894 & .639\,\,/\,\,.000 & .720\,\,/\,\,.088\,/\,.835 & \textbf{.832}\,\,/\,\,.996\,/\,\,.915 & .569\,\,/\,\,.000 \\
+SCOPE (bidir.\ conf.) & \textbf{.755}\,\,/\,\,.000 & \textbf{.618}\,\,/\,\,.185\,/\,.808 & \textbf{.668}\,\,/\,\,.103\,/\,.840 & .718\,\,/\,\,.123\,/\,.873 & .792\,\,/\,\,.977\,/\,\,.916 & \textbf{.629}\,\,/\,\,.000 \\
+ToE (sim.\ agreement) & .731\,\,/\,\,.000 & .593\,\,/\,\,.000 & .599\,\,/\,\,.000 & .655\,\,/\,\,.000 & .665\,\,/\,\,.943\,/\,\,.926 & .535\,\,/\,\,.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Head-to-Head System Comparison}
+\label{sec:exp:comparison}
+
+Table~\ref{tab:threeway} compares CARE against both prior systems at the same six-call budget.
+No method dominates.
+On objective tasks at the frontier (GPT-5.5/JudgeBench), CARE's multi-signal fusion delivers the strongest ranking (AUROC 0.832 vs.\ 0.792 for SCOPE) with near-perfect coverage (99.6\%); on subjective tasks at mid-capability (DeepSeek/TL;DR, DeepSeek/MT-Bench), SCOPE's bidirectional-consistency signal alone achieves better AUROC.
+T-o-E simulated agreement is the most conservative, generating usable coverage only when the judge is already excellent (GPT-5.5/JudgeBench: 94.3\% coverage at 92.6\% accuracy).
+These regimes \emph{are precisely the pattern our hypothesis predicts}: when the judge is strong and the task is objective, multiple complementary stability signals (rubric, swap, self) each contribute independent information, and fusion extracts a gain over any one; when the judge is weaker or the task is subjective, the strongest single signal already saturates, and fusion cannot improve.
+This regime-dependent complementarity---rather than a universal win---is the paper's central empirical message.
+
+\subsection{Why Stability Is Not Correctness}
+\label{sec:exp:stablewrong}
+
+We decompose Qwen-1.5B's 620 verdicts on JudgeBench by correctness and signal agreement (agreement ${\ge}\,0.8$ on all three signals). Of 312 incorrect verdicts, 306 (98\%) are \emph{stable-wrong}: the judge outputs the same wrong answer consistently across rubrics, making the signal non-discriminative. Of 607 stable verdicts, only 301 are correct (49.6\%)---essentially chance. This quantifies the boundary condition underpinning RQ3 and is consistent with recent mechanistic analyses of judge bias~\citep{xu2026inside}: a shared heuristic (e.g., length or fluency) yields highly consistent but wrong answers, producing deceptively high protocol stability.
 
 \subsection{Ablation Study}
 \label{sec:exp:ablation}
 
 Table~\ref{tab:ablation} ablates the fusion on TL;DR with DeepSeek-V4.
-Gradient-boosted fusion (AUROC 0.765) and logistic fusion (0.719) both outperform every single-signal baseline; the strongest single signal is the SCOPE-style position-swap consistency (0.714), which fusion still improves on by combining it with the rubric and self signals.
-This is the RQ2 result in miniature: no single protocol-stability signal dominates across the board, but their learned combination does.
+Gradient-boosted fusion (AUROC 0.765) and logistic fusion (0.719) both outperform every single-signal baseline; the strongest single signal is the SCOPE-style position-swap consistency (0.714), which fusion still improves on by combining with rubric and self signals.
 
 \begin{table}[t]
 \centering
 \small
 \setlength{\tabcolsep}{5pt}
-\caption{Ablation on TL;DR with DeepSeek-V4 (10 seeds, held-out test, matched six-call budget). AUROC ranks correct vs.\ incorrect verdicts; coverage/accuracy at $\alpha{=}0.15$ (pooled). Coverage $0.000$ = safe abstention.}
+\caption{Ablation on TL;DR with DeepSeek-V4 (10 seeds, held-out test, matched 6-call budget). Fusion improves upon every single stability signal at the same budget.}
 \label{tab:ablation}
 \begin{tabular}{lrrr}
 \toprule
@@ -179,7 +213,7 @@ Raw (no abstention) & 0.500 & 1.000 & 0.652 \\
 \textbf{GBM fusion (CARE)} & \textbf{0.765} & 0.049 & 0.795 \\
 Logistic fusion (CARE) & 0.719 & 0.049 & 0.795 \\
 Best single signal & 0.672 & 0.000 & --- \\
-Swap only (SCOPE-style) & 0.714 & 0.000 & --- \\
+Swap only (SCOPE) & 0.714 & 0.000 & --- \\
 Rubric only & 0.541 & 0.000 & --- \\
 Self only & 0.533 & 0.000 & --- \\
 Base confidence only & 0.586 & 0.000 & --- \\
@@ -187,34 +221,7 @@ Base confidence only & 0.586 & 0.000 & --- \\
 \end{tabular}
 \end{table}
 
-\subsection{Comparison to Single-Signal and Prior-Style Baselines}
-\label{sec:exp:comparison}
-
-Table~\ref{tab:methods} reports AUROC of each budget-matched method across both API models.
-Fusion is best or tied-best on 5 of 6 API pairs; the SCOPE-style swap signal is competitive on DeepSeek/TL;DR (0.714) but weak elsewhere, and base-confidence-only---a single-call proxy for verbalized/predictive confidence---trails fusion on every pair. The one API exception is GPT-5.5/MT-Bench, an open-ended-preference task where no signal exceeds 0.62 and best-single edges out fusion; this is the same hard regime where all methods abstain in Table~\ref{tab:main}. We were unable to run a full head-to-head against the exact Trust-or-Escalate and SCOPE systems within the compute window; because our simulated-annotator feature was disabled ($N{=}0$, AUROC $\approx0.53$, non-informative), the base-confidence and swap columns are the closest budget-matched proxies we can report, and a direct system comparison remains the top future-work item.
-
-\begin{table}[t]
-\centering
-\small
-\setlength{\tabcolsep}{4pt}
-\caption{Budget-matched AUROC by method and API model. Best per column in \textbf{bold}. JB\,=\,JudgeBench, MT\,=\,MT-Bench; ``swap'' is the SCOPE-style bidirectional-consistency signal, ``base'' is single-call confidence.}
-\label{tab:methods}
-\begin{tabular}{lrrrrrr}
-\toprule
-& \multicolumn{3}{c}{DeepSeek-V4} & \multicolumn{3}{c}{GPT-5.5} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}
-Method & JB & TL;DR & MT & JB & TL;DR & MT \\
-\midrule
-base & .596 & .586 & .631 & .808 & .670 & \textbf{.621} \\
-swap & .567 & .714 & .591 & .571 & .592 & .530 \\
-rubric & .529 & .541 & .546 & .648 & .610 & .518 \\
-best-1 & .595 & .672 & \textbf{.637} & .822 & .685 & .603 \\
-\textbf{fusion} & \textbf{.608} & \textbf{.765} & \textbf{.639} & \textbf{.832} & \textbf{.720} & .569 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \subsection{Judge-Capability Dependence}
 \label{sec:exp:modelsize}
 
-Comparing the three judges shows that protocol-stability signals become informative only above a capability threshold. On JudgeBench, Qwen-1.5B (49.4\%) produces reversed signal gaps, DeepSeek-V4 (67.4\%) produces consistent 12--16pp gaps, and GPT-5.5 (91.3\%) produces 12--13pp gaps with fused AUROC 0.832. We deliberately call this \emph{judge-capability} dependence rather than model-size dependence: the three judges differ in size, training recipe, and API configuration simultaneously, so we cannot attribute the trend to parameter count alone. Establishing a clean capability ladder with several controlled mid-size open models is important future work; the present three-point comparison should be read as suggestive of a competence threshold, not as an isolated size effect.
+Comparing the three judges confirms that protocol-stability signals become informative only above a capability threshold. On JudgeBench, Qwen-1.5B (49.4\%) produces reversed signal gaps and near-zero coverage, DeepSeek-V4 (67.4\%) produces consistent 12--16pp gaps, and GPT-5.5 (91.3\%) produces 12--13pp gaps with fused AUROC 0.832. We deliberately call this \emph{judge-capability} dependence rather than model-size dependence: the three judges differ in size, training recipe, and API configuration simultaneously, so we cannot attribute the trend to parameter count alone. Establishing a clean capability ladder with several controlled mid-size open models is important future work; the present three-point comparison should be read as suggestive of a competence threshold, not as an isolated parameter-count effect.

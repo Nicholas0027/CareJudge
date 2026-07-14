@@ -1,0 +1,145 @@
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Anghel et~al.(2025)Anghel, Anghel, Pecheanu, Cr\u{a}ciun, Cocu, and
+  Niculita}]{anghel2025pearl}
+Anghel, C.; Anghel, A.~A.; Pecheanu, E.; Cr\u{a}ciun, M.; Cocu, A.; and
+  Niculita, C. 2025.
+\newblock PEARL: A Rubric-Driven Multi-Metric Framework for LLM Evaluation.
+\newblock \emph{Information}, 16(11).
+
+\bibitem[{Badshah, Emami, and Sajjad(2026)}]{badshah2026scope}
+Badshah, S.; Emami, A.; and Sajjad, H. 2026.
+\newblock SCOPE: Selective Conformal Optimized Pairwise LLM Judging.
+\newblock arXiv:2602.13110.
+\newblock arXiv:2602.13110.
+
+\bibitem[{Bauer(1991)}]{bauer1991multiple}
+Bauer, P. 1991.
+\newblock A Note on Multiple Testing Procedures in Structural Break Tests.
+\newblock \emph{Journal of Statistical Planning and Inference}.
+
+\bibitem[{Clopper and Pearson(1934)}]{clopper1934use}
+Clopper, C.~J.; and Pearson, E.~S. 1934.
+\newblock The Use of Confidence or Fiducial Limits Illustrated in the Case of
+  the Binomial.
+\newblock \emph{Biometrika}, 26(4): 404--413.
+
+\bibitem[{El-Yaniv and Wiener(2010)}]{el2010foundations}
+El-Yaniv, R.; and Wiener, Y. 2010.
+\newblock On the Foundations of Noise-free Selective Classification.
+\newblock \emph{JMLR}.
+
+\bibitem[{Geifman and El-Yaniv(2017)}]{geifman2017selective}
+Geifman, Y.; and El-Yaniv, R. 2017.
+\newblock Selective Classification for Deep Neural Networks.
+\newblock In \emph{NeurIPS}.
+
+\bibitem[{Hong et~al.(2026)Hong, Yao, Shen, Xu, Wei, and Dong}]{hong2026from}
+Hong, Y.; Yao, H.; Shen, B.; Xu, W.; Wei, H.; and Dong, Y. 2026.
+\newblock From Rubrics to Reliable Scores: Evidence-Grounded Text Evaluation
+  with LLM Judges.
+\newblock In \emph{arXiv:2601.08654}.
+
+\bibitem[{Jung, Brahman, and Choi(2025)}]{jung2025trust}
+Jung, J.; Brahman, F.; and Choi, Y. 2025.
+\newblock Trust or Escalate: LLM Judges with Provable Guarantees for Human
+  Agreement.
+\newblock In \emph{ICLR}.
+
+\bibitem[{Krishnan, Khanna, and Tickoo(2024)}]{krishnan2024enhancing}
+Krishnan, R.; Khanna, P.; and Tickoo, O. 2024.
+\newblock Enhancing Trust in Large Language Models via Uncertainty-Calibrated
+  Fine-Tuning.
+\newblock In \emph{arXiv:2412.02904}.
+
+\bibitem[{Lambert et~al.(2024)Lambert, Pyatkin, Morrison
+  et~al.}]{lambert2024rewardbench}
+Lambert, N.; Pyatkin, V.; Morrison, J.; et~al. 2024.
+\newblock RewardBench: Evaluating Reward Models for Language Modeling.
+\newblock In \emph{arXiv:2403.13787}.
+
+\bibitem[{Li et~al.(2025)Li, Sun, Huang, Zhong, Jiang, Han, Zhang, Wang, and
+  Liu}]{li2025preference}
+Li, D.; Sun, R.; Huang, Y.; Zhong, M.; Jiang, B.; Han, J.; Zhang, X.; Wang, W.;
+  and Liu, H. 2025.
+\newblock Preference Leakage: A Contamination Problem in LLM-as-a-judge.
+\newblock arXiv:2502.01534.
+\newblock arXiv:2502.01534.
+
+\bibitem[{Li et~al.(2024)Li, Dong, Chen, Su, Zhou, Ai, Ye, and
+  Liu}]{li2024llmsasjudges}
+Li, H.; Dong, Q.; Chen, J.; Su, H.; Zhou, Y.; Ai, Q.; Ye, Z.; and Liu, Y. 2024.
+\newblock LLMs-as-Judges: A Comprehensive Survey on LLM-based Evaluation
+  Methods.
+\newblock \emph{arXiv preprint arXiv:2412.05579}.
+
+\bibitem[{Ouyang et~al.(2022)Ouyang, Wu, Jiang et~al.}]{ouyang2022training}
+Ouyang, L.; Wu, J.; Jiang, X.; et~al. 2022.
+\newblock Training Language Models to Follow Instructions with Human Feedback.
+\newblock In \emph{NeurIPS}.
+
+\bibitem[{Sheng et~al.(2025)Sheng, Liu, He, Zhao, and
+  Kang}]{sheng2025analyzing}
+Sheng, H.; Liu, X.; He, H.; Zhao, J.; and Kang, J. 2025.
+\newblock Analyzing Uncertainty of LLM-as-a-Judge: Interval Evaluations with
+  Conformal Prediction.
+\newblock arXiv:2509.18658.
+\newblock arXiv:2509.18658.
+
+\bibitem[{Stiennon et~al.(2020)Stiennon, Long, Hou, Wu, Ziegler, Radford,
+  Amodei, and Christiano}]{stiennon2020learning}
+Stiennon, N.; Long, L.; Hou, Y.; Wu, J.; Ziegler, D.; Radford, R.; Amodei, D.;
+  and Christiano, P. 2020.
+\newblock Learning to Summarize with Human Feedback.
+\newblock \emph{NeurIPS}.
+
+\bibitem[{Tan et~al.(2024)Tan, Zhuang, Montgomery, Tang, Cuadron, and
+  Wang}]{tan2024judgebench}
+Tan, S.; Zhuang, S.; Montgomery, K.~L.; Tang, W.; Cuadron, A.; and Wang, C.
+  2024.
+\newblock JudgeBench: A Benchmark for Evaluating LLM-Based Judges.
+\newblock In \emph{arXiv:2410.12784}.
+
+\bibitem[{Wang et~al.(2023)Wang, Li, Chen, Zhu, Lin, Cao, Liu, Liu, and
+  Sui}]{wang2023faireval}
+Wang, P.; Li, L.; Chen, L.; Zhu, D.; Lin, B.; Cao, Y.; Liu, Q.; Liu, T.; and
+  Sui, Z. 2023.
+\newblock Large Language Models are not Fair Evaluators.
+\newblock In \emph{arXiv:2305.17926}.
+
+\bibitem[{Wei et~al.(2024)Wei, He, Xia, Liu, Wong, Lin, and
+  Han}]{wei2024systematic}
+Wei, H.; He, S.; Xia, T.; Liu, F.; Wong, A.; Lin, J.; and Han, M. 2024.
+\newblock Systematic Evaluation of LLM-as-a-Judge in LLM Alignment Tasks:
+  Explainable Metrics and Diverse Prompt Templates.
+\newblock In \emph{arXiv:2408.13006}.
+
+\bibitem[{Wen et~al.(2025)Wen, Yao, Feng, Xu, Tsvetkov, Howe, and
+  Wang}]{wen2025know}
+Wen, B.; Yao, J.; Feng, S.; Xu, C.; Tsvetkov, Y.; Howe, B.; and Wang, L.~L.
+  2025.
+\newblock Know Your Limits: A Survey of Abstention in Large Language Models.
+\newblock \emph{TACL}, 13: 529--556.
+
+\bibitem[{Xu et~al.(2026)Xu, Li, Liu, Wang, Li, Song, and Chen}]{xu2026inside}
+Xu, Z.; Li, S.; Liu, H.; Wang, X.; Li, S.; Song, Z.; and Chen, X. 2026.
+\newblock Inside the Unfair Judge: A Mechanistic Interpretability Account of
+  LLM-as-Judge Bias.
+\newblock arXiv:2607.11871.
+\newblock arXiv:2607.11871.
+
+\bibitem[{Zellinger, Liu, and Thomson(2025)}]{zellinger2025costsaving}
+Zellinger, M.~J.; Liu, R.; and Thomson, M. 2025.
+\newblock Cost-Saving LLM Cascades with Early Abstention.
+\newblock arXiv:2502.09054.
+\newblock arXiv:2502.09054.
+
+\bibitem[{Zheng et~al.(2023)Zheng, Chiang, Sheng, Zhuang, Wu, Zhuang, Lin, Li,
+  Li, Xing, Zhang, Gonzalez, and Stoica}]{zheng2023judging}
+Zheng, L.; Chiang, W.-L.; Sheng, Y.; Zhuang, S.; Wu, Z.; Zhuang, Y.; Lin, Z.;
+  Li, Z.; Li, D.; Xing, E.~P.; Zhang, H.; Gonzalez, J.~E.; and Stoica, I. 2023.
+\newblock Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.
+\newblock In \emph{NeurIPS Datasets and Benchmarks}.
+
+\end{thebibliography}
