@@ -1,0 +1,13 @@
+% sections/abstract.tex
+
+\begin{abstract}
+Large language models are increasingly used as automated judges to evaluate generated text, yet these judges are prone to overconfidence, positional bias, and sensitivity to evaluation-protocol wording.
+We propose \textbf{CARE-Judge} (Calibrated, Abstaining, and Robust Evaluation), a selective evaluation framework that determines \emph{when} an LLM judge's verdict should be trusted.
+Our central insight is \emph{protocol-stability}: a judgment that remains invariant under semantically equivalent evaluation protocols---rubric paraphrases, response-order permutations, and repeated stochastic sampling---is significantly more likely to agree with the reference label.
+CARE-Judge converts multi-signal protocol-stability features into a learned correctness calibrator, then applies fixed-sequence testing with an exact Clopper--Pearson bound to accept judgments at a user-specified risk level with finite-sample guarantees.
+Experiments across three judge models (Qwen2.5-1.5B, DeepSeek-V4, GPT-5.5), three benchmarks (JudgeBench, TL;DR, MT-Bench Human), and 3{,}660 pairwise evaluations demonstrate that protocol-stability signals---particularly rubric perturbation and position-swap consistency---consistently predict judge error, with accuracy gaps of 12--54 percentage points between stable and unstable subsets.
+On TL;DR with DeepSeek-V4, CARE-Judge improves accepted accuracy from 65.2\% to 82.2\% at 11.3\% coverage under a 15\% risk budget.
+On JudgeBench with GPT-5.5, it achieves 98.2\% accuracy at 42.9\% coverage ($\alpha{=}0.05$).
+A cost-aware cascade (Qwen-1.5B $\to$ DeepSeek $\to$ GPT-5.5) achieves 100\% cost savings on TL;DR by routing all items to the free local model while maintaining 88.9\% accuracy.
+When the judge is near-random (Qwen-1.5B on JudgeBench, 49.4\%), CARE-Judge correctly abstains on all examples.
+\end{abstract}

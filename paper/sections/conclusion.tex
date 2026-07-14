@@ -1,0 +1,23 @@
+% sections/conclusion.tex
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We proposed CARE-Judge, a selective evaluation framework for LLM-as-a-judge that exploits \emph{protocol-stability signals}---particularly rubric perturbation and position-swap consistency---to determine when an LLM judge's verdict should be trusted.
+Our central finding is that evaluation-protocol instability is a strong, consistent predictor of judge error: when semantically equivalent rubrics or response orderings produce different verdicts, the judgment is substantially less likely to be correct.
+CARE-Judge converts these signals into a learned correctness calibrator with a valid finite-sample selective-risk guarantee via exact Clopper--Pearson bounds and disjoint train/calibration/test splits.
+
+Experiments across three judge models (Qwen2.5-1.5B, DeepSeek-V4, GPT-5.5) and three benchmarks (JudgeBench, TL;DR, MT-Bench Human) demonstrate that:
+(i)~protocol-stability signals produce 12--54pp accuracy gaps between stable and unstable subsets;
+(ii)~CARE-Judge improves accepted accuracy by up to 17pp while maintaining useful coverage;
+(iii)~the framework correctly abstains entirely when the judge is near-random, preventing unreliable deployment;
+(iv)~a cost-aware cascade routes easy items to a free local model, achieving up to 100\% API-cost savings on TL;DR while retaining 88.9\% accuracy; and
+(v)~calibrators transfer across datasets for strong judges (TL;DR$\to$JudgeBench: 100\% coverage at 91.1\% accuracy for GPT-5.5).
+
+\paragraph{Limitations.}
+Protocol-stability signals require a minimum judge capability: when the judge's raw accuracy is near chance (e.g., Qwen-1.5B on JudgeBench), the signals lose discriminative power.
+Additionally, our current evaluation uses 6--10 judge calls per item, which increases evaluation cost relative to single-call judging; the adaptive-$k$ mechanism and the cost-aware cascade partially mitigate this.
+Finally, cross-dataset transfer to open-ended human-preference tasks (MT-Bench) remains difficult, indicating that the calibrator's transferability depends on task type.
+
+\paragraph{Future Work.}
+Promising directions include: (1)~extending protocol-stability signals to pointwise (non-pairwise) evaluation, (2)~developing domain-aware signal selection (e.g., position-swap may be more informative for subjective preference, rubric perturbation for factual correctness), and (3)~integrating protocol stability into active learning for human annotation triage.

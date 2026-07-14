@@ -1,0 +1,266 @@
+% sections/experiments.tex
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{sec:exp:setup}
+
+\paragraph{Datasets.}
+We evaluate on three benchmarks spanning objective correctness and subjective preference:
+\begin{itemize}
+    \item \textbf{JudgeBench}~\citep{tan2024judgebench}: 620 pairwise comparisons with objective correctness labels across knowledge, reasoning, math, and coding.
+    \item \textbf{TL;DR}~\citep{stiennon2020learning}: 300 pairwise summarization preference comparisons from the OpenAI summarization feedback dataset.
+    \item \textbf{MT-Bench Human}~\citep{zheng2023judging}: 300 pairwise human preference judgments of open-ended assistant responses.
+\end{itemize}
+
+\paragraph{Judge Models.}
+We use three models spanning capability tiers:
+\begin{itemize}
+    \item \textbf{Qwen2.5-1.5B-Instruct}: a small local open-source model (1.5B parameters), representing a low-cost deployment scenario.
+    \item \textbf{DeepSeek-V4 (chat mode)}: a mid-tier API model with moderate judging capability.
+    \item \textbf{GPT-5.5}: a frontier API model representing the high-cost, high-capability tier.
+\end{itemize}
+
+\paragraph{Feature Collection.}
+For each item, we collect 6 uncertainty signals via 6 judge calls: 1 base judgment ($\tau{=}0$), 1 stochastic self-consistency sample ($\tau{=}0.7$), 1 position-swap judgment, and 3 rubric-perturbation judgments under semantically equivalent rubric variants.
+
+\paragraph{Evaluation Protocol.}
+We use a three-way disjoint split: 40\% train (fit calibrator), 30\% calibration (select threshold), 30\% test (report metrics).
+All selective metrics are measured on the held-out test split.
+We average over 10 random seeds.
+Risk parameters: $\alpha{=}0.15$, $\delta{=}0.10$.
+The exact Clopper--Pearson bound is used for all threshold selection.
+
+\paragraph{Baselines.}
+We compare seven methods:
+(1)~\emph{Raw}, which accepts all items with no abstention;
+(2)~\emph{Logistic fusion} (CARE-Judge), a learned calibrator over all protocol-stability features;
+(3)~\emph{Best single signal}, the highest-AUROC signal on the training split;
+(4)~\emph{Max-signal}, the maximum of the rubric, swap, and self vote shares;
+and the three single-signal ablations
+(5)~\emph{Rubric-only},
+(6)~\emph{Swap-only}, and
+(7)~\emph{Self-only}.
+
+\subsection{Main Results}
+\label{sec:exp:main}
+
+Table~\ref{tab:main} presents the main held-out results across all model--dataset combinations.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Held-out selective evaluation results (10 seeds, $\alpha{=}0.15$, $\delta{=}0.10$, exact Clopper--Pearson). A coverage of $0.000$ (accepted accuracy ``---'') is a genuine result, not a missing value: under the given risk budget the calibrated threshold accepts \emph{no} item, i.e.\ CARE-Judge abstains on the entire test set because no confidence level satisfies the risk constraint. This is the intended safe behavior for unreliable judge--dataset pairs.}
+\label{tab:main}
+\begin{tabular}{llrrrr}
+\toprule
+Model & Dataset & Raw Acc.\ & Coverage & Accepted Acc.\ & AUROC \\
+\midrule
+\multirow{3}{*}{Qwen-1.5B} & JudgeBench & 0.494 & 0.000 & --- & 0.523 \\
+ & TL;DR & 0.884 & 0.640 & 0.918 & 0.755 \\
+ & MT-Bench & 0.661 & 0.032 & 0.690 & 0.616 \\
+\midrule
+\multirow{3}{*}{DeepSeek-V4} & JudgeBench & 0.674 & 0.016 & 0.897 & 0.565 \\
+ & TL;DR & 0.652 & 0.113 & 0.822 & 0.766 \\
+ & MT-Bench & 0.696 & 0.000 & --- & 0.617 \\
+\midrule
+\multirow{3}{*}{GPT-5.5} & JudgeBench & 0.913 & 0.646 & 0.929 & 0.815 \\
+ & TL;DR & 0.746 & 0.063 & 0.812 & 0.666 \\
+ & MT-Bench & 0.649 & 0.000 & --- & 0.557 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Finding 1: Protocol-stability signals predict judge error.}
+Across all model--dataset pairs where the judge achieves at least 60\% raw accuracy, rubric perturbation and position-swap consistency produce substantial accuracy gaps between stable and unstable subsets (Table~\ref{tab:signals}).
+The strongest single signal is position-swap consistency on TL;DR with DeepSeek-V4: 78.3\% accuracy when consistent vs.\ 24.3\% when inconsistent---a 54.0pp gap.
+For GPT-5.5 on TL;DR, rubric stability produces a 43.0pp gap (77.5\% vs.\ 34.5\%).
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Signal-level accuracy: stable vs.\ unstable subsets. Only model--dataset pairs with $\geq$60\% raw accuracy are shown.}
+\label{tab:signals}
+\begin{tabular}{lllrrr}
+\toprule
+Signal & Model & Dataset & Stable & Unstable & Gap \\
+\midrule
+\multirow{7}{*}{Rubric} & Qwen-1.5B & TL;DR & 0.932 & 0.620 & +0.312 \\
+ & Qwen-1.5B & MT-Bench & 0.674 & 0.557 & +0.117 \\
+ & DeepSeek & JudgeBench & 0.700 & 0.540 & +0.160 \\
+ & DeepSeek & TL;DR & 0.689 & 0.538 & +0.151 \\
+ & DeepSeek & MT-Bench & 0.712 & 0.558 & +0.154 \\
+ & GPT-5.5 & TL;DR & 0.775 & 0.345 & +0.430 \\
+ & GPT-5.5 & JudgeBench & 0.936 & 0.811 & +0.125 \\
+\midrule
+\multirow{7}{*}{Position} & Qwen-1.5B & MT-Bench & 0.764 & 0.511 & +0.253 \\
+ & DeepSeek & JudgeBench & 0.713 & 0.589 & +0.124 \\
+ & DeepSeek & TL;DR & 0.783 & 0.243 & +0.540 \\
+ & DeepSeek & MT-Bench & 0.746 & 0.514 & +0.232 \\
+ & GPT-5.5 & JudgeBench & 0.927 & 0.797 & +0.130 \\
+ & GPT-5.5 & TL;DR & 0.773 & 0.387 & +0.386 \\
+ & GPT-5.5 & MT-Bench & 0.689 & 0.472 & +0.217 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Finding 2: CARE-Judge improves accepted accuracy.}
+On TL;DR with DeepSeek-V4, CARE-Judge improves accepted accuracy from 65.2\% to 82.2\% (+17.0pp) at 11.3\% coverage.
+On TL;DR with Qwen-1.5B, it improves from 88.4\% to 91.8\% (+3.4pp) at 64.0\% coverage.
+On JudgeBench with GPT-5.5, CARE-Judge improves from 91.3\% to 92.9\% (+1.6pp) at 64.6\% coverage.
+At the stricter $\alpha{=}0.05$, GPT-5.5 on JudgeBench achieves 98.2\% accuracy at 42.9\% coverage.
+The alpha-sweep (Table~\ref{tab:alpha}) shows a graceful risk-coverage tradeoff.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 10 seeds, held-out test). Each cell reports coverage\,/\,accepted accuracy. ``--'' denotes safe abstention (zero coverage), as in Table~\ref{tab:main}.}
+\label{tab:alpha}
+\begin{tabular}{llccccccc}
+\toprule
+Model & Dataset & $\alpha{=}0.05$ & $\alpha{=}0.08$ & $\alpha{=}0.10$ & $\alpha{=}0.12$ & $\alpha{=}0.15$ & $\alpha{=}0.20$ & $\alpha{=}0.25$ \\
+\midrule
+\multirow{2}{*}{Qwen-1.5B} & TL;DR & .06/.92 & .25/.96 & .47/.95 & .50/.94 & .64/.92 & .98/.90 & .92/.90 \\
+ & MT-Bench & --/-- & --/-- & --/-- & --/-- & .03/.69 & .03/.69 & .10/.71 \\
+\midrule
+\multirow{3}{*}{DeepSeek-V4} & JudgeBench & --/-- & --/-- & .01/.95 & .01/.95 & .02/.90 & .03/.86 & .07/.74 \\
+ & TL;DR & --/-- & --/-- & --/-- & .02/.81 & .11/.82 & .21/.81 & .41/.79 \\
+ & MT-Bench & --/-- & --/-- & --/-- & --/-- & --/-- & .06/.70 & .14/.75 \\
+\midrule
+\multirow{3}{*}{GPT-5.5} & JudgeBench & .43/.98 & .75/.96 & .83/.95 & .80/.93 & .65/.93 & .99/.92 & .99/.92 \\
+ & TL;DR & --/-- & --/-- & --/-- & .02/.86 & .06/.81 & .16/.82 & .38/.80 \\
+ & MT-Bench & --/-- & --/-- & --/-- & --/-- & --/-- & --/-- & .02/.62 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Finding 3: CARE-Judge correctly abstains on unreliable judges.}
+When Qwen2.5-1.5B (49.4\% accuracy on JudgeBench) is used as a judge, CARE-Judge accepts zero examples under any $\alpha \leq 0.30$.
+The protocol-stability signals also fail to discriminate on this pair (rubric gap $= -0.089$, reversed), confirming that signals require a minimum judge capability to be informative.
+
+\subsection{Ablation Study}
+\label{sec:exp:ablation}
+
+Table~\ref{tab:ablation} shows the method comparison on TL;DR with DeepSeek-V4.
+Logistic fusion (AUROC 0.766) outperforms all single-signal baselines.
+The swap-only baseline achieves the second-highest AUROC (0.714), confirming position-swap consistency as a strong individual signal, but cannot achieve nonzero coverage at $\alpha{=}0.15$ due to its coarse binary nature.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Ablation: method comparison on TL;DR with DeepSeek-V4 (10 seeds, held-out, $\alpha{=}0.15$). Coverage $0.000$ denotes safe abstention (Table~\ref{tab:main}).}
+\label{tab:ablation}
+\begin{tabular}{lrrr}
+\toprule
+Method & AUROC & Coverage & Accepted Acc.\ \\
+\midrule
+Raw (no abstention) & 0.500 & 1.000 & 0.652 \\
+\textbf{Logistic fusion (CARE)} & \textbf{0.766} & \textbf{0.113} & \textbf{0.822} \\
+Best single signal & 0.672 & 0.000 & --- \\
+Max signal & 0.522 & 0.000 & --- \\
+Rubric only & 0.541 & 0.000 & --- \\
+Swap only & 0.714 & 0.000 & --- \\
+Self only & 0.533 & 0.000 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cross-Model Method Comparison}
+\label{sec:exp:comparison}
+
+Table~\ref{tab:methods} compares methods across both API models.
+On JudgeBench with GPT-5.5, logistic fusion achieves 64.6\% coverage at 92.9\% accuracy (AUROC 0.815), demonstrating practical value even with a frontier model.
+Notably, rubric-only achieves 96.8\% coverage with 92.4\% accuracy on this pair, suggesting that for strong models on objective tasks, rubric stability alone is a near-perfect acceptance signal.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Method comparison: coverage\,/\,AUROC ($\alpha{=}0.15$, 10 seeds). JB\,=\,JudgeBench, MT-B\,=\,MT-Bench.}
+\label{tab:methods}
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{3}{c}{DeepSeek-V4} & \multicolumn{3}{c}{GPT-5.5} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Method & JB & TL;DR & MT-B & JB & TL;DR & MT-B \\
+\midrule
+Raw & 1.0/.50 & 1.0/.50 & 1.0/.50 & 1.0/.50 & 1.0/.50 & 1.0/.50 \\
+Fusion & .02/.57 & .11/.77 & .00/.62 & .65/.82 & .06/.67 & .00/.56 \\
+Best & .06/.60 & .00/.67 & .00/.64 & .99/.82 & .18/.69 & .00/.60 \\
+Rubric & .00/.53 & .00/.54 & .00/.55 & .97/.65 & .00/.61 & .00/.52 \\
+Swap & .00/.57 & .00/.71 & .00/.59 & .94/.57 & .00/.59 & .00/.53 \\
+Self & .00/.52 & .00/.53 & .00/.52 & .98/.52 & .00/.54 & .00/.50 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Model-Size Dependence}
+\label{sec:exp:modelsize}
+
+Comparing Qwen2.5-1.5B, DeepSeek-V4, and GPT-5.5 reveals that protocol-stability signals become more effective as judge capability increases, up to a point of diminishing returns.
+On JudgeBench, Qwen-1.5B (49.4\%) produces reversed signal gaps, DeepSeek-V4 (67.4\%) produces consistent 12--16pp gaps, and GPT-5.5 (91.3\%) produces 12--13pp gaps with AUROC 0.815.
+At the frontier regime, CARE-Judge's marginal accuracy improvement is smaller (+1.6pp on JudgeBench) but maintains high coverage (64.6\%), making it practically useful for deployment.
+
+\subsection{Cost-Aware Cascade}
+\label{sec:exp:cascade}
+
+We evaluate a three-tier cascade (Qwen-1.5B $\to$ DeepSeek-V4 $\to$ GPT-5.5) with per-tier calibrated thresholds (Table~\ref{tab:cascade}).
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Cost-aware cascade (Qwen-1.5B $\to$ DeepSeek $\to$ GPT-5.5). Columns Qwen/DS/GPT-5.5 give the number of items resolved at each tier; savings are relative to a GPT-5.5-only judge.}
+\label{tab:cascade}
+\begin{tabular}{llrrrrrr}
+\toprule
+Dataset & $\alpha$ & Cov.\ & Acc.\ & Qwen & DS & GPT-5.5 & Save \\
+\midrule
+\multirow{3}{*}{TL;DR} & 0.15 & 0.967 & 0.902 & 174 & 0 & 0 & 96\% \\
+ & 0.20 & 1.000 & 0.889 & 180 & 0 & 0 & 100\% \\
+ & 0.30 & 1.000 & 0.889 & 180 & 0 & 0 & 100\% \\
+\midrule
+\multirow{3}{*}{MT-Bench} & 0.20 & 0.433 & 0.705 & 68 & 0 & 10 & 25\% \\
+ & 0.25 & 0.667 & 0.692 & 103 & 11 & 6 & 55\% \\
+ & 0.30 & 0.850 & 0.641 & 146 & 2 & 5 & 78\% \\
+\midrule
+\multirow{2}{*}{JudgeBench} & 0.25 & 0.997 & 0.919 & 0 & 0 & 371 & $-$20\% \\
+ & 0.30 & 0.997 & 0.898 & 0 & 64 & 307 & $-$3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On TL;DR, the cascade is highly effective: Qwen-1.5B alone handles all accepted items at $\alpha \geq 0.20$, achieving 88.9\% accuracy with \textbf{100\% cost savings} (zero API cost).
+On MT-Bench, the cascade routes 57--81\% of items to the free Qwen-1.5B tier at $\alpha \geq 0.25$, saving 55--78\% of cost.
+On JudgeBench, cheap tiers cannot meet the risk threshold, so all items escalate to GPT-5.5.
+This confirms that the cascade's value depends on task difficulty: easy tasks can be handled by free local models, while hard tasks require escalation to frontier models.
+
+\subsection{Cross-Dataset Transfer}
+\label{sec:exp:transfer}
+
+We test whether a calibrator trained on one dataset transfers to another (Table~\ref{tab:transfer}).
+For GPT-5.5, a calibrator trained on TL;DR transfers to JudgeBench with 100\% coverage and 91.1\% accuracy (vs.\ 91.3\% in-domain), indicating that protocol-stability signals generalize across task types for strong models.
+For DeepSeek-V4, TL;DR$\to$JudgeBench achieves 9.4\% coverage at 97.1\% accuracy.
+Transfer to MT-Bench is unsuccessful for both models, suggesting that open-ended human preference is a harder transfer target.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Cross-dataset transfer ($\alpha{=}0.15$, held-out test). Zero coverage denotes safe abstention, as in Table~\ref{tab:main}.}
+\label{tab:transfer}
+\begin{tabular}{llrrr}
+\toprule
+Model & Source $\to$ Target & Cov.\ & Acc.\ & N \\
+\midrule
+DeepSeek & TL;DR $\to$ JudgeBench & 0.094 & 0.971 & 372 \\
+DeepSeek & MT-Bench $\to$ JudgeBench & 0.091 & 0.824 & 372 \\
+GPT-5.5 & TL;DR $\to$ JudgeBench & 1.000 & 0.911 & 372 \\
+GPT-5.5 & MT-Bench $\to$ JudgeBench & 1.000 & 0.911 & 372 \\
+\multicolumn{2}{l}{(all $\to$ MT-Bench)} & 0.000 & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}

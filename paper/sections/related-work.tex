@@ -1,0 +1,33 @@
+% sections/related-work.tex
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{LLM-as-a-Judge.}
+The use of LLMs as automated evaluators has grown rapidly.
+\citet{zheng2023judging} introduced Chatbot Arena and MT-Bench, establishing pairwise LLM judging as a scalable evaluation paradigm.
+\citet{li2024llmsasjudges} provided a comprehensive survey of LLM-based evaluation methods, identifying biases including position bias, length bias, and self-enhancement bias.
+\citet{wang2023faireval} proposed mitigating position bias via multi-turn debate and swap-and-compare.
+\citet{wei2024systematic} systematically evaluated LLM-as-a-judge prompt sensitivity, finding that rubric template diversity affects alignment scores---a finding that motivates our use of rubric perturbation as an error signal rather than merely a nuisance to be controlled.
+
+\paragraph{Selective Prediction and Abstention.}
+Selective classification~\citep{geifman2017selective,el2010foundations} enables a predictor to abstain on uncertain inputs.
+\citet{wen2025know} surveyed abstention in LLMs, covering verbalized confidence, self-consistency, and retrieval-based approaches.
+\citet{krishnan2024enhancing} proposed uncertainty-calibrated fine-tuning for LLM trust, using last-layer hidden states.
+Our work differs by focusing on \emph{evaluation-protocol stability} as the uncertainty source, which is specific to the judging task and does not require model internals.
+
+\paragraph{Risk-Controlled Evaluation.}
+\citet{jung2025trust} (Trust-or-Escalate) proposed cascaded selective evaluation for LLM judges with provable human-agreement guarantees via Simulated Annotators and fixed-sequence testing.
+Our framework builds on their risk-control machinery but replaces the single-signal confidence (simulated annotator agreement) with a multi-signal protocol-stability calibrator.
+We additionally introduce rubric perturbation as a novel signal and provide a direct comparison to their approach.
+
+\paragraph{Judge Benchmarks.}
+\citet{tan2024judgebench} introduced JudgeBench, a benchmark of challenging response pairs with objective correctness labels across knowledge, reasoning, math, and coding.
+\citet{lambert2024rewardbench} proposed RewardBench for evaluating reward models.
+We use JudgeBench as a hard-objective benchmark and TL;DR~\citep{stiennon2020learning} and MT-Bench Human~\citep{zheng2023judging} as subjective-preference benchmarks, covering both correctness and preference evaluation.
+
+\paragraph{Rubric-Based Evaluation.}
+\citet{hong2026from} studied aligning LLM judges with human scoring rubrics.
+\citet{anghel2025pearl} proposed a rubric-driven multi-metric evaluation framework.
+These works treat rubrics as fixed evaluation criteria to be aligned with; in contrast, we treat \emph{rubric sensitivity}---the degree to which a judge's verdict changes under semantically equivalent rubric paraphrases---as an uncertainty signal.
+To our knowledge, no prior work has used rubric perturbation instability as a predictor of judge error.

@@ -1,0 +1,107 @@
+% sections/method.tex
+
+\section{Method}
+\label{sec:method}
+
+CARE-Judge converts an LLM judge $f$ into a \emph{selective evaluator} $(\hat{f}, \hat{c})$ that either outputs a judgment $\hat{f}(x)$ or abstains, based on a confidence measure $\hat{c}(x)$ and a risk-controlled threshold $\hat{\lambda}$.
+The framework has three components: (1)~multi-signal protocol-stability feature extraction, (2)~learned correctness calibration, and (3)~risk-controlled threshold selection with finite-sample guarantees.
+
+\subsection{Protocol-Stability Features}
+\label{sec:method:features}
+
+Given a pairwise evaluation item $x = (q, a_1, a_2)$ consisting of a prompt $q$ and two candidate responses, we issue multiple judge calls under semantically equivalent evaluation protocols and measure the stability of the resulting verdicts.
+Let $f(x; r, \tau)$ denote the judge's output (winner $\in\{A, B\}$ and confidence $\in[0,1]$) given rubric $r$ and sampling temperature $\tau$.
+
+\paragraph{Rubric Perturbation Stability.}
+We define a set of $K$ semantically equivalent rubric variants $\{r_1, \ldots, r_K\}$ that express the same evaluation criteria in different wording (e.g., ``Prefer the more correct response'' vs.\ ``Choose the answer a careful evaluator would prefer'').
+For each item, we collect verdicts $\{v_1, \ldots, v_K\}$ where $v_k = f(x; r_k, 0)$.
+We compute:
+\begin{align}
+    \text{rubric\_vote\_share} &= \max_{w \in \{A,B\}} \frac{|\{k : v_k = w\}|}{K}, \label{eq:rubric_share} \\
+    \text{rubric\_flip} &= \mathbb{1}\!\left[|\{v_1, \ldots, v_K\}| > 1\right], \label{eq:rubric_flip}
+\end{align}
+where $\text{rubric\_flip} = 1$ if any rubric variant produces a different winner.
+The intuition is that if the judge's verdict depends on rubric surface features rather than response content, the judgment is content-irrelevant and thus less reliable.
+
+\paragraph{Position-Swap Consistency.}
+We judge the item in both response orderings: $(q, a_1, a_2)$ and $(q, a_2, a_1)$.
+Let $v_{\text{orig}} = f(x; r_1, 0)$ and $v_{\text{swap}} = f(\text{swap}(x); r_1, 0)$, where $\text{swap}$ reverses the response order.
+We map $v_{\text{swap}}$ back to the original coordinate system and compute:
+\begin{equation}
+    \text{swap\_consistency} = \mathbb{1}\!\left[\text{map}(v_{\text{swap}}) = v_{\text{orig}}\right].
+    \label{eq:swap}
+\end{equation}
+This probes positional bias: a judge that reverses its verdict under response reordering is unreliable.
+
+\paragraph{Self-Consistency.}
+We sample $S$ stochastic judgments at temperature $\tau > 0$ under the base rubric and compute the majority vote share:
+\begin{equation}
+    \text{self\_vote\_share} = \max_{w} \frac{|\{s : f(x; r_1, \tau_s) = w\}|}{S}.
+    \label{eq:self}
+\end{equation}
+We optionally employ \emph{adaptive-$k$} early stopping: if $\text{self\_vote\_share} \geq \tau_{\text{stop}}$ after the minimum number of samples, we terminate early to reduce API costs.
+
+\paragraph{Simulated Annotators.}
+Following~\citet{jung2025trust}, we construct $N$ few-shot judge personas, each conditioned on $K_{\text{shot}}$ labeled examples drawn from the calibration pool.
+We compute the agreement ratio across simulated annotators as an additional confidence signal.
+We treat this as a \emph{baseline signal} rather than a novel contribution.
+
+\paragraph{Feature Vector.}
+The full feature vector for item $x$ is:
+\begin{equation}
+\begin{aligned}
+    \boldsymbol{\phi}(x) = \big[\,
+    &\text{base\_conf},\; \text{rubric\_vote\_share},\; \text{rubric\_flip},\\
+    &\text{swap\_consistency},\; \text{self\_vote\_share},\; \text{sim\_vote\_share},\\
+    &\text{mean\_conf},\; \text{std\_conf},\; \text{length\_gap}\,\big].
+\end{aligned}
+    \label{eq:features}
+\end{equation}
+
+\subsection{Correctness Calibration}
+\label{sec:method:calibration}
+
+We fit a calibrator $\hat{p}: \mathbb{R}^d \to [0,1]$ that predicts the probability that the judge's verdict is correct given the feature vector:
+\begin{equation}
+    \hat{p}(x) = P\!\left(\hat{f}(x) = y \mid \boldsymbol{\phi}(x)\right),
+    \label{eq:calibrator}
+\end{equation}
+where $y$ is the reference label.
+We support logistic regression, isotonic regression, and gradient-boosted classifiers.
+The calibrator is fit on a \emph{training split} $D_{\text{train}}$ that is disjoint from both the threshold-selection set and the evaluation set.
+
+\subsection{Risk-Controlled Threshold Selection}
+\label{sec:method:risk}
+
+Given a user-specified risk tolerance $\alpha \in (0,1)$ and error level $\delta \in (0,1)$, we select an acceptance threshold $\hat{\lambda}$ on a \emph{calibration split} $D_{\text{cal}}$ (disjoint from $D_{\text{train}}$) such that:
+\begin{equation}
+    P\!\left(P\!\left(\hat{f}(x) \neq y \mid \hat{c}(x) \geq \hat{\lambda}\right) \leq \alpha\right) \geq 1 - \delta.
+    \label{eq:guarantee}
+\end{equation}
+
+We employ fixed-sequence testing~\citep{bauer1991multiple}: sorting calibration items by descending confidence, we sweep thresholds from high to low and select the lowest threshold $\hat{\lambda}$ whose $(1-\delta)$ upper confidence bound on the error rate remains at most $\alpha$.
+We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
+\begin{equation}
+    \text{CP}_{\text{upper}}(e, n, \delta) = \sup\!\left\{p : P\!\left(\text{Bin}(n, p) \leq e\right) \geq \delta\right\},
+    \label{eq:cp}
+\end{equation}
+where $e$ is the number of errors among the $n$ accepted calibration items.
+This bound is computed exactly via bisection on the binomial CDF.
+
+The selective evaluator is then applied to a \emph{held-out test split} $D_{\text{test}}$:
+\begin{equation}
+    (\hat{f}, \hat{c})(x) = \begin{cases} \hat{f}(x) & \text{if } \hat{c}(x) \geq \hat{\lambda}, \\ \emptyset & \text{otherwise (abstain).} \end{cases}
+    \label{eq:selective}
+\end{equation}
+
+All reported metrics (coverage, selective risk, accepted accuracy, calibration error) are measured on $D_{\text{test}}$, ensuring the risk guarantee is valid.
+
+\subsection{Cost-Aware Cascade}
+\label{sec:method:cascade}
+
+For deployment, we arrange multiple judges $\mathcal{M} = (M_1, \ldots, M_T)$ in order of increasing cost.
+Each tier $t$ has its own calibrator $\hat{p}_t$ and threshold $\hat{\lambda}_t$, calibrated independently on $D_{\text{cal}}$.
+An item is evaluated by $M_1$; if $\hat{p}_1(x) \geq \hat{\lambda}_1$, the verdict is accepted.
+Otherwise, the item is escalated to $M_2$, and so on.
+If no tier accepts, the item is abstained.
+The risk guarantee of~\eqref{eq:guarantee} holds across the full cascade, ensuring that the overall selective risk does not exceed $\alpha$ with probability at least $1-\delta$.
