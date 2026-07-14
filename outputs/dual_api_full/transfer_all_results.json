@@ -1,0 +1,110 @@
+{
+  "deepseek_judgebench_to_tldr": {
+    "source": "outputs/dual_api_full/deepseek-chat_judgebench_features.jsonl",
+    "target": "outputs/dual_api_full/deepseek-chat_tldr_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "deepseek_judgebench_to_mtbench_human": {
+    "source": "outputs/dual_api_full/deepseek-chat_judgebench_features.jsonl",
+    "target": "outputs/dual_api_full/deepseek-chat_mtbench_human_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "deepseek_tldr_to_judgebench": {
+    "source": "outputs/dual_api_full/deepseek-chat_tldr_features.jsonl",
+    "target": "outputs/dual_api_full/deepseek-chat_judgebench_features.jsonl",
+    "n_test": 372,
+    "coverage": 0.09408602150537634,
+    "accuracy_accepted": 0.9714285714285714,
+    "risk_accepted": 0.02857142857142858,
+    "threshold": 0.9580300183082262
+  },
+  "deepseek_tldr_to_mtbench_human": {
+    "source": "outputs/dual_api_full/deepseek-chat_tldr_features.jsonl",
+    "target": "outputs/dual_api_full/deepseek-chat_mtbench_human_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "deepseek_mtbench_human_to_judgebench": {
+    "source": "outputs/dual_api_full/deepseek-chat_mtbench_human_features.jsonl",
+    "target": "outputs/dual_api_full/deepseek-chat_judgebench_features.jsonl",
+    "n_test": 372,
+    "coverage": 0.0913978494623656,
+    "accuracy_accepted": 0.8235294117647058,
+    "risk_accepted": 0.17647058823529416,
+    "threshold": 0.8224179043927529
+  },
+  "deepseek_mtbench_human_to_tldr": {
+    "source": "outputs/dual_api_full/deepseek-chat_mtbench_human_features.jsonl",
+    "target": "outputs/dual_api_full/deepseek-chat_tldr_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "gpt55_judgebench_to_tldr": {
+    "source": "outputs/dual_api_full/gpt-5_5_judgebench_features.jsonl",
+    "target": "outputs/dual_api_full/gpt-5_5_tldr_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "gpt55_judgebench_to_mtbench_human": {
+    "source": "outputs/dual_api_full/gpt-5_5_judgebench_features.jsonl",
+    "target": "outputs/dual_api_full/gpt-5_5_mtbench_human_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "gpt55_tldr_to_judgebench": {
+    "source": "outputs/dual_api_full/gpt-5_5_tldr_features.jsonl",
+    "target": "outputs/dual_api_full/gpt-5_5_judgebench_features.jsonl",
+    "n_test": 372,
+    "coverage": 1.0,
+    "accuracy_accepted": 0.9112903225806451,
+    "risk_accepted": 0.08870967741935487,
+    "threshold": 0.00513135805542099
+  },
+  "gpt55_tldr_to_mtbench_human": {
+    "source": "outputs/dual_api_full/gpt-5_5_tldr_features.jsonl",
+    "target": "outputs/dual_api_full/gpt-5_5_mtbench_human_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  },
+  "gpt55_mtbench_human_to_judgebench": {
+    "source": "outputs/dual_api_full/gpt-5_5_mtbench_human_features.jsonl",
+    "target": "outputs/dual_api_full/gpt-5_5_judgebench_features.jsonl",
+    "n_test": 372,
+    "coverage": 1.0,
+    "accuracy_accepted": 0.9112903225806451,
+    "risk_accepted": 0.08870967741935487,
+    "threshold": 0.03379959038241966
+  },
+  "gpt55_mtbench_human_to_tldr": {
+    "source": "outputs/dual_api_full/gpt-5_5_mtbench_human_features.jsonl",
+    "target": "outputs/dual_api_full/gpt-5_5_tldr_features.jsonl",
+    "n_test": 180,
+    "coverage": 0.0,
+    "accuracy_accepted": null,
+    "risk_accepted": null,
+    "threshold": 1.01
+  }
+}
