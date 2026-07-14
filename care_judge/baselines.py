@@ -23,19 +23,32 @@ def _accepted_rows(rows: List[Dict[str, Any]], scores: List[float], threshold: f
     return out
 
 
-def run_feature_threshold_baseline(rows: List[Dict[str, Any]], feature: str, alpha: float, delta: float, min_keep: int) -> Dict[str, Any]:
-    scores = [_prob_from_feature(r, feature) for r in rows]
-    labeled = [(s, int(r["correct"])) for r, s in zip(rows, scores) if r.get("correct") is not None]
-    threshold, trace = calibrate_threshold([x[0] for x in labeled], [x[1] for x in labeled], alpha=alpha, delta=delta, min_keep=min_keep)
-    selected = _accepted_rows(rows, scores, threshold)
+def run_feature_threshold_baseline(
+    cal_rows: List[Dict[str, Any]],
+    test_rows: List[Dict[str, Any]],
+    feature: str,
+    alpha: float,
+    delta: float,
+    min_keep: int,
+    bound: str = "clopper_pearson",
+) -> Dict[str, Any]:
+    """Select threshold on the calibration split, evaluate on the test split."""
+    cal_scores = [_prob_from_feature(r, feature) for r in cal_rows]
+    cal_labeled = [(s, int(r["correct"])) for s, r in zip(cal_scores, cal_rows) if r.get("correct") is not None]
+    threshold, trace = calibrate_threshold(
+        [x[0] for x in cal_labeled], [x[1] for x in cal_labeled],
+        alpha=alpha, delta=delta, min_keep=min_keep, bound=bound,
+    )
+    test_scores = [_prob_from_feature(r, feature) for r in test_rows]
+    selected = _accepted_rows(test_rows, test_scores, threshold)
     report = summarize_selective(selected)
-    report.update({"baseline": feature, "threshold": threshold, "threshold_trace": trace})
+    report.update({"baseline": feature, "type": "thresholded", "threshold": threshold})
     return report
 
 
-def run_rule_baseline(rows: List[Dict[str, Any]], rule: str) -> Dict[str, Any]:
+def run_rule_baseline(test_rows: List[Dict[str, Any]], rule: str) -> Dict[str, Any]:
     out = []
-    for row in rows:
+    for row in test_rows:
         r = dict(row)
         if rule == "raw":
             accept = True
@@ -54,15 +67,22 @@ def run_rule_baseline(rows: List[Dict[str, Any]], rule: str) -> Dict[str, Any]:
         r["p_correct"] = float(row.get("confidence", 0.5) or 0.5)
         out.append(r)
     report = summarize_selective(out)
-    report.update({"baseline": rule, "threshold": None})
+    report.update({"baseline": rule, "type": "rule", "threshold": None})
     return report
 
 
-def run_all_baselines(rows: List[Dict[str, Any]], alpha: float = 0.1, delta: float = 0.1, min_keep: int = 20) -> List[Dict[str, Any]]:
+def run_all_baselines(
+    cal_rows: List[Dict[str, Any]],
+    test_rows: List[Dict[str, Any]],
+    alpha: float = 0.1,
+    delta: float = 0.1,
+    min_keep: int = 20,
+    bound: str = "clopper_pearson",
+) -> List[Dict[str, Any]]:
     reports = []
     for rule in ["raw", "position_swap", "rubric_stable", "self_consistency", "simulated_annotators"]:
-        reports.append(run_rule_baseline(rows, rule))
+        reports.append(run_rule_baseline(test_rows, rule))
     for feat in ["confidence", "base_conf", "mean_conf", "self_vote_share", "rubric_vote_share", "swap_consistency", "sim_vote_share", "ensemble_vote_share"]:
-        if feat == "confidence" or any(f"feat_{feat}" in r for r in rows):
-            reports.append(run_feature_threshold_baseline(rows, feat, alpha=alpha, delta=delta, min_keep=min_keep))
+        if feat == "confidence" or any(f"feat_{feat}" in r for r in test_rows):
+            reports.append(run_feature_threshold_baseline(cal_rows, test_rows, feat, alpha=alpha, delta=delta, min_keep=min_keep, bound=bound))
     return reports

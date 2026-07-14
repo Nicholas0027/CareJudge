@@ -22,6 +22,9 @@ def make_judge(spec: str) -> BaseJudge:
         return MockJudge(name=spec, accuracy=acc)
     if spec.startswith("litellm:"):
         return LiteLLMJudge(model=spec.split(":", 1)[1])
+    if spec.startswith("openai:"):
+        from care_judge.judges.openai_compat import OpenAICompatJudge
+        return OpenAICompatJudge(model=spec.split(":", 1)[1])
     if spec.startswith("local_hf:"):
         from care_judge.judges.local_hf import LocalHFJudge
         model_name = spec.split(":", 1)[1]

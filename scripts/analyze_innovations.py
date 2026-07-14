@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+"""Innovation validation with methodologically valid held-out evaluation.
+
+For each feature group (single-signal and full CARE) and each leave-one-signal-out
+ablation, we:
+  1. fit the calibrator on a TRAIN split,
+  2. select the risk-controlled threshold on a disjoint CALIBRATION split,
+  3. report discrimination (AUROC/AUPRC/ECE/Brier) and selective risk/coverage on
+     a disjoint TEST split,
+averaged over multiple seeds with bootstrap confidence intervals.
+"""
 from __future__ import annotations
 
 import argparse
@@ -14,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from care_judge.calibration.fixed_sequence import calibrate_threshold
 from care_judge.calibration.models import fit_calibrator
-from care_judge.evaluation.metrics import calibration_report
+from care_judge.evaluation.metrics import calibration_report, bootstrap_ci
 from care_judge.selective.evaluate import apply_threshold, summarize_selective
 from care_judge.utils import read_jsonl
 
@@ -49,46 +59,62 @@ def existing(cols: List[str], rows: List[Dict[str, Any]]) -> List[str]:
     return [c for c in cols if c in keys]
 
 
-def split_rows(rows: List[Dict[str, Any]], seed: int, frac: float) -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+def three_way(rows: List[Dict[str, Any]], seed: int, train_frac: float, cal_frac: float):
     labeled = [r for r in rows if r.get("correct") is not None]
     rng = random.Random(seed)
     rng.shuffle(labeled)
-    n = max(2, int(len(labeled) * frac))
-    return labeled[:n], labeled[n:]
+    n = len(labeled)
+    n_train = max(2, int(n * train_frac))
+    n_cal = max(2, int(n * cal_frac))
+    train = labeled[:n_train]
+    cal = labeled[n_train:n_train + n_cal]
+    test = labeled[n_train + n_cal:]
+    if not test:
+        test = cal
+    return train, cal, test
 
 
 def aggregate(reports: List[Dict[str, Any]]) -> Dict[str, Any]:
     out: Dict[str, Any] = {}
     if not reports:
         return out
-    keys = sorted({k for r in reports for k, v in r.items() if isinstance(v, (int, float)) and v is not None and not (isinstance(v, float) and math.isnan(v))})
-    for k in keys:
+    numeric_keys = sorted({k for r in reports for k, v in r.items() if isinstance(v, (int, float)) and v is not None and not (isinstance(v, float) and math.isnan(v))})
+    for k in numeric_keys:
         vals = [float(r[k]) for r in reports if isinstance(r.get(k), (int, float)) and r.get(k) is not None and not (isinstance(r.get(k), float) and math.isnan(r.get(k)))]
         if vals:
             mean = sum(vals) / len(vals)
             out[k] = mean
             out[f"{k}_std"] = (sum((x - mean) ** 2 for x in vals) / len(vals)) ** 0.5
+            lo, hi = bootstrap_ci(vals)
+            out[f"{k}_ci_low"], out[f"{k}_ci_high"] = lo, hi
     return out
 
 
-def evaluate_feature_set(rows: List[Dict[str, Any]], cols: List[str], alpha: float, delta: float, min_keep: int, seeds: int) -> Dict[str, Any]:
+def evaluate_feature_set(rows, cols, alpha, delta, min_keep, seeds, method, bound, train_frac, cal_frac):
     if not cols:
         cols = all_feature_cols(rows)
     cols = existing(cols, rows)
     fold_reports = []
     for seed in range(seeds):
-        train, test = split_rows(rows, seed, 0.5)
-        if len(test) < 2:
+        train, cal, test = three_way(rows, seed, train_frac, cal_frac)
+        if len(test) < 2 or len(cal) < 2 or len(train) < 2:
             continue
-        bundle = fit_calibrator(train, method="logistic", feature_cols=cols)
-        probs = bundle.predict_proba(test)
-        cal = calibration_report(test, probs)
-        labeled = [(p, int(r["correct"])) for r, p in zip(test, probs) if r.get("correct") is not None]
-        threshold, _ = calibrate_threshold([x[0] for x in labeled], [x[1] for x in labeled], alpha=alpha, delta=delta, min_keep=min_keep)
-        selected = apply_threshold(test, probs, threshold)
+        try:
+            bundle = fit_calibrator(train, method=method, feature_cols=cols)
+        except Exception:
+            continue
+        p_cal = bundle.predict_proba(cal)
+        cal_pairs = [(pp, int(r["correct"])) for r, pp in zip(cal, p_cal)]
+        threshold, _ = calibrate_threshold([x[0] for x in cal_pairs], [x[1] for x in cal_pairs], alpha=alpha, delta=delta, min_keep=min_keep, bound=bound)
+        p_test = bundle.predict_proba(test)
+        cal_rep = calibration_report(test, p_test)
+        selected = apply_threshold(test, p_test, threshold)
         sel = summarize_selective(selected)
-        fold_reports.append({**cal, **{f"selective_{k}": v for k, v in sel.items()}, "threshold": threshold})
-    return aggregate(fold_reports) | {"feature_cols": ";".join(cols), "folds": len(fold_reports)}
+        fold_reports.append({**cal_rep, **{f"selective_{k}": v for k, v in sel.items() if isinstance(v, (int, float))}, "threshold": threshold})
+    agg = aggregate(fold_reports)
+    agg["feature_cols"] = ";".join(cols)
+    agg["folds"] = len(fold_reports)
+    return agg
 
 
 def signal_failure_rates(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -118,28 +144,36 @@ def main() -> None:
     p.add_argument("--features", required=True)
     p.add_argument("--dataset", required=True)
     p.add_argument("--out-dir", required=True)
+    p.add_argument("--method", default="logistic", choices=["logistic", "isotonic", "gbm"])
+    p.add_argument("--bound", default="clopper_pearson", choices=["clopper_pearson", "hoeffding"])
     p.add_argument("--alpha", type=float, default=0.15)
     p.add_argument("--delta", type=float, default=0.10)
     p.add_argument("--min-keep", type=int, default=20)
-    p.add_argument("--seeds", type=int, default=5)
+    p.add_argument("--seeds", type=int, default=10)
+    p.add_argument("--train-frac", type=float, default=0.4)
+    p.add_argument("--cal-frac", type=float, default=0.3)
     args = p.parse_args()
+
     rows = [r for r in read_jsonl(args.features) if r.get("correct") is not None]
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     all_cols = all_feature_cols(rows)
+
     reports = []
     for name, cols in FEATURE_GROUPS.items():
-        report = evaluate_feature_set(rows, cols if cols else all_cols, args.alpha, args.delta, args.min_keep, args.seeds)
-        report.update({"dataset": args.dataset, "variant": name, "type": "feature_group"})
-        reports.append(report)
+        rep = evaluate_feature_set(rows, cols or all_cols, args.alpha, args.delta, args.min_keep, args.seeds, args.method, args.bound, args.train_frac, args.cal_frac)
+        rep.update({"dataset": args.dataset, "variant": name, "type": "feature_group"})
+        reports.append(rep)
     for name, drop in DROP_GROUPS.items():
         cols = [c for c in all_cols if c not in drop]
-        report = evaluate_feature_set(rows, cols, args.alpha, args.delta, args.min_keep, args.seeds)
-        report.update({"dataset": args.dataset, "variant": name, "type": "ablation"})
-        reports.append(report)
+        rep = evaluate_feature_set(rows, cols, args.alpha, args.delta, args.min_keep, args.seeds, args.method, args.bound, args.train_frac, args.cal_frac)
+        rep.update({"dataset": args.dataset, "variant": name, "type": "ablation"})
+        reports.append(rep)
+
     signal_rows = signal_failure_rates(rows)
     for r in signal_rows:
         r["dataset"] = args.dataset
+
     with open(out_dir / f"{args.dataset}_innovation_ablation.json", "w", encoding="utf-8") as f:
         json.dump(reports, f, indent=2)
     with open(out_dir / f"{args.dataset}_signal_failure_rates.json", "w", encoding="utf-8") as f:
@@ -149,7 +183,8 @@ def main() -> None:
         w = csv.DictWriter(f, fieldnames=fieldnames); w.writeheader(); w.writerows(reports)
     with open(out_dir / f"{args.dataset}_signal_failure_rates.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=sorted({k for r in signal_rows for k in r})); w.writeheader(); w.writerows(signal_rows)
-    print(json.dumps({"dataset": args.dataset, "n": len(rows), "reports": reports, "signal_failure_rates": signal_rows}, indent=2))
+
+    print(json.dumps({"dataset": args.dataset, "n": len(rows), "method": args.method, "bound": args.bound, "reports": reports, "signal_failure_rates": signal_rows}, indent=2))
 
 
 if __name__ == "__main__":

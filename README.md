@@ -2,25 +2,56 @@
 
 CARE-Judge is a runnable research codebase for **Calibrated, Abstaining, and Robust LLM-as-a-Judge Evaluation**. It implements the proposed AAAI-style experiment plan: multi-signal judge uncertainty, rubric perturbation, position-swap robustness, self-consistency, learned correctness calibration, fixed-sequence risk-controlled abstention, and cost-aware cascades.
 
+## Contribution and Scope
+
+The central, empirically supported contribution is **protocol-stability signals for
+LLM-as-a-judge reliability**: a judgment that is unstable under semantically
+equivalent evaluation protocols (rubric paraphrases, response ordering, repeated
+sampling) is less likely to agree with the reference label. CARE-Judge turns these
+signals into a calibrated selective evaluator with a valid finite-sample selective-risk
+guarantee, and a cost-aware cascade.
+
+Honest positioning of each component:
+- **Rubric-perturbation stability**: the primary novel signal (strongest in our results).
+- **Position-swap consistency**: a confirmed, previously-known bias probe, used as a signal/baseline.
+- **Simulated annotators**: reimplements the Trust-or-Escalate idea; treated as a baseline, not a new contribution.
+- **Risk-controlled abstention**: standard selective-prediction machinery with a valid held-out guarantee (below).
+
+## Methodological Guarantees (important)
+
+- **Disjoint splits.** The calibrator P(correct | features) is fit on a TRAIN split, the
+  risk-controlled threshold is selected on a disjoint CALIBRATION split, and every
+  reported risk/coverage/calibration number is measured on a disjoint TEST split. This
+  disjointness is what makes the selective-risk guarantee valid — thresholds are never
+  selected on the data used to report risk.
+- **Exact Clopper-Pearson.** `clopper_pearson_upper` computes the exact one-sided
+  binomial upper confidence bound via bisection on the binomial CDF (stdlib only). A
+  `hoeffding` bound is also provided for comparison. Fixed-sequence testing controls the
+  selective risk at level `alpha` with probability `1-delta`.
+- **Real calibrators.** `logistic` (sklearn or dependency-free fallback), `isotonic`
+  (sklearn `IsotonicRegression`, or a dependency-free PAV fallback), and `gbm` (sklearn
+  `GradientBoostingClassifier`; if sklearn is missing the method is tagged
+  `logistic_gbm_fallback` so logs stay truthful). No calibrator silently masquerades as another.
+- **Statistics.** Reports include bootstrap 95% CIs and per-domain breakdowns; the
+  ablation analyzer averages over multiple seeds with held-out evaluation.
+
 ## What Is Implemented
 
 - Pairwise dataset loader for local JSONL and optional HuggingFace datasets.
 - Judges:
   - `mock[:accuracy]` for reproducible smoke tests with no API key.
+  - `local_hf:<hf-model>` for local HuggingFace transformers judges (e.g. Qwen2.5).
   - `litellm:<model>` for OpenAI/Anthropic/Gemini/Together/local OpenAI-compatible endpoints via LiteLLM.
-- Uncertainty features:
-  - verbal/base confidence
-  - self-consistency
+- Protocol-stability + uncertainty features:
+  - base confidence
+  - self-consistency (with optional adaptive-k early stop)
   - A/B position-swap consistency
-  - rubric perturbation stability
-  - confidence variance
-  - length-gap bias proxy
-- Calibration:
-  - logistic regression
-  - isotonic regression
-  - gradient boosting
-  - fixed-sequence Clopper-Pearson thresholding
-- Selective evaluation and cascaded cheap-to-strong judging.
+  - rubric perturbation stability (primary signal)
+  - simulated annotators (baseline)
+  - confidence variance and length-gap bias proxy
+- Calibration: logistic, isotonic, GBM (all real), plus exact Clopper-Pearson fixed-sequence thresholding.
+- Selective evaluation with train/cal/test split, offline baselines, innovation ablations,
+  and a cost-aware cheap-to-strong cascade with cost accounting.
 
 ## Install
 

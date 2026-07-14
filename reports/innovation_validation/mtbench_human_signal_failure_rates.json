@@ -1,58 +1,58 @@
 [
   {
     "signal_group": "position_consistent",
-    "n": 165,
-    "accuracy": 0.7636363636363637,
-    "error_rate": 0.23636363636363633,
+    "n": 80,
+    "accuracy": 0.6875,
+    "error_rate": 0.3125,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "position_inconsistent",
-    "n": 135,
-    "accuracy": 0.5111111111111111,
-    "error_rate": 0.48888888888888893,
+    "n": 10,
+    "accuracy": 0.4,
+    "error_rate": 0.6,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "rubric_stable",
-    "n": 239,
-    "accuracy": 0.6736401673640168,
-    "error_rate": 0.3263598326359832,
+    "n": 76,
+    "accuracy": 0.6447368421052632,
+    "error_rate": 0.35526315789473684,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "rubric_unstable",
-    "n": 61,
-    "accuracy": 0.5573770491803278,
-    "error_rate": 0.4426229508196722,
+    "n": 14,
+    "accuracy": 0.7142857142857143,
+    "error_rate": 0.2857142857142857,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "self_high_agree",
-    "n": 235,
-    "accuracy": 0.6680851063829787,
-    "error_rate": 0.3319148936170213,
+    "n": 82,
+    "accuracy": 0.6829268292682927,
+    "error_rate": 0.31707317073170727,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "self_low_agree",
-    "n": 65,
-    "accuracy": 0.5846153846153846,
-    "error_rate": 0.41538461538461535,
+    "n": 8,
+    "accuracy": 0.375,
+    "error_rate": 0.625,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "sim_high_agree",
-    "n": 184,
-    "accuracy": 0.6684782608695652,
-    "error_rate": 0.3315217391304348,
+    "n": 82,
+    "accuracy": 0.6829268292682927,
+    "error_rate": 0.31707317073170727,
     "dataset": "mtbench_human"
   },
   {
     "signal_group": "sim_low_agree",
-    "n": 116,
-    "accuracy": 0.6206896551724138,
-    "error_rate": 0.3793103448275862,
+    "n": 8,
+    "accuracy": 0.375,
+    "error_rate": 0.625,
     "dataset": "mtbench_human"
   }
 ]

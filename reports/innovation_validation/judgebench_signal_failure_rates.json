@@ -1,58 +1,58 @@
 [
   {
     "signal_group": "position_consistent",
-    "n": 182,
-    "accuracy": 0.554945054945055,
-    "error_rate": 0.44505494505494503,
+    "n": 86,
+    "accuracy": 0.9186046511627907,
+    "error_rate": 0.08139534883720934,
     "dataset": "judgebench"
   },
   {
     "signal_group": "position_inconsistent",
-    "n": 438,
-    "accuracy": 0.4726027397260274,
-    "error_rate": 0.5273972602739726,
+    "n": 4,
+    "accuracy": 0.75,
+    "error_rate": 0.25,
     "dataset": "judgebench"
   },
   {
     "signal_group": "rubric_stable",
-    "n": 447,
-    "accuracy": 0.4720357941834452,
-    "error_rate": 0.5279642058165548,
+    "n": 86,
+    "accuracy": 0.9302325581395349,
+    "error_rate": 0.06976744186046513,
     "dataset": "judgebench"
   },
   {
     "signal_group": "rubric_unstable",
-    "n": 173,
-    "accuracy": 0.5606936416184971,
-    "error_rate": 0.4393063583815029,
+    "n": 4,
+    "accuracy": 0.5,
+    "error_rate": 0.5,
     "dataset": "judgebench"
   },
   {
     "signal_group": "self_high_agree",
-    "n": 419,
-    "accuracy": 0.4988066825775656,
-    "error_rate": 0.5011933174224343,
+    "n": 89,
+    "accuracy": 0.9101123595505618,
+    "error_rate": 0.0898876404494382,
     "dataset": "judgebench"
   },
   {
     "signal_group": "self_low_agree",
-    "n": 201,
-    "accuracy": 0.4925373134328358,
-    "error_rate": 0.5074626865671642,
+    "n": 1,
+    "accuracy": 1.0,
+    "error_rate": 0.0,
     "dataset": "judgebench"
   },
   {
     "signal_group": "sim_high_agree",
-    "n": 331,
-    "accuracy": 0.5015105740181269,
-    "error_rate": 0.49848942598187307,
+    "n": 89,
+    "accuracy": 0.9101123595505618,
+    "error_rate": 0.0898876404494382,
     "dataset": "judgebench"
   },
   {
     "signal_group": "sim_low_agree",
-    "n": 289,
-    "accuracy": 0.4913494809688581,
-    "error_rate": 0.5086505190311419,
+    "n": 1,
+    "accuracy": 1.0,
+    "error_rate": 0.0,
     "dataset": "judgebench"
   }
 ]
