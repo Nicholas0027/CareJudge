@@ -1,0 +1,128 @@
+{
+  "care@0.05": {
+    "alpha": 0.05,
+    "method": "care",
+    "cov_mean": 0.0,
+    "acc_mean": 0,
+    "auroc_mean": 0.7200138325090908
+  },
+  "care@0.1": {
+    "alpha": 0.1,
+    "method": "care",
+    "cov_mean": 0.015555555555555555,
+    "acc_mean": 0.8571428571428571,
+    "auroc_mean": 0.7200138325090908
+  },
+  "care@0.15": {
+    "alpha": 0.15,
+    "method": "care",
+    "cov_mean": 0.08777777777777777,
+    "acc_mean": 0.834932211313698,
+    "auroc_mean": 0.7200138325090908
+  },
+  "care@0.2": {
+    "alpha": 0.2,
+    "method": "care",
+    "cov_mean": 0.22333333333333333,
+    "acc_mean": 0.8362350952533235,
+    "auroc_mean": 0.7200138325090908
+  },
+  "care@0.25": {
+    "alpha": 0.25,
+    "method": "care",
+    "cov_mean": 0.478888888888889,
+    "acc_mean": 0.8364924820632268,
+    "auroc_mean": 0.7200138325090908
+  },
+  "care@0.3": {
+    "alpha": 0.3,
+    "method": "care",
+    "cov_mean": 0.738888888888889,
+    "acc_mean": 0.7924235333128653,
+    "auroc_mean": 0.7200138325090908
+  },
+  "toe@0.05": {
+    "alpha": 0.05,
+    "method": "toe",
+    "cov_mean": 0.0,
+    "acc_mean": 0,
+    "auroc_mean": 0.6549445318365394
+  },
+  "toe@0.1": {
+    "alpha": 0.1,
+    "method": "toe",
+    "cov_mean": 0.0,
+    "acc_mean": 0,
+    "auroc_mean": 0.6549445318365394
+  },
+  "toe@0.15": {
+    "alpha": 0.15,
+    "method": "toe",
+    "cov_mean": 0.0,
+    "acc_mean": 0,
+    "auroc_mean": 0.6549445318365394
+  },
+  "toe@0.2": {
+    "alpha": 0.2,
+    "method": "toe",
+    "cov_mean": 0.08222222222222222,
+    "acc_mean": 0.8648648648648649,
+    "auroc_mean": 0.6549445318365394
+  },
+  "toe@0.25": {
+    "alpha": 0.25,
+    "method": "toe",
+    "cov_mean": 0.5022222222222222,
+    "acc_mean": 0.8152842626416409,
+    "auroc_mean": 0.6549445318365394
+  },
+  "toe@0.3": {
+    "alpha": 0.3,
+    "method": "toe",
+    "cov_mean": 0.8111111111111111,
+    "acc_mean": 0.7846839886090504,
+    "auroc_mean": 0.6549445318365394
+  },
+  "scope@0.05": {
+    "alpha": 0.05,
+    "method": "scope",
+    "cov_mean": 0.0,
+    "acc_mean": 0,
+    "auroc_mean": 0.7179442046879585
+  },
+  "scope@0.1": {
+    "alpha": 0.1,
+    "method": "scope",
+    "cov_mean": 0.07888888888888888,
+    "acc_mean": 0.9148717948717948,
+    "auroc_mean": 0.7179442046879585
+  },
+  "scope@0.15": {
+    "alpha": 0.15,
+    "method": "scope",
+    "cov_mean": 0.12333333333333332,
+    "acc_mean": 0.8725333081950729,
+    "auroc_mean": 0.7179442046879585
+  },
+  "scope@0.2": {
+    "alpha": 0.2,
+    "method": "scope",
+    "cov_mean": 0.30333333333333334,
+    "acc_mean": 0.8765235275322872,
+    "auroc_mean": 0.7179442046879585
+  },
+  "scope@0.25": {
+    "alpha": 0.25,
+    "method": "scope",
+    "cov_mean": 0.4777777777777777,
+    "acc_mean": 0.8480830781334165,
+    "auroc_mean": 0.7179442046879585
+  },
+  "scope@0.3": {
+    "alpha": 0.3,
+    "method": "scope",
+    "cov_mean": 0.6622222222222222,
+    "acc_mean": 0.8036536716299668,
+    "auroc_mean": 0.7179442046879585
+  }
+}
