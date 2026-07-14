@@ -6,35 +6,36 @@
 Large language models (LLMs) are now widely deployed as automated judges: scoring model outputs in RLHF pipelines~\citep{ouyang2022training}, ranking chatbot responses on public leaderboards~\citep{zheng2023judging}, filtering training data, and evaluating generation quality across diverse NLP tasks.
 This ``LLM-as-a-judge'' paradigm offers scalability that human evaluation cannot match, but it introduces a critical reliability problem: \emph{LLM judges make systematic errors, exhibit positional biases, and vary their verdicts based on evaluation-protocol wording---all while expressing high confidence in their judgments}~\citep{li2024llmsasjudges,wang2023faireval,wei2024systematic}.
 
-Prior work has established that LLM judges are overconfident.
-\citet{jung2025trust} showed that standard confidence measures (predictive probability, verbalized confidence) poorly predict whether a judge's verdict agrees with human annotators, and proposed \emph{Simulated Annotators} with cascaded selective evaluation to provide provable human-agreement guarantees.
-However, this approach relies on a single confidence source---simulated annotator agreement---and does not exploit the broader observation that \emph{evaluation-protocol sensitivity itself is an error signal}.
+Prior work has established that LLM judges are overconfident and has begun to control this risk explicitly.
+\citet{jung2025trust} showed that standard confidence measures (predictive probability, verbalized confidence) poorly predict whether a judge's verdict agrees with human annotators, and proposed \emph{Simulated Annotators} with cascaded selective evaluation to provide provable human-agreement guarantees; \citet{badshah2026scope} instead aggregate both response orderings into a permutation-invariant conformal score.
+These methods each rely on a \emph{single} confidence source---simulated-annotator agreement or bidirectional preference probability---and do not exploit the broader observation that sensitivity across \emph{multiple} semantically equivalent evaluation protocols is itself an error signal.
+We build directly on their risk-control machinery (fixed-sequence testing with a Clopper--Pearson bound) and do not claim it as a contribution; our contribution is the confidence signal that machinery is applied to.
 
-We propose a complementary insight: \textbf{a judgment that is unstable under semantically equivalent evaluation protocols is less likely to be correct.}
+We investigate a complementary and deliberately asymmetric hypothesis: \textbf{a judgment that is unstable under semantically equivalent evaluation protocols is often unreliable, whereas stability alone is not sufficient evidence of correctness.}
 Concretely, if an LLM judge produces different rankings when (i)~the rubric is paraphrased, (ii)~the response order is swapped, or (iii)~the judgment is re-sampled at nonzero temperature, the resulting verdict is less trustworthy.
-We call this property \emph{protocol stability}, and we show that it yields strong, consistent predictors of judge correctness across models and datasets.
+The converse does not hold: a judge can be stably wrong, applying the same erroneous heuristic (e.g., a length or fluency preference) under every protocol variant~\citep{xu2026inside}.
+We call this property \emph{protocol stability}, and we show that protocol \emph{instability} is a useful sufficient warning signal in competence regimes where the judge is at least moderately accurate---and we characterize precisely where it fails.
 
-Building on this insight, we introduce \textbf{CARE-Judge} (Calibrated, Abstaining, and Robust Evaluation), a framework that:
-\begin{enumerate}
-    \item Collects multi-signal protocol-stability features---rubric perturbation, position-swap consistency, self-consistency, and simulated annotator agreement---for each pairwise judgment;
-    \item Learns a correctness calibrator $\hat{p}(\text{correct}\mid\text{features})$ on a training split;
-    \item Selects a risk-controlled acceptance threshold on a disjoint calibration split using fixed-sequence testing with an exact Clopper--Pearson upper bound;
-    \item Reports selective risk and coverage on a held-out test split, providing a valid finite-sample guarantee.
-\end{enumerate}
+We organize our study around three research questions:
+\emph{(RQ1)} Does per-instance protocol stability predict judge error?
+\emph{(RQ2)} Under a matched inference budget, does fusing protocol-stability signals improve the risk--coverage tradeoff over standard confidence and single-signal baselines?
+\emph{(RQ3)} In which judge-capability and task regimes do these signals help, and where do they break down?
 
-We validate CARE-Judge across three judge models spanning three capability tiers (Qwen2.5-1.5B, DeepSeek-V4, GPT-5.5) and three benchmarks covering objective correctness (JudgeBench~\citep{tan2024judgebench}), summarization preference (TL;DR~\citep{stiennon2020learning}), and open-ended human preference (MT-Bench Human~\citep{zheng2023judging}).
-Our experiments yield three key findings:
+Building on this insight, we introduce \textbf{CARE-Judge} (Calibrated, Abstaining, and Robust Evaluation), which (i)~collects multi-signal protocol-stability features---rubric perturbation, position-swap consistency, and stochastic self-consistency---for each pairwise judgment; (ii)~learns a correctness calibrator $\hat{p}(\text{correct}\mid\text{features})$ on a training split; (iii)~selects an acceptance threshold on a disjoint calibration split using the established fixed-sequence testing with an exact Clopper--Pearson bound~\citep{jung2025trust}; and (iv)~reports selective risk and coverage on a held-out test split.
+
+We validate CARE-Judge across three judge models spanning a wide capability range (Qwen2.5-1.5B, DeepSeek-V4, GPT-5.5) and three benchmarks covering objective correctness (JudgeBench~\citep{tan2024judgebench}), summarization preference (TL;DR~\citep{stiennon2020learning}), and open-ended human preference (MT-Bench Human~\citep{zheng2023judging}).
+Our experiments answer the three research questions as follows:
 
 \begin{itemize}
-    \item \textbf{Protocol stability predicts judge error.} Rubric perturbation and position-swap consistency produce accuracy gaps of 12--54 percentage points between stable and unstable subsets, consistently across models and datasets where the judge has at least moderate accuracy ($\geq 60\%$).
-    \item \textbf{CARE-Judge improves accepted accuracy while controlling risk.} On TL;DR with DeepSeek-V4, CARE-Judge raises accepted accuracy from 65.2\% to 82.2\% at 11.3\% coverage under a 15\% risk budget ($\alpha=0.15$). On TL;DR with Qwen2.5-1.5B, it improves from 88.4\% to 91.8\% at 64.0\% coverage.
-    \item \textbf{CARE-Judge correctly abstains when the judge is unreliable.} When Qwen2.5-1.5B (49.4\% accuracy on JudgeBench) is used as a judge, CARE-Judge accepts zero examples under any reasonable risk budget, preventing the deployment of unreliable verdicts.
+    \item \textbf{(RQ1) Protocol instability predicts judge error.} Rubric perturbation and position-swap consistency produce accuracy gaps of 12--54 percentage points between stable and unstable subsets, consistently across models and datasets where the judge is at least moderately accurate ($\geq 60\%$). Where the judge is near chance, the same signals lose their predictive sign.
+    \item \textbf{(RQ2) Multi-view fusion improves risk--coverage.} At a matched six-call budget, the fused calibrator attains the best AUROC in 7 of 9 judge--dataset pairs, beating base confidence, self-consistency, rubric stability, and the SCOPE-style bidirectional signal; e.g., on DeepSeek/TL;DR it lifts pooled accepted accuracy from 65.2\% to 79.5\% under a 15\% risk budget.
+    \item \textbf{(RQ3) Stability is not correctness.} When Qwen2.5-1.5B (49.4\% on JudgeBench) judges, its verdicts are \emph{stable but wrong}: the signals reverse sign and CARE-Judge abstains on the whole set. We treat this as evidence that protocol stability requires a minimum judge competence, not as a headline success.
 \end{itemize}
 
 Our contributions are:
 \begin{enumerate}
-    \item We introduce \emph{rubric perturbation stability} as a novel, interpretable uncertainty signal for LLM-as-a-judge reliability (Section~\ref{sec:method}).
-    \item We formalize a multi-signal protocol-stability framework with a valid finite-sample selective-risk guarantee via exact Clopper--Pearson bounds and disjoint train/calibration/test splits (Section~\ref{sec:method}).
-    \item We conduct the first systematic evaluation of protocol-stability signals across multiple judge models and benchmark types, demonstrating consistent predictive power and practical accuracy improvements (Section~\ref{sec:experiments}).
-    \item We release a reproducible codebase with dataset converters, calibration utilities, and cost-aware cascade support.\footnote{Code and data will be released upon acceptance; an anonymized version is provided in the supplementary material.}
+    \item \textbf{Protocol-stability uncertainty.} We introduce a per-instance uncertainty representation based on invariance under semantically equivalent evaluation protocols---rubric paraphrases, response permutations, and stochastic resampling---and, in particular, are the first to use rubric-paraphrase instability as a per-instance acceptance signal (Section~\ref{sec:method}).
+    \item \textbf{Multi-view correctness calibration.} We show that fusing these complementary signals ranks correct versus incorrect verdicts better than standard confidence and single-signal baselines at a matched inference budget, when combined with the established selective-risk apparatus (Section~\ref{sec:experiments}).
+    \item \textbf{Risk--coverage characterization across capability regimes.} We map when protocol stability yields useful coverage and when it fails because the underlying judge lacks minimum competence, turning the Qwen--JudgeBench failure into a concrete boundary condition (Section~\ref{sec:experiments}).
 \end{enumerate}
+We do not claim the risk-control machinery as novel; it is adopted from prior selective-judging work~\citep{jung2025trust,badshah2026scope}. Code and data will be released upon acceptance.

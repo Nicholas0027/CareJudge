@@ -13,7 +13,7 @@ Given a pairwise evaluation item $x = (q, a_1, a_2)$ consisting of a prompt $q$ 
 Let $f(x; r, \tau)$ denote the judge's output (winner $\in\{A, B\}$ and confidence $\in[0,1]$) given rubric $r$ and sampling temperature $\tau$.
 
 \paragraph{Rubric Perturbation Stability.}
-We define a set of $K$ semantically equivalent rubric variants $\{r_1, \ldots, r_K\}$ that express the same evaluation criteria in different wording (e.g., ``Prefer the more correct response'' vs.\ ``Choose the answer a careful evaluator would prefer'').
+We define a set of $K=3$ semantically equivalent rubric variants $\{r_1, \ldots, r_K\}$ that are intended to express the same evaluation criteria in different wording (e.g., ``Prefer the more correct response'' vs.\ ``Choose the answer a careful evaluator would prefer''); all variants are listed verbatim in the Appendix.
 For each item, we collect verdicts $\{v_1, \ldots, v_K\}$ where $v_k = f(x; r_k, 0)$.
 We compute:
 \begin{align}
@@ -21,7 +21,7 @@ We compute:
     \text{rubric\_flip} &= \mathbb{1}\!\left[|\{v_1, \ldots, v_K\}| > 1\right], \label{eq:rubric_flip}
 \end{align}
 where $\text{rubric\_flip} = 1$ if any rubric variant produces a different winner.
-The intuition is that if the judge's verdict depends on rubric surface features rather than response content, the judgment is content-irrelevant and thus less reliable.
+The intuition is that a verdict that changes under paraphrase is \emph{protocol-dependent} and therefore not robust to the stated evaluation specification. We deliberately avoid the stronger claim that such a verdict is ``content-irrelevant,'' because a paraphrase can also shift the relative weight the judge places on competing criteria (helpfulness, clarity, style) rather than only its sensitivity to surface wording; the Appendix reports a negative-control experiment with intentionally non-equivalent rubrics to separate wording perturbation from criterion perturbation.
 
 \paragraph{Position-Swap Consistency.}
 We judge the item in both response orderings: $(q, a_1, a_2)$ and $(q, a_2, a_1)$.
@@ -34,29 +34,29 @@ We map $v_{\text{swap}}$ back to the original coordinate system and compute:
 This probes positional bias: a judge that reverses its verdict under response reordering is unreliable.
 
 \paragraph{Self-Consistency.}
-We sample $S$ stochastic judgments at temperature $\tau > 0$ under the base rubric and compute the majority vote share:
+We form a set of $S$ judgments under the base rubric that pools the deterministic base verdict ($\tau{=}0$) with $S-1$ stochastic re-samples at temperature $\tau>0$, and compute the majority vote share:
 \begin{equation}
     \text{self\_vote\_share} = \max_{w} \frac{|\{s : f(x; r_1, \tau_s) = w\}|}{S}.
     \label{eq:self}
 \end{equation}
-We optionally employ \emph{adaptive-$k$} early stopping: if $\text{self\_vote\_share} \geq \tau_{\text{stop}}$ after the minimum number of samples, we terminate early to reduce API costs.
+In all reported experiments $S=3$ (one $\tau{=}0$ base verdict and two $\tau{=}0.7$ samples), so the score is genuinely informative rather than degenerate.
+An optional \emph{adaptive-$k$} early-stopping rule ($\text{self\_vote\_share}\geq\tau_{\text{stop}}$ after a minimum of two samples) is available to reduce cost but was disabled in the main experiments.
 
-\paragraph{Simulated Annotators.}
-Following~\citet{jung2025trust}, we construct $N$ few-shot judge personas, each conditioned on $K_{\text{shot}}$ labeled examples drawn from the calibration pool.
-We compute the agreement ratio across simulated annotators as an additional confidence signal.
-We treat this as a \emph{baseline signal} rather than a novel contribution.
+\paragraph{Simulated Annotators (optional; disabled in main runs).}
+Following~\citet{jung2025trust}, the framework can construct $N$ few-shot judge personas conditioned on labeled demonstrations and use their agreement as an additional signal. To avoid calibration leakage, any such demonstrations must be drawn only from the training split $D_{\text{train}}$, never from the calibration split $D_{\text{cal}}$ used for thresholding (Section~\ref{sec:method:risk}). Because this signal reproduces Trust-or-Escalate rather than testing our hypothesis, we disable it in all main experiments ($N{=}0$); the corresponding feature is then a constant fallback and carries no information. We include it only in a supplementary comparison against a simulated-annotator-only baseline.
 
 \paragraph{Feature Vector.}
-The full feature vector for item $x$ is:
+With simulated annotators disabled, CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict)---and forms the feature vector
 \begin{equation}
 \begin{aligned}
     \boldsymbol{\phi}(x) = \big[\,
     &\text{base\_conf},\; \text{rubric\_vote\_share},\; \text{rubric\_flip},\\
     &\text{swap\_consistency},\; \text{self\_vote\_share},\; \text{sim\_vote\_share},\\
-    &\text{mean\_conf},\; \text{std\_conf},\; \text{length\_gap}\,\big].
+    &\text{mean\_conf},\; \text{std\_conf},\; \text{length\_gap}\,\big],
 \end{aligned}
     \label{eq:features}
 \end{equation}
+where $\text{sim\_vote\_share}$ is the constant fallback noted above.
 
 \subsection{Correctness Calibration}
 \label{sec:method:calibration}
@@ -79,7 +79,7 @@ Given a user-specified risk tolerance $\alpha \in (0,1)$ and error level $\delta
     \label{eq:guarantee}
 \end{equation}
 
-We employ fixed-sequence testing~\citep{bauer1991multiple}: sorting calibration items by descending confidence, we sweep thresholds from high to low and select the lowest threshold $\hat{\lambda}$ whose $(1-\delta)$ upper confidence bound on the error rate remains at most $\alpha$.
+We employ fixed-sequence testing~\citep{bauer1991multiple,jung2025trust}: candidate thresholds are ordered a priori from most to least confident, and we walk down this pre-specified sequence, at each step testing whether the $(1-\delta)$ upper confidence bound on the accepted-set error rate is $\leq\alpha$. We accept the lowest threshold that still satisfies the bound and stop at the first subsequent violation, which controls the family-wise error without a separate multiplicity correction.
 We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
 \begin{equation}
     \text{CP}_{\text{upper}}(e, n, \delta) = \sup\!\left\{p : P\!\left(\text{Bin}(n, p) \leq e\right) \geq \delta\right\},
@@ -87,6 +87,28 @@ We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper193
 \end{equation}
 where $e$ is the number of errors among the $n$ accepted calibration items.
 This bound is computed exactly via bisection on the binomial CDF.
+Algorithm~\ref{alg:care} states the complete train/calibrate/test procedure, including the pre-specified stopping rule and the minimum-acceptance floor $m$ that prevents accepting a threshold on too few calibration points.
+
+\begin{algorithm}[t]
+\caption{CARE-Judge selective evaluation}
+\label{alg:care}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} labeled items $D$; risk $\alpha$, level $\delta$; min-accept $m$
+\STATE Split $D$ into disjoint $D_{\text{train}}, D_{\text{cal}}, D_{\text{test}}$ (40/30/30)
+\STATE Fit calibrator $\hat p$ on $\{(\boldsymbol\phi(x), \mathbb{1}[\hat f(x){=}y])\}_{x\in D_{\text{train}}}$
+\STATE Sort $D_{\text{cal}}$ by $\hat p$ descending: $c_{(1)}\ge\cdots\ge c_{(n)}$
+\STATE $\hat\lambda \gets \infty$ \COMMENT{accept nothing by default}
+\FOR{$i = 1$ \TO $n$}
+  \STATE $e_i \gets \#\{j\le i: \hat f(x_{(j)})\ne y_{(j)}\}$
+  \IF{$i \ge m$ \AND $\text{CP}_{\text{upper}}(e_i, i, \delta) \le \alpha$}
+    \STATE $\hat\lambda \gets \hat p(x_{(i)})$ \COMMENT{lower threshold, more coverage}
+  \ELSIF{$i \ge m$ \AND $\hat\lambda < \infty$}
+    \STATE \textbf{break} \COMMENT{stop at first violation after acceptance}
+  \ENDIF
+\ENDFOR
+\STATE \textbf{Output:} on $D_{\text{test}}$, accept $x$ iff $\hat p(x)\ge\hat\lambda$, else abstain
+\end{algorithmic}
+\end{algorithm}
 
 The selective evaluator is then applied to a \emph{held-out test split} $D_{\text{test}}$:
 \begin{equation}
@@ -96,12 +118,8 @@ The selective evaluator is then applied to a \emph{held-out test split} $D_{\tex
 
 All reported metrics (coverage, selective risk, accepted accuracy, calibration error) are measured on $D_{\text{test}}$, ensuring the risk guarantee is valid.
 
-\subsection{Cost-Aware Cascade}
+\subsection{Cost-Aware Cascade (Exploratory)}
 \label{sec:method:cascade}
 
-For deployment, we arrange multiple judges $\mathcal{M} = (M_1, \ldots, M_T)$ in order of increasing cost.
-Each tier $t$ has its own calibrator $\hat{p}_t$ and threshold $\hat{\lambda}_t$, calibrated independently on $D_{\text{cal}}$.
-An item is evaluated by $M_1$; if $\hat{p}_1(x) \geq \hat{\lambda}_1$, the verdict is accepted.
-Otherwise, the item is escalated to $M_2$, and so on.
-If no tier accepts, the item is abstained.
-The risk guarantee of~\eqref{eq:guarantee} holds across the full cascade, ensuring that the overall selective risk does not exceed $\alpha$ with probability at least $1-\delta$.
+As an application, we arrange multiple judges $\mathcal{M} = (M_1, \ldots, M_T)$ in order of increasing cost. Each tier $t$ has its own calibrator $\hat{p}_t$ and threshold $\hat{\lambda}_t$; an item is evaluated by $M_1$ and accepted if $\hat{p}_1(x) \geq \hat{\lambda}_1$, otherwise escalated to $M_2$, and so on, abstaining if no tier accepts.
+To make the cascade guarantee sound, we calibrate each tier \emph{conditionally}: tier $t$'s threshold is selected on the subset of $D_{\text{cal}}$ that was rejected by tiers $1{:}t{-}1$, i.e.\ on the distribution of items that actually reach $M_t$ at deployment. We also split the error budget as $\delta_t = \delta/T$, so that by a union bound the event ``some tier's risk bound fails'' has probability at most $\delta$, giving a simultaneous $(\alpha,\delta)$ guarantee across the whole cascade. We still treat the cascade as an exploratory application (Appendix~\ref{app:cascade}), because it uses a single labeled pool per dataset and we have not stress-tested the conditional calibration under distribution shift; a formal deployment-time theorem under shift is future work.

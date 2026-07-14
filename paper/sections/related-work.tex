@@ -9,6 +9,9 @@ The use of LLMs as automated evaluators has grown rapidly.
 \citet{li2024llmsasjudges} provided a comprehensive survey of LLM-based evaluation methods, identifying biases including position bias, length bias, and self-enhancement bias.
 \citet{wang2023faireval} proposed mitigating position bias via multi-turn debate and swap-and-compare.
 \citet{wei2024systematic} systematically evaluated LLM-as-a-judge prompt sensitivity, finding that rubric template diversity affects alignment scores---a finding that motivates our use of rubric perturbation as an error signal rather than merely a nuisance to be controlled.
+Importantly, prompt-perturbation and order-sensitivity consistency have themselves been studied as reliability diagnostics, so we do not claim to be the first to observe protocol sensitivity; rather, our novelty is turning per-instance protocol instability into a calibrated, risk-controlled acceptance decision.
+Recent work also cautions that surface agreement need not reflect substantive quality: \citet{xu2026inside} give a mechanistic-interpretability account showing that judge biases arise from shared internal heuristics, which directly motivates our position that stability is a warning signal but not a correctness guarantee.
+\citet{li2025preference} further document preference leakage as a contamination mode in LLM-as-a-judge pipelines, underscoring the need for strictly disjoint data splits when calibrating any judge-reliability estimator.
 
 \paragraph{Selective Prediction and Abstention.}
 Selective classification~\citep{geifman2017selective,el2010foundations} enables a predictor to abstain on uncertain inputs.
@@ -16,10 +19,14 @@ Selective classification~\citep{geifman2017selective,el2010foundations} enables 
 \citet{krishnan2024enhancing} proposed uncertainty-calibrated fine-tuning for LLM trust, using last-layer hidden states.
 Our work differs by focusing on \emph{evaluation-protocol stability} as the uncertainty source, which is specific to the judging task and does not require model internals.
 
-\paragraph{Risk-Controlled Evaluation.}
-\citet{jung2025trust} (Trust-or-Escalate) proposed cascaded selective evaluation for LLM judges with provable human-agreement guarantees via Simulated Annotators and fixed-sequence testing.
-Our framework builds on their risk-control machinery but replaces the single-signal confidence (simulated annotator agreement) with a multi-signal protocol-stability calibrator.
-We additionally introduce rubric perturbation as a novel signal and provide a direct comparison to their approach.
+\paragraph{Risk-Controlled Selective Judging.}
+Our work is most closely related to a recent line of risk-controlled selective LLM judging, and we are explicit that the statistical control machinery we use is adopted from, not invented by, this work.
+\citet{jung2025trust} (Trust-or-Escalate) proposed cascaded selective evaluation for LLM judges with provable human-agreement guarantees, using Simulated Annotators as the confidence source together with fixed-sequence testing and Clopper--Pearson risk control.
+Concurrently, \citet{badshah2026scope} (SCOPE) proposed selective conformal pairwise judging, aggregating the probabilities of both response orderings into a permutation-invariant score and deriving finite-sample risk--coverage guarantees on benchmarks including MT-Bench.
+\citet{sheng2025analyzing} likewise applied conformal prediction to quantify LLM-as-a-judge uncertainty through interval evaluations.
+CARE-Judge inherits the same selective-risk apparatus (fixed-sequence thresholding with an exact Clopper--Pearson bound) rather than proposing new statistical guarantees.
+Our contribution is orthogonal and lies in the \emph{confidence signal}: whereas Trust-or-Escalate relies on simulated-annotator agreement and SCOPE on bidirectional preference probability alone, we combine rubric-paraphrase instability, position-swap inconsistency, and stochastic self-consistency into a single learned calibrator, and we characterize the judge-capability regimes in which such protocol-stability signals help or fail.
+Because SCOPE isolates permutation invariance while CARE-Judge treats position inconsistency as one diagnostic feature among several, the two are complementary; we position CARE-Judge as a multi-view generalization rather than a competitor to any single signal.
 
 \paragraph{Judge Benchmarks.}
 \citet{tan2024judgebench} introduced JudgeBench, a benchmark of challenging response pairs with objective correctness labels across knowledge, reasoning, math, and coding.
@@ -30,4 +37,8 @@ We use JudgeBench as a hard-objective benchmark and TL;DR~\citep{stiennon2020lea
 \citet{hong2026from} studied aligning LLM judges with human scoring rubrics.
 \citet{anghel2025pearl} proposed a rubric-driven multi-metric evaluation framework.
 These works treat rubrics as fixed evaluation criteria to be aligned with; in contrast, we treat \emph{rubric sensitivity}---the degree to which a judge's verdict changes under semantically equivalent rubric paraphrases---as an uncertainty signal.
-To our knowledge, no prior work has used rubric perturbation instability as a predictor of judge error.
+While prompt-perturbation consistency has been examined as a general reliability property, we are not aware of prior work that uses rubric-paraphrase instability specifically as a per-instance acceptance signal within a risk-controlled selective-judging framework; we frame this narrower claim as our contribution and validate it empirically.
+
+\paragraph{Cost-Aware Cascades.}
+Routing easy queries to cheap models and escalating hard ones is a well-established cost-reduction strategy; \citet{zellinger2025costsaving} study LLM cascades with early abstention and formal cost analysis.
+Our cascade experiment (Appendix) applies the same idea to judge routing, but we treat it as an exploratory application of protocol-stability confidence rather than a core contribution, and we defer a formal cascade-level guarantee to future work.

@@ -1,0 +1,71 @@
+% sections/appendix.tex
+
+\appendix
+
+\section{Reproducibility Details}
+\label{app:repro}
+
+\paragraph{Judge model configurations.}
+GPT-5.5 was queried through an OpenAI-compatible endpoint; DeepSeek-V4 was queried in non-thinking (\texttt{deepseek-chat}) mode because the reasoning mode is too token-intensive for six-call-per-item feature collection; Qwen2.5-1.5B-Instruct was run locally. All deterministic verdicts use temperature $0$; self-consistency samples use temperature $0.7$. Exact model identifiers, version dates, and prompt templates are released with the code. Invalid or unparseable judge outputs are retried once and, if still invalid, recorded as a tie and mapped to the base verdict; such items are a small fraction and are counted in the reported totals.
+
+\paragraph{Rubric variants (semantic-equivalence caveat).}
+The $K{=}3$ rubric paraphrases used for the rubric-stability signal are reproduced verbatim in the released prompt file. They were written to hold the evaluation target (which response is better) fixed while varying wording. Because paraphrases can inadvertently shift the weight a judge places on competing criteria (correctness vs.\ helpfulness vs.\ style), we additionally ran a negative-control condition with \emph{intentionally non-equivalent} rubrics (e.g., one emphasizing brevity, one emphasizing thoroughness) and verified that these produce substantially larger flip rates than the equivalent set, supporting the interpretation that flips under the equivalent set reflect judge instability rather than a change of criterion. A human check of pairwise rubric equivalence and a formal criterion-vs-wording decomposition remain future work.
+
+\paragraph{Per-seed risk reporting.}
+For every model--dataset--$\alpha$ setting we release, per seed: the accepted count, realized test error $\hat R_{\text{test}}$, the Clopper--Pearson upper bound on the calibration split, and whether $\hat R_{\text{test}}>\alpha$. Aggregate accepted accuracy in the main tables pools errors and accepts across seeds (rather than averaging per-seed ratios) so that zero-coverage seeds neither dominate nor are silently dropped. We also report the empirical risk-violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$; because the guarantee is a $(1-\delta)$ statement about the calibration draw, occasional test-set violations at very low coverage are expected and do not contradict the bound.
+
+\section{Exploratory: Cost-Aware Cascade}
+\label{app:cascade}
+
+This section now uses the \textbf{same strict 40/30/30 split as the main experiments} and, unlike our earlier version, calibrates each tier \emph{conditionally} on the calibration items that actually reach it and allocates the error budget as $\delta_t=\delta/T$ so a union bound gives a simultaneous $(\alpha,\delta)$ statement across the $T{=}3$ tiers (Section~\ref{sec:method:cascade}). We still label it exploratory because it uses a single labeled pool per dataset and we have not stress-tested the conditional calibration under distribution shift.
+
+We evaluate a three-tier cascade (Qwen-1.5B $\to$ DeepSeek-V4 $\to$ GPT-5.5), averaging over 10 seeds; routing columns are mean items resolved per tier on the held-out test (Table~\ref{tab:cascade}). On TL;DR the cascade is genuinely useful: it routes most accepted items to the free local tier, reaching 98\% coverage at $\alpha{=}0.30$ with 74--98\% paid-API-token savings; because Qwen already scores 88\% raw on TL;DR, this partly reflects task easiness for the small model. On JudgeBench the cheap tiers cannot certify the risk bound, so items escalate to GPT-5.5 and savings are near zero (mildly positive only at loose $\alpha$). On MT-Bench the cascade mostly abstains, consistent with the main results. Savings are \emph{paid-API-token cost avoided on the accepted subset} relative to a single-call GPT-5.5 judge, and exclude local GPU time, throughput, and latency; a full Pareto analysis over those axes is future work.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Cost-aware cascade (strict 40/30/30 split, conditional per-tier calibration, $\delta_t{=}\delta/T$, 10 seeds). Qwen/DS/GPT columns are mean items resolved per tier on the held-out test; ``Save'' is paid-API-token cost avoided on the accepted subset vs.\ single-call GPT-5.5.}
+\label{tab:cascade}
+\begin{tabular}{llrrrrrr}
+\toprule
+Dataset & $\alpha$ & Cov.\ & Acc.\ & Qwen & DS & GPT & Save \\
+\midrule
+\multirow{3}{*}{TL;DR} & 0.15 & 0.763 & 0.928 & 69 & 0 & 0 & 74\% \\
+ & 0.20 & 0.938 & 0.907 & 84 & 0 & 0 & 93\% \\
+ & 0.30 & 0.986 & 0.895 & 89 & 0 & 0 & 98\% \\
+\midrule
+\multirow{3}{*}{MT-Bench} & 0.15 & 0.000 & --- & 0 & 0 & 0 & --- \\
+ & 0.25 & 0.000 & --- & 0 & 0 & 0 & --- \\
+ & 0.30 & 0.181 & 0.784 & 11 & 0 & 5 & 4\% \\
+\midrule
+\multirow{2}{*}{JudgeBench} & 0.15 & 0.988 & 0.917 & 0 & 6 & 178 & $-$7\% \\
+ & 0.30 & 0.995 & 0.885 & 0 & 40 & 145 & 12\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Exploratory: Cross-Dataset Transfer}
+\label{app:transfer}
+
+We now use the strict three-way split: the calibrator is fit on the \emph{source} dataset (train+cal) and evaluated on a held-out \emph{target} test split, averaged over 10 seeds (Table~\ref{tab:transfer}, GPT-5.5). Transfer \emph{into} JudgeBench is selective but precise---a TL;DR-trained calibrator accepts 15\% of JudgeBench at 100\% accuracy---while calibrators trained on JudgeBench transfer with high coverage but only moderate accuracy onto the subjective targets (74.7\% onto TL;DR, 65.1\% onto MT-Bench). Calibrators trained on MT-Bench fail to transfer at all (zero coverage), reinforcing that the open-ended-preference signal is the least portable. The overall picture matches the in-domain capability-threshold finding: transfer succeeds when the target admits an accurate acceptance region and degrades on subjective tasks.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Cross-dataset transfer for GPT-5.5 ($\alpha{=}0.15$, strict 3-way split, source train+cal $\to$ target held-out test, 10 seeds). Zero coverage denotes safe abstention.}
+\label{tab:transfer}
+\begin{tabular}{lrr}
+\toprule
+Source $\to$ Target & Cov.\ & Acc.\ \\
+\midrule
+TL;DR $\to$ JudgeBench & 0.150 & 1.000 \\
+JudgeBench $\to$ TL;DR & 0.998 & 0.747 \\
+JudgeBench $\to$ MT-Bench & 0.988 & 0.651 \\
+TL;DR $\to$ MT-Bench & 0.042 & 0.697 \\
+MT-Bench $\to$ JudgeBench & 0.000 & --- \\
+MT-Bench $\to$ TL;DR & 0.000 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
