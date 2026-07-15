@@ -1,0 +1,46 @@
+{
+  "alpha0.15": {
+    "coverage": 0.05133333333333333,
+    "accuracy_accepted": 0.9346295647544984,
+    "cost_savings_pct": -10.549999999999429,
+    "routing_avg": {
+      "qwen": 0.0,
+      "deepseek": 1.5,
+      "gpt55": 29.3,
+      "abstain": 569.2
+    }
+  },
+  "alpha0.2": {
+    "coverage": 0.119,
+    "accuracy_accepted": 0.8935866008078279,
+    "cost_savings_pct": -5.566666666666104,
+    "routing_avg": {
+      "qwen": 0.0,
+      "deepseek": 31.4,
+      "gpt55": 40.0,
+      "abstain": 528.6
+    }
+  },
+  "alpha0.25": {
+    "coverage": 0.269,
+    "accuracy_accepted": 0.854868411167488,
+    "cost_savings_pct": 3.224733333333878,
+    "routing_avg": {
+      "qwen": 2.3,
+      "deepseek": 81.6,
+      "gpt55": 77.5,
+      "abstain": 438.6
+    }
+  },
+  "alpha0.3": {
+    "coverage": 0.5518333333333334,
+    "accuracy_accepted": 0.8055424561184976,
+    "cost_savings_pct": 15.87420000000049,
+    "routing_avg": {
+      "qwen": 6.9,
+      "deepseek": 152.4,
+      "gpt55": 171.8,
+      "abstain": 268.9
+    }
+  }
+}

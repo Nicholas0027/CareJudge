@@ -1,0 +1,22 @@
+{
+  "alpha0.15": {
+    "coverage": 0.5575268817204301,
+    "accuracy_accepted": 0.6557899967674321,
+    "n_seeds": 10
+  },
+  "alpha0.2": {
+    "coverage": 0.9182795698924732,
+    "accuracy_accepted": 0.3944372761055663,
+    "n_seeds": 10
+  },
+  "alpha0.25": {
+    "coverage": 0.9973118279569892,
+    "accuracy_accepted": 0.3579843165211193,
+    "n_seeds": 10
+  },
+  "alpha0.3": {
+    "coverage": 0.9994623655913978,
+    "accuracy_accepted": 0.3571839581517001,
+    "n_seeds": 10
+  }
+}

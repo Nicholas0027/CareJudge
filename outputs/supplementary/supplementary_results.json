@@ -1,0 +1,872 @@
+{
+  "deepseek-chat": [
+    {
+      "dataset": "judgebench",
+      "judge": "DeepSeek-V4",
+      "n_total": 620,
+      "raw_acc": 0.6806451612903226,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.6024895214355928,
+        "auroc_std": 0.044918578662216706,
+        "cov_mean": 0.014247311827956988,
+        "acc_mean": 0.09042857142857144,
+        "risk_mean": 0.00957142857142857,
+        "violation_rate": 0.0
+      },
+      "scope": {
+        "auroc_mean": 0.561337955639721,
+        "auroc_std": 0.02468018765587503,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5100071943242346,
+        "auroc_std": 0.018796124603513764,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.5845679291389355,
+        "auroc_std": 0.03138331194662188,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.5811502522444928,
+        "auroc_std": 0.03439066068652713,
+        "cov_mean": 0.03844086021505376,
+        "acc_mean": 0.12100031065548307,
+        "risk_mean": 0.028999689344516928,
+        "violation_rate": 0.15
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.5857043234445248,
+        "auroc_std": 0.044813284492371194,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.6230990766778997,
+        "auroc_std": 0.027528137475932597,
+        "cov_mean": 0.1344086021505376,
+        "acc_mean": 0.5809774937860366,
+        "risk_mean": 0.06902250621396344,
+        "violation_rate": 0.15
+      },
+      "ablation_length": {
+        "auroc_mean": 0.50874637948508,
+        "auroc_std": 0.03974072567083795,
+        "cov_mean": 0.008333333333333333,
+        "acc_mean": 0.037096774193548385,
+        "risk_mean": 0.012903225806451613,
+        "violation_rate": 0.05
+      }
+    },
+    {
+      "dataset": "tldr",
+      "judge": "DeepSeek-V4",
+      "n_total": 2000,
+      "raw_acc": 0.6795,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.6752833027027276,
+        "auroc_std": 0.01613442059761423,
+        "cov_mean": 0.08383333333333334,
+        "acc_mean": 0.3729277244202193,
+        "risk_mean": 0.07707227557978066,
+        "violation_rate": 0.4
+      },
+      "scope": {
+        "auroc_mean": 0.6155836196972678,
+        "auroc_std": 0.020447290889185923,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5192225600270028,
+        "auroc_std": 0.008028842256840266,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.6087422081499257,
+        "auroc_std": 0.016125481444367897,
+        "cov_mean": 0.02758333333333333,
+        "acc_mean": 0.03942598187311178,
+        "risk_mean": 0.010574018126888218,
+        "violation_rate": 0.05
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.6183234244209264,
+        "auroc_std": 0.017451297414931254,
+        "cov_mean": 0.042499999999999996,
+        "acc_mean": 0.24298758947303467,
+        "risk_mean": 0.05701241052696532,
+        "violation_rate": 0.25
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.6597528384862787,
+        "auroc_std": 0.016781562881940947,
+        "cov_mean": 0.05275,
+        "acc_mean": 0.11939987482376749,
+        "risk_mean": 0.030600125176232517,
+        "violation_rate": 0.15
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.6830395606796495,
+        "auroc_std": 0.01692735227991721,
+        "cov_mean": 0.2053333333333333,
+        "acc_mean": 0.5940748788624398,
+        "risk_mean": 0.10592512113756017,
+        "violation_rate": 0.3
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5478842950681927,
+        "auroc_std": 0.01861761126731739,
+        "cov_mean": 0.0025833333333333333,
+        "acc_mean": 0.03387096774193548,
+        "risk_mean": 0.01612903225806452,
+        "violation_rate": 0.05
+      }
+    },
+    {
+      "dataset": "rewardbench",
+      "judge": "DeepSeek-V4",
+      "n_total": 2000,
+      "raw_acc": 0.9215,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.8305621518131512,
+        "auroc_std": 0.03381368279957892,
+        "cov_mean": 0.9991666666666668,
+        "acc_mean": 0.9258496638646487,
+        "risk_mean": 0.07415033613535131,
+        "violation_rate": 0.0
+      },
+      "scope": {
+        "auroc_mean": 0.6063889547369665,
+        "auroc_std": 0.02916133824315822,
+        "cov_mean": 1.0,
+        "acc_mean": 0.9253333333333336,
+        "risk_mean": 0.07466666666666669,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5130743083560494,
+        "auroc_std": 0.009121213198058283,
+        "cov_mean": 1.0,
+        "acc_mean": 0.9253333333333336,
+        "risk_mean": 0.07466666666666669,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.6752846259538517,
+        "auroc_std": 0.035713760013600625,
+        "cov_mean": 1.0,
+        "acc_mean": 0.9253333333333336,
+        "risk_mean": 0.07466666666666669,
+        "violation_rate": 0.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.8104663005691618,
+        "auroc_std": 0.03450068758587592,
+        "cov_mean": 0.9993333333333334,
+        "acc_mean": 0.9257039347444552,
+        "risk_mean": 0.07429606525554484,
+        "violation_rate": 0.0
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.6831889540569454,
+        "auroc_std": 0.07502099686902705,
+        "cov_mean": 0.999,
+        "acc_mean": 0.9258404851517067,
+        "risk_mean": 0.07415951484829356,
+        "violation_rate": 0.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.8283281315784645,
+        "auroc_std": 0.02821268278805546,
+        "cov_mean": 0.9989166666666666,
+        "acc_mean": 0.9260810259075363,
+        "risk_mean": 0.07391897409246394,
+        "violation_rate": 0.0
+      },
+      "ablation_length": {
+        "auroc_mean": 0.6224607679550972,
+        "auroc_std": 0.02511248450949086,
+        "cov_mean": 0.9986666666666668,
+        "acc_mean": 0.925495083427573,
+        "risk_mean": 0.07450491657242705,
+        "violation_rate": 0.0
+      }
+    },
+    {
+      "dataset": "lmaarena",
+      "judge": "DeepSeek-V4",
+      "n_total": 2000,
+      "raw_acc": 0.721,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.6775894049128155,
+        "auroc_std": 0.020272741709007135,
+        "cov_mean": 0.07691666666666666,
+        "acc_mean": 0.3962669251123953,
+        "risk_mean": 0.05373307488760468,
+        "violation_rate": 0.1
+      },
+      "scope": {
+        "auroc_mean": 0.6148849745428845,
+        "auroc_std": 0.015223115099739407,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5171898734790585,
+        "auroc_std": 0.007654337097499203,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.6115137658305517,
+        "auroc_std": 0.02268977704778675,
+        "cov_mean": 0.03741666666666667,
+        "acc_mean": 0.03942093541202672,
+        "risk_mean": 0.010579064587973275,
+        "violation_rate": 0.05
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.6159872759591358,
+        "auroc_std": 0.019554499182801423,
+        "cov_mean": 0.03991666666666666,
+        "acc_mean": 0.3467859243874347,
+        "risk_mean": 0.05321407561256527,
+        "violation_rate": 0.15
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.6527841684598092,
+        "auroc_std": 0.021922803756001877,
+        "cov_mean": 0.036333333333333336,
+        "acc_mean": 0.08445501952622594,
+        "risk_mean": 0.015544980473774056,
+        "violation_rate": 0.05
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.6800281336180858,
+        "auroc_std": 0.017806304477355747,
+        "cov_mean": 0.16166666666666668,
+        "acc_mean": 0.6088251330526624,
+        "risk_mean": 0.09117486694733762,
+        "violation_rate": 0.1
+      },
+      "ablation_length": {
+        "auroc_mean": 0.531363182629749,
+        "auroc_std": 0.01587270249446969,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    }
+  ],
+  "gpt-5_5": [
+    {
+      "dataset": "judgebench",
+      "judge": "GPT-5.5",
+      "n_total": 620,
+      "raw_acc": 0.34516129032258064,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.9859424043520141,
+        "auroc_std": 0.005092258575378434,
+        "cov_mean": 0.3559139784946237,
+        "acc_mean": 0.9156379689933237,
+        "risk_mean": 0.08436203100667612,
+        "violation_rate": 0.05
+      },
+      "scope": {
+        "auroc_mean": 0.17660541473927197,
+        "auroc_std": 0.029332054920578082,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.4938571451546106,
+        "auroc_std": 0.004681092084709262,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.9743810290717974,
+        "auroc_std": 0.007340792890293433,
+        "cov_mean": 0.5419354838709677,
+        "acc_mean": 0.3840076605103027,
+        "risk_mean": 0.3159923394896973,
+        "violation_rate": 0.45
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.9854208742965301,
+        "auroc_std": 0.00601707724772271,
+        "cov_mean": 0.521774193548387,
+        "acc_mean": 0.7513207846403515,
+        "risk_mean": 0.2486792153596485,
+        "violation_rate": 0.3
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.9703482227675092,
+        "auroc_std": 0.011247630351108838,
+        "cov_mean": 0.4489247311827957,
+        "acc_mean": 0.4618592433190175,
+        "risk_mean": 0.2381407566809826,
+        "violation_rate": 0.3
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.9882274829891754,
+        "auroc_std": 0.004577892181976354,
+        "cov_mean": 0.5422043010752688,
+        "acc_mean": 0.7503766738035996,
+        "risk_mean": 0.24962332619640026,
+        "violation_rate": 0.3
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5308320647912528,
+        "auroc_std": 0.04098941954955578,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    },
+    {
+      "dataset": "tldr",
+      "judge": "GPT-5.5",
+      "n_total": 2000,
+      "raw_acc": 0.546,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.862864803935528,
+        "auroc_std": 0.011347952078835821,
+        "cov_mean": 0.18441666666666667,
+        "acc_mean": 0.8519709749735187,
+        "risk_mean": 0.09802902502648125,
+        "violation_rate": 0.1
+      },
+      "scope": {
+        "auroc_mean": 0.3154083787421615,
+        "auroc_std": 0.020923345777248855,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5003520837113686,
+        "auroc_std": 0.00331965224398246,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.8078580709462058,
+        "auroc_std": 0.011606435540202584,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.86426959095798,
+        "auroc_std": 0.012075440121533585,
+        "cov_mean": 0.22141666666666668,
+        "acc_mean": 0.8352315341404312,
+        "risk_mean": 0.11476846585956864,
+        "violation_rate": 0.1
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.8374886450279471,
+        "auroc_std": 0.019817103141600782,
+        "cov_mean": 0.05891666666666666,
+        "acc_mean": 0.16192400793045117,
+        "risk_mean": 0.03807599206954884,
+        "violation_rate": 0.2
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.8654677109027379,
+        "auroc_std": 0.010705696017341086,
+        "cov_mean": 0.21783333333333332,
+        "acc_mean": 0.8375247832513143,
+        "risk_mean": 0.11247521674868573,
+        "violation_rate": 0.15
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5171866126395269,
+        "auroc_std": 0.02047722311944259,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    },
+    {
+      "dataset": "rewardbench",
+      "judge": "GPT-5.5",
+      "n_total": 2000,
+      "raw_acc": 0.7095,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.9901878748322204,
+        "auroc_std": 0.0031766585930642064,
+        "cov_mean": 0.8120833333333334,
+        "acc_mean": 0.8769839810855065,
+        "risk_mean": 0.1230160189144935,
+        "violation_rate": 0.15
+      },
+      "scope": {
+        "auroc_mean": 0.2681526150285851,
+        "auroc_std": 0.015335750094599775,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.4996442054404705,
+        "auroc_std": 0.0005435544841419222,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.9590450586288799,
+        "auroc_std": 0.011961595669036465,
+        "cov_mean": 1.0,
+        "acc_mean": 0.7118333333333332,
+        "risk_mean": 0.2881666666666667,
+        "violation_rate": 1.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.9907313621017104,
+        "auroc_std": 0.0027864963862699846,
+        "cov_mean": 1.0,
+        "acc_mean": 0.7118333333333332,
+        "risk_mean": 0.2881666666666667,
+        "violation_rate": 1.0
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.9728516188897374,
+        "auroc_std": 0.018470042651292283,
+        "cov_mean": 1.0,
+        "acc_mean": 0.7118333333333332,
+        "risk_mean": 0.2881666666666667,
+        "violation_rate": 1.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.9911388100060983,
+        "auroc_std": 0.0026481998605240396,
+        "cov_mean": 1.0,
+        "acc_mean": 0.7118333333333332,
+        "risk_mean": 0.2881666666666667,
+        "violation_rate": 1.0
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5018358454754666,
+        "auroc_std": 0.026962420236126296,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    },
+    {
+      "dataset": "lmaarena",
+      "judge": "GPT-5.5",
+      "n_total": 2000,
+      "raw_acc": 0.531,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.8457026257353458,
+        "auroc_std": 0.014483460567282275,
+        "cov_mean": 0.06341666666666666,
+        "acc_mean": 0.5720666305348304,
+        "risk_mean": 0.07793336946516954,
+        "violation_rate": 0.15
+      },
+      "scope": {
+        "auroc_mean": 0.3195066015783597,
+        "auroc_std": 0.016730393647101972,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5023840567549349,
+        "auroc_std": 0.00470991070453784,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.8038424532039048,
+        "auroc_std": 0.01184635296846822,
+        "cov_mean": 0.03158333333333334,
+        "acc_mean": 0.03641160949868074,
+        "risk_mean": 0.01358839050131926,
+        "violation_rate": 0.05
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.845402795086524,
+        "auroc_std": 0.014547056288668904,
+        "cov_mean": 0.10225000000000002,
+        "acc_mean": 0.7942387847264853,
+        "risk_mean": 0.10576121527351472,
+        "violation_rate": 0.2
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.8201123551216668,
+        "auroc_std": 0.013308503392068613,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.8493315608270923,
+        "auroc_std": 0.014030072911384436,
+        "cov_mean": 0.10458333333333333,
+        "acc_mean": 0.7898853411534092,
+        "risk_mean": 0.11011465884659082,
+        "violation_rate": 0.25
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5030104563020346,
+        "auroc_std": 0.0208787774205468,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    }
+  ],
+  "qwen-1.5b": [
+    {
+      "dataset": "judgebench",
+      "judge": "Qwen-1.5B",
+      "n_total": 620,
+      "raw_acc": 0.4935483870967742,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.5220752570112429,
+        "auroc_std": 0.0535038320337469,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "scope": {
+        "auroc_mean": 0.5341656689881992,
+        "auroc_std": 0.027625381374102333,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5258461911715251,
+        "auroc_std": 0.029500451773987125,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.504610832061569,
+        "auroc_std": 0.04070134709410722,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.5092534801496861,
+        "auroc_std": 0.03662239124054037,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.5304486591806093,
+        "auroc_std": 0.053012041438806806,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.49451089113515606,
+        "auroc_std": 0.03834844534028919,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_length": {
+        "auroc_mean": 0.4972433893027741,
+        "auroc_std": 0.02735082989771211,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    },
+    {
+      "dataset": "tldr",
+      "judge": "Qwen-1.5B",
+      "n_total": 2000,
+      "raw_acc": 0.5835,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.5831048594450736,
+        "auroc_std": 0.017123351904436975,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "scope": {
+        "auroc_mean": 0.570365475960812,
+        "auroc_std": 0.020200116205409405,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5245245775459942,
+        "auroc_std": 0.01734084128647499,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.5440860537135687,
+        "auroc_std": 0.027540361207423564,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.4939705837026539,
+        "auroc_std": 0.015927292707783796,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.5793063979049506,
+        "auroc_std": 0.01564648905276249,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.5811982025263999,
+        "auroc_std": 0.026728474081069813,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5363099853906028,
+        "auroc_std": 0.017217028328520435,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    },
+    {
+      "dataset": "rewardbench",
+      "judge": "Qwen-1.5B",
+      "n_total": 2000,
+      "raw_acc": 0.77,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.7128604323322036,
+        "auroc_std": 0.011209235907092184,
+        "cov_mean": 0.5162500000000001,
+        "acc_mean": 0.880266747430993,
+        "risk_mean": 0.11973325256900705,
+        "violation_rate": 0.1
+      },
+      "scope": {
+        "auroc_mean": 0.4245088072812891,
+        "auroc_std": 0.02026289127943068,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.491527482308015,
+        "auroc_std": 0.009556743122771463,
+        "cov_mean": 0.04441666666666667,
+        "acc_mean": 0.03874296435272045,
+        "risk_mean": 0.011257035647279551,
+        "violation_rate": 0.05
+      },
+      "maj_vote": {
+        "auroc_mean": 0.537762950575863,
+        "auroc_std": 0.024591639989120225,
+        "cov_mean": 0.019,
+        "acc_mean": 0.04057017543859649,
+        "risk_mean": 0.00942982456140351,
+        "violation_rate": 0.05
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.6199596429549981,
+        "auroc_std": 0.020187175348831708,
+        "cov_mean": 0.14258333333333334,
+        "acc_mean": 0.2500077658809408,
+        "risk_mean": 0.049992234119059155,
+        "violation_rate": 0.25
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.6615614222772073,
+        "auroc_std": 0.0119473510822064,
+        "cov_mean": 0.44058333333333327,
+        "acc_mean": 0.7758911461640077,
+        "risk_mean": 0.12410885383599232,
+        "violation_rate": 0.3
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.6312122277627014,
+        "auroc_std": 0.026359745442492654,
+        "cov_mean": 0.10016666666666665,
+        "acc_mean": 0.5607131579764246,
+        "risk_mean": 0.08928684202357536,
+        "violation_rate": 0.2
+      },
+      "ablation_length": {
+        "auroc_mean": 0.6088337179841674,
+        "auroc_std": 0.01599498894673965,
+        "cov_mean": 0.3754166666666667,
+        "acc_mean": 0.8690545043260707,
+        "risk_mean": 0.13094549567392927,
+        "violation_rate": 0.25
+      }
+    },
+    {
+      "dataset": "lmaarena",
+      "judge": "Qwen-1.5B",
+      "n_total": 2000,
+      "raw_acc": 0.583,
+      "seeds": 20,
+      "alpha": 0.15,
+      "care": {
+        "auroc_mean": 0.577932032744857,
+        "auroc_std": 0.019667467853309837,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "scope": {
+        "auroc_mean": 0.5629658177319957,
+        "auroc_std": 0.014550913979036365,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "toe": {
+        "auroc_mean": 0.5271718506515137,
+        "auroc_std": 0.01170250320909393,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "maj_vote": {
+        "auroc_mean": 0.5591405062345194,
+        "auroc_std": 0.019523342748729505,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "wtd_vote": {
+        "auroc_mean": 0.49425198892083333,
+        "auroc_std": 0.017596619827574173,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_protocol": {
+        "auroc_mean": 0.5803460275981414,
+        "auroc_std": 0.020767331716704734,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_conf": {
+        "auroc_mean": 0.5874451257475484,
+        "auroc_std": 0.014539159510544724,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      },
+      "ablation_length": {
+        "auroc_mean": 0.5352705163734807,
+        "auroc_std": 0.016859410514088416,
+        "cov_mean": 0.0,
+        "acc_mean": 0.0,
+        "risk_mean": 0.0,
+        "violation_rate": 0.0
+      }
+    }
+  ]
+}
