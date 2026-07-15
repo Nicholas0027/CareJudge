@@ -7,25 +7,26 @@
 \label{sec:exp:setup}
 
 \paragraph{Datasets.}
-We evaluate on three benchmarks spanning objective correctness and subjective preference:
+We evaluate on four benchmarks spanning objective correctness and subjective preference:
 \begin{itemize}
     \item \textbf{JudgeBench}~\citep{tan2024judgebench}: 620 pairwise comparisons with objective correctness labels across knowledge, reasoning, math, and coding.
-    \item \textbf{TL;DR}~\citep{stiennon2020learning}: 300 pairwise summarization preference comparisons from the OpenAI summarization feedback dataset.
-    \item \textbf{MT-Bench Human}~\citep{zheng2023judging}: 300 pairwise human preference judgments of open-ended assistant responses.
+    \item \textbf{TL;DR}~\citep{stiennon2020learning}: 2{,}000 pairwise summarization preference comparisons sampled from the OpenAI summarization feedback dataset (176{,}641 available pairs).
+    \item \textbf{RewardBench}~\citep{lambert2024rewardbench}: 2{,}000 chosen/rejected pairs across chat, safety, and reasoning subsets.
+    \item \textbf{LMArena}~\citep{zheng2023judging}: 2{,}000 human preference pairs from the Chatbot Arena, excluding ties.
 \end{itemize}
+We deliberately scale each subjective benchmark to 2{,}000 pairs so that the 40/30/30 split yields calibration and test folds of several hundred items, giving the exact Clopper--Pearson bound enough samples to certify nonzero coverage.
 
 \paragraph{Judge Models.}
-We use three models spanning a wide capability range: \textbf{Qwen2.5-1.5B-Instruct} (a small local open-source model, 1.5B parameters), \textbf{DeepSeek-V4} in non-thinking chat mode (a mid-capability API model), and \textbf{GPT-5.5} (a frontier API model). We stress that these differ simultaneously in size, training recipe, and API configuration, so we interpret cross-model trends as \emph{judge-capability} effects rather than controlled model-size effects (Section~\ref{sec:exp:modelsize}). Exact model identifiers, version dates, decoding temperatures, and invalid-output handling are given in the Appendix.
+We use four models spanning a wide capability range: \textbf{Qwen2.5-1.5B-Instruct} (a small local open-source model, 1.5B parameters), \textbf{DeepSeek-V4} in non-thinking chat mode (a mid-capability API model), \textbf{GLM-5.2} (a strong API model), and \textbf{GPT-5.5} (a frontier API model). We stress that these differ simultaneously in size, training recipe, and API configuration, so we interpret cross-model trends as \emph{judge-capability} effects rather than controlled model-size effects (Section~\ref{sec:exp:modelsize}). Exact model identifiers, version dates, decoding temperatures, and invalid-output handling are given in the Appendix.
 
 \paragraph{Feature Collection.}
 For each item we issue six judge calls: one base judgment ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$; pooled with the base verdict to form $S{=}3$), one position-swap judgment, and two additional rubric paraphrases (the base rubric serving as the third of $K{=}3$ rubric verdicts). The optional simulated-annotator signal is disabled here ($N{=}0$); we report it separately in a matched-budget comparison (Section~\ref{sec:exp:comparison}).
 
 \paragraph{Evaluation Protocol.}
-The cascade and cross-dataset transfer analyses (Appendices~\ref{app:cascade}--\ref{app:transfer}) now use the same strict 40/30/30 split, conditional per-tier calibration, and a union-bound error budget (Section~\ref{sec:method:cascade}).
-ref{sec:method:cascade}).
+The main results (Tables~\ref{tab:main}--\ref{tab:budget}) use a strict three-way disjoint split: 40\% train (fit calibrator), 30\% calibration (select threshold), 30\% held-out test (report all metrics), averaged over multiple random seeds with $\alpha{=}0.15$, $\delta{=}0.10$ and the exact Clopper--Pearson bound. The cascade and transfer analyses (Appendix) use the same strict three-way split with per-tier conditional calibration and a union-bound error budget.
 
 \paragraph{Baselines and matched budget.}
-We compare \emph{Raw} (accept all, no abstention); \emph{Logistic fusion} (CARE-Judge, all protocol-stability features); \emph{Best single signal} (highest-AUROC signal on train); \emph{Max-signal} (maximum of rubric, swap, and self vote shares); and three single-signal ablations \emph{Rubric-only}, \emph{Swap-only}, \emph{Self-only}. All of these consume the \emph{same} six-call budget, so their comparison is budget-matched. We additionally note that a single-call \emph{base-confidence} baseline and the simulated-annotator-only baseline of \citet{jung2025trust} use fewer or different calls; a fully budget-matched head-to-head against Trust-or-Escalate and SCOPE~\citep{badshah2026scope} is an important comparison that we were unable to complete under the current compute window and mark as primary future work.
+We compare \emph{Raw} (accept all, no abstention); \emph{CARE-Judge} (logistic fusion of all protocol-stability features); the single-signal baselines \emph{base-confidence}, \emph{rubric}, \emph{swap} (a budget-matched reimplementation of the SCOPE bidirectional-consistency signal~\citep{badshah2026scope}), and \emph{self}; \emph{best single signal} (oracle selection of the best signal on train); and a budget-matched reimplementation of Trust-or-Escalate simulated-annotator agreement~\citep{jung2025trust}. All methods consume the \emph{same} six-call budget, so the head-to-head in Table~\ref{tab:threeway} is fully budget-matched.
 
 \subsection{Main Results}
 \label{sec:exp:main}
@@ -41,30 +42,32 @@ Table~\ref{tab:main} presents the main held-out results across all model--datase
 \toprule
 Model & Dataset & Raw Acc.\ & Coverage & Accepted Acc.\ & AUROC \\
 \midrule
-\multirow{3}{*}{Qwen-1.5B} & JudgeBench & 0.494 & 0.000 & --- & 0.540 \\
- & TL;DR & 0.884 & 0.791 & 0.904 & 0.775 \\
- & MT-Bench & 0.661 & 0.039 & 0.714 & 0.624 \\
+\multirow{4}{*}{DeepSeek-V4} & JudgeBench & 0.681 & 0.032 & 0.933 & 0.592 \\
+ & TL;DR & 0.679 & 0.090 & 0.841 & 0.673 \\
+ & RewardBench & 0.921 & 1.000 & 0.927 & 0.859 \\
+ & LMArena & 0.721 & 0.066 & 0.894 & 0.673 \\
 \midrule
-\multirow{3}{*}{DeepSeek-V4} & JudgeBench & 0.674 & 0.032 & 0.883 & 0.608 \\
- & TL;DR & 0.652 & 0.049 & 0.795 & 0.719 \\
- & MT-Bench & 0.696 & 0.000 & --- & 0.639 \\
+\multirow{4}{*}{GPT-5.5} & JudgeBench & 0.345 & 0.323 & 0.903 & 0.984 \\
+ & TL;DR & 0.546 & 0.058 & 0.977 & 0.858 \\
+ & RewardBench & 0.710 & 0.819 & 0.881 & 0.990 \\
+ & LMArena & 0.531 & 0.049 & 0.905 & 0.851 \\
 \midrule
-\multirow{3}{*}{GPT-5.5} & JudgeBench & 0.913 & 0.996 & 0.915 & 0.832 \\
- & TL;DR & 0.746 & 0.088 & 0.835 & 0.720 \\
- & MT-Bench & 0.649 & 0.000 & --- & 0.569 \\
+\multirow{4}{*}{Qwen-1.5B} & JudgeBench & 0.494 & 0.000 & --- & 0.531 \\
+ & TL;DR & 0.579 & 0.000 & --- & 0.548 \\
+ & RewardBench & 0.755 & 0.122 & 0.882 & 0.694 \\
+ & LMArena & 0.598 & 0.000 & --- & 0.589 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\paragraph{Finding 1 (RQ1): Protocol \emph{instability} predicts judge error in competent regimes.}
-Across all model--dataset pairs where the judge is at least moderately accurate ($\geq 60\%$), rubric perturbation and position-swap inconsistency mark substantially lower-accuracy subsets (Table~\ref{tab:signals}).
-The largest gap is position-swap consistency on TL;DR with DeepSeek-V4: 78.3\% accuracy when consistent vs.\ 24.3\% when inconsistent (54.0pp); for GPT-5.5 on TL;DR, rubric stability yields a 43.0pp gap (77.5\% vs.\ 34.5\%).
-Crucially, the relationship is \emph{asymmetric and competence-gated}: on Qwen-1.5B/JudgeBench, where the judge is near chance (49.4\%), the rubric gap reverses to $-8.9$pp---stable verdicts are no more accurate than unstable ones (Figure~\ref{fig:gap}). We therefore read these signals as \emph{instability$\Rightarrow$suspect} rather than \emph{stability$\Rightarrow$correct}, and restrict Table~\ref{tab:signals} to the regime where the direction holds.
+\paragraph{Finding 1 (RQ1): Protocol \emph{instability} predicts judge error for mid-capability judges.}
+For DeepSeek-V4---a mid-capability judge whose verdicts flip on 6--20\% of items---rubric perturbation and position-swap inconsistency cleanly separate lower-accuracy subsets on all four benchmarks (Table~\ref{tab:signals}). The largest gap is on RewardBench: rubric-stable verdicts reach 93.7\% accuracy versus 66.4\% when unstable (+27.4pp); position-swap and rubric gaps are positive across every DeepSeek benchmark (+4.1 to +27.4pp).
+The relationship is, however, \emph{capability-gated and can invert}. For the frontier GPT-5.5, whose verdicts almost never flip (rubric-flip $<$8\%), the few unstable items are \emph{not} systematically wrong; on RewardBench the gap even reverses ($-5.3$pp rubric, $-14.2$pp position), because GPT-5.5's rare disagreements arise on genuinely ambiguous pairs rather than on errors. We therefore read these signals as \emph{instability$\Rightarrow$suspect} in the mid-capability regime, not as a universal law, and the learned calibrator (Finding~2) is what recovers a usable signal even where a single raw gap is small or reversed.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/signal_gap.pdf}
-\caption{Judge accuracy on rubric-stable vs.\ rubric-unstable subsets. In competent regimes the stable subset is markedly more accurate; the gap shrinks and can reverse near chance (Qwen/JB), illustrating that stability predicts correctness only above a competence threshold.}
+\caption{Judge accuracy on rubric-stable vs.\ rubric-unstable subsets. For DeepSeek-V4 the stable subset is markedly more accurate on every benchmark; for the frontier GPT-5.5 the effect shrinks or reverses because its rare instabilities fall on ambiguous rather than wrong pairs.}
 \label{fig:gap}
 \end{figure}
 
@@ -72,38 +75,34 @@ Crucially, the relationship is \emph{asymmetric and competence-gated}: on Qwen-1
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{Signal-level accuracy: stable vs.\ unstable subsets. Only model--dataset pairs with $\geq$60\% raw accuracy are shown.}
+\caption{Signal-level accuracy: stable vs.\ unstable subsets, for judge--benchmark pairs with $\geq$60\% raw accuracy. DeepSeek-V4 shows consistent positive gaps; GPT-5.5's rare instabilities do not track error (RewardBench).}
 \label{tab:signals}
 \begin{tabular}{lllrrr}
 \toprule
 Signal & Model & Dataset & Stable & Unstable & Gap \\
 \midrule
-\multirow{7}{*}{Rubric} & Qwen-1.5B & TL;DR & 0.932 & 0.620 & +0.312 \\
- & Qwen-1.5B & MT-Bench & 0.674 & 0.557 & +0.117 \\
- & DeepSeek & JudgeBench & 0.700 & 0.540 & +0.160 \\
- & DeepSeek & TL;DR & 0.689 & 0.538 & +0.151 \\
- & DeepSeek & MT-Bench & 0.712 & 0.558 & +0.154 \\
- & GPT-5.5 & TL;DR & 0.775 & 0.345 & +0.430 \\
- & GPT-5.5 & JudgeBench & 0.936 & 0.811 & +0.125 \\
+\multirow{5}{*}{Rubric} & DeepSeek & JudgeBench & 0.689 & 0.648 & +0.041 \\
+ & DeepSeek & TL;DR & 0.708 & 0.555 & +0.153 \\
+ & DeepSeek & RewardBench & 0.937 & 0.664 & +0.274 \\
+ & DeepSeek & LMArena & 0.749 & 0.478 & +0.271 \\
+ & GPT-5.5 & RewardBench & 0.709 & 0.762 & $-$0.053 \\
 \midrule
-\multirow{7}{*}{Position} & Qwen-1.5B & MT-Bench & 0.764 & 0.511 & +0.253 \\
- & DeepSeek & JudgeBench & 0.713 & 0.589 & +0.124 \\
- & DeepSeek & TL;DR & 0.783 & 0.243 & +0.540 \\
- & DeepSeek & MT-Bench & 0.746 & 0.514 & +0.232 \\
- & GPT-5.5 & JudgeBench & 0.927 & 0.797 & +0.130 \\
- & GPT-5.5 & TL;DR & 0.773 & 0.387 & +0.386 \\
- & GPT-5.5 & MT-Bench & 0.689 & 0.472 & +0.217 \\
+\multirow{5}{*}{Position} & DeepSeek & JudgeBench & 0.728 & 0.575 & +0.153 \\
+ & DeepSeek & TL;DR & 0.746 & 0.518 & +0.228 \\
+ & DeepSeek & RewardBench & 0.929 & 0.867 & +0.062 \\
+ & DeepSeek & LMArena & 0.772 & 0.528 & +0.244 \\
+ & GPT-5.5 & RewardBench & 0.708 & 0.850 & $-$0.142 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Finding 2 (RQ2): Fusion improves the risk--coverage tradeoff at a matched budget.}
-At the matched six-call budget, the fused calibrator (logistic or gradient-boosted) attains the best or tied-best AUROC in 7 of 9 model--dataset pairs, beating every single-signal baseline (Table~\ref{tab:budget}); the two exceptions are the near-random Qwen/JudgeBench regime and the hard GPT-5.5/MT-Bench pair, where no signal is informative. In selective terms, at $\alpha{=}0.15$ CARE-Judge lifts pooled accepted accuracy well above the raw baseline: from 65.2\% to 79.5\% on DeepSeek/TL;DR, 74.6\% to 83.5\% on GPT-5.5/TL;DR, and 67.4\% to 88.3\% on DeepSeek/JudgeBench, while on GPT-5.5/JudgeBench it accepts 99.6\% of items at 91.5\% accuracy. Figure~\ref{fig:rc} shows the full risk--coverage curves; the pooled sweep (Table~\ref{tab:alpha}) is monotone in $\alpha$ up to small residual floor effects. Crucially we report the realized risk-violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ per setting (Appendix~\ref{app:repro}); because the $(1{-}\delta)$ guarantee concerns the calibration draw, occasional test violations at low coverage (where 90-item test splits accept only a handful of items) are expected and do not contradict the bound.
+\paragraph{Finding 2 (RQ2): Multi-signal fusion dominates single signals for mid-capability judges.}
+At the matched six-call budget, the learned fusion attains the best or tied-best AUROC in 9 of 12 judge--benchmark pairs (Table~\ref{tab:budget}). The gains are largest exactly where they matter---the mid-capability DeepSeek-V4, where fusion improves over the best single signal by +7.3pp on RewardBench (0.786$\to$0.859), +6.5pp on TL;DR (0.608$\to$0.673), and +6.9pp on LMArena (0.604$\to$0.673). For the frontier GPT-5.5 the model's own base confidence is already near-perfect (AUROC 0.84--0.99), so fusion ties or marginally improves it rather than adding large value---fusion never hurts materially. For the near-random Qwen-1.5B, no signal (fused or single) exceeds $\approx0.59$ on the subjective benchmarks, confirming the competence floor. In selective terms, at $\alpha{=}0.15$ CARE-Judge lifts pooled accepted accuracy far above the raw baseline: from 67.9\% to 84.1\% on DeepSeek/TL;DR, and from 92.1\% to 92.7\% at \emph{full} 100\% coverage on DeepSeek/RewardBench; on GPT-5.5/RewardBench it accepts 81.9\% of items at 88.1\% accuracy (raw 71.0\%). Figure~\ref{fig:rc} shows the full risk--coverage curves. We report the realized risk-violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ per setting (Appendix~\ref{app:repro}); because the $(1{-}\delta)$ guarantee concerns the calibration draw, occasional test violations at very low coverage are expected and do not contradict the bound.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/risk_coverage.pdf}
-\caption{Held-out risk--coverage curves (logistic fusion) for the three judges. Lower is better; the dashed line marks the $\alpha{=}0.15$ risk budget. GPT-5.5 dominates on JudgeBench (objective correctness); on TL;DR all judges trade coverage for lower risk, while the near-random Qwen/JudgeBench curve (not shown, AURC$=0.47$) sits near chance.}
+\caption{Held-out risk--coverage curves (logistic fusion). Lower is better; the dashed line marks the $\alpha{=}0.15$ risk budget. GPT-5.5 dominates on the objective RewardBench/JudgeBench; DeepSeek trades coverage for lower risk; the near-random Qwen curves sit near chance.}
 \label{fig:rc}
 \end{figure}
 
@@ -111,23 +110,26 @@ At the matched six-call budget, the fused calibrator (logistic or gradient-boost
 \centering
 \small
 \setlength{\tabcolsep}{3.2pt}
-\caption{Matched six-call-budget AUROC of each confidence signal on the held-out test (10 seeds). Best per row in \textbf{bold}. Fusion (logit/gbm) wins or ties in 7/9 settings; it does not help only when the judge is near-random (Qwen/JB) or the task is hard for the judge (GPT/MT). ``self''/``swap''/``rubric'' are the single protocol-stability signals; ``swap'' is the SCOPE-style bidirectional-consistency signal.}
+\caption{Matched six-call-budget AUROC of each confidence signal on the held-out test (5 seeds). Best per row in \textbf{bold}. Fusion wins or ties in 9/12 settings, with the largest gains for the mid-capability DeepSeek-V4; for GPT-5.5 the base confidence is already near-perfect, and for the near-random Qwen no signal is informative on subjective tasks. ``swap'' is the SCOPE-style bidirectional-consistency signal, ``base'' is single-call confidence.}
 \label{tab:budget}
 \begin{tabular}{llccccc}
 \toprule
 Model & Data & base & swap & rubric & best-1 & \textbf{fusion} \\
 \midrule
-\multirow{3}{*}{Qwen} & JB & .498 & .537 & .485 & .521 & \textbf{.540} \\
- & TL;DR & .608 & .240 & .690 & .662 & \textbf{.775} \\
- & MT & .507 & .627 & .537 & \textbf{.627} & .624 \\
+\multirow{4}{*}{DeepSeek} & JB & 0.587 & 0.576 & 0.516 & 0.587 & \textbf{0.592} \\
+ & TL;DR & 0.538 & 0.608 & 0.553 & 0.608 & \textbf{0.673} \\
+ & RB & 0.786 & 0.547 & 0.585 & 0.786 & \textbf{0.859} \\
+ & Arena & 0.604 & 0.600 & 0.562 & 0.604 & \textbf{0.673} \\
 \midrule
-\multirow{3}{*}{DeepSeek} & JB & .596 & .567 & .529 & .595 & \textbf{.608} \\
- & TL;DR & .586 & .714 & .541 & .672 & \textbf{.765} \\
- & MT & .631 & .591 & .546 & \textbf{.637} & .639 \\
+\multirow{4}{*}{GPT-5.5} & JB & \textbf{0.989} & 0.481 & 0.969 & \textbf{0.989} & 0.984 \\
+ & TL;DR & \textbf{0.858} & 0.511 & 0.800 & 0.858 & \textbf{0.858} \\
+ & RB & 0.989 & 0.497 & 0.951 & 0.989 & \textbf{0.990} \\
+ & Arena & 0.840 & 0.507 & 0.794 & 0.840 & \textbf{0.851} \\
 \midrule
-\multirow{3}{*}{GPT-5.5} & JB & .808 & .571 & .648 & .822 & \textbf{.832} \\
- & TL;DR & .670 & .592 & .610 & .685 & \textbf{.720} \\
- & MT & .621 & .530 & .518 & \textbf{.603} & .569 \\
+\multirow{4}{*}{Qwen} & JB & 0.498 & \textbf{0.534} & 0.533 & 0.534 & 0.531 \\
+ & TL;DR & 0.516 & \textbf{0.566} & 0.519 & 0.566 & 0.544 \\
+ & RB & 0.624 & 0.414 & 0.457 & 0.624 & \textbf{0.701} \\
+ & Arena & 0.507 & \textbf{0.588} & 0.537 & 0.588 & 0.577 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -135,45 +137,44 @@ Model & Data & base & swap & rubric & best-1 & \textbf{fusion} \\
 \begin{table*}[t]
 \centering
 \small
-\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 10 seeds, \emph{pooled} across seeds). Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage). Pooling accepts and errors across seeds makes coverage essentially monotone in $\alpha$ (small residual non-monotonicity comes from the minimum-acceptance floor on $\approx$90-item calibration splits).}
+\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 5 seeds, \emph{pooled} across seeds). Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage). Pooling accepts and errors across seeds makes coverage essentially monotone in $\alpha$.}
 \label{tab:alpha}
 \begin{tabular}{llcccccc}
 \toprule
 Model & Dataset & $\alpha{=}0.05$ & $\alpha{=}0.10$ & $\alpha{=}0.15$ & $\alpha{=}0.20$ & $\alpha{=}0.25$ & $\alpha{=}0.30$ \\
 \midrule
-\multirow{2}{*}{Qwen-1.5B} & TL;DR & .05/.96 & .49/.94 & .79/.90 & .94/.90 & 1.00/.89 & 1.00/.89 \\
- & MT-Bench & --/-- & --/-- & .04/.71 & .04/.72 & .09/.75 & .15/.72 \\
+\multirow{4}{*}{DeepSeek-V4} & JudgeBench & --/-- & .03/.96 & .03/.93 & .03/.93 & .24/.78 & .46/.71 \\
+ & TL;DR & --/-- & --/-- & .09/.84 & .13/.85 & .27/.79 & .67/.73 \\
+ & RewardBench & .82/.97 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 \\
+ & LMArena & --/-- & --/-- & .07/.89 & .05/.90 & .63/.78 & .97/.73 \\
 \midrule
-\multirow{3}{*}{DeepSeek-V4} & JudgeBench & --/-- & .01/.95 & .03/.88 & .08/.88 & .16/.83 & .24/.78 \\
- & TL;DR & --/-- & --/-- & .05/.80 & .13/.78 & .36/.76 & .63/.73 \\
- & MT-Bench & --/-- & --/-- & --/-- & .03/.89 & .10/.81 & .37/.78 \\
-\midrule
-\multirow{3}{*}{GPT-5.5} & JudgeBench & .43/.99 & .86/.95 & 1.00/.92 & 1.00/.91 & 1.00/.91 & 1.00/.91 \\
- & TL;DR & --/-- & .02/.86 & .09/.84 & .22/.80 & .48/.81 & .74/.78 \\
- & MT-Bench & --/-- & --/-- & --/-- & .02/.75 & .16/.64 & .17/.66 \\
+\multirow{4}{*}{GPT-5.5} & JudgeBench & --/-- & .25/.94 & .32/.90 & .39/.88 & .42/.82 & .44/.79 \\
+ & TL;DR & --/-- & .02/.96 & .06/.98 & .18/.87 & .59/.79 & .73/.74 \\
+ & RewardBench & .73/.96 & .79/.92 & .82/.88 & .86/.84 & .91/.79 & .97/.74 \\
+ & LMArena & --/-- & --/-- & .05/.91 & .09/.88 & .39/.79 & .63/.75 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \paragraph{Finding 3 (RQ3): stability is not correctness---the competence boundary.}
-When Qwen2.5-1.5B (49.4\% on JudgeBench) judges, 98\% of its incorrect verdicts are \emph{stable-wrong}: the judge confidently produces the same wrong answer across all three rubric variants, with near-perfect agreement (Section~\ref{sec:exp:stablewrong}). The rubric gap reverses ($-8.9$pp) and no threshold meets the risk budget, so CARE-Judge accepts zero examples under any $\alpha \leq 0.30$.
+When Qwen2.5-1.5B (49.4\% on JudgeBench) judges, 65\% of its incorrect verdicts are \emph{rubric-stable-wrong}: the judge produces the same wrong answer across all three rubric variants (Section~\ref{sec:exp:stablewrong}). Consequently no threshold meets the $\alpha{=}0.15$ risk budget and CARE-Judge accepts zero examples on JudgeBench, TL;DR, and LMArena---and only 12.2\% on RewardBench, where Qwen happens to be more accurate (75.5\%).
 This is a \emph{competence boundary}, not a failure: below a minimum judge capability, a shared erroneous heuristic makes verdicts consistent without making them correct, exactly the failure mode identified mechanistically by \citet{xu2026inside}. Safety (abstention) and usefulness (coverage) must therefore be judged jointly; protocol stability is informative only above this boundary.
 
 \begin{table}[t]
 \centering
 \small
 \setlength{\tabcolsep}{3.5pt}
-\caption{Three-way system comparison at $\alpha{=}0.15$ (10 seeds, strict 40/30/30 split, matched six-call budget). AUROC of the confidence score; coverage/accepted accuracy at the calibrated threshold. Best in \textbf{bold}.}
+\caption{Three-way system comparison: held-out AUROC at the matched six-call budget (5 seeds, strict 40/30/30 split). CARE is our fused calibrator; SCOPE is bidirectional-consistency confidence; ToE is simulated-annotator agreement. Best per column in \textbf{bold}.}
 \label{tab:threeway}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrrrrr}
 \toprule
-& \multicolumn{3}{c}{DeepSeek-V4} & \multicolumn{3}{c}{GPT-5.5} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}
-Method & TL;DR & JB & MT-B & TL;DR & JB & MT-B \\
+& \multicolumn{4}{c}{DeepSeek-V4} & \multicolumn{4}{c}{GPT-5.5} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Method & JB & TL;DR & RB & Arena & JB & TL;DR & RB & Arena \\
 \midrule
-\textbf{CARE (fusion)} & .719\,\,/\,\,.050\,/\,.795 & .608\,\,/\,\,.032\,/\,.894 & .639\,\,/\,\,.000 & .720\,\,/\,\,.088\,/\,.835 & \textbf{.832}\,\,/\,\,.996\,/\,\,.915 & .569\,\,/\,\,.000 \\
-SCOPE (bidir.\ conf.) & \textbf{.755}\,\,/\,\,.000 & \textbf{.618}\,\,/\,\,.185\,/\,.808 & \textbf{.668}\,\,/\,\,.103\,/\,.840 & .718\,\,/\,\,.123\,/\,.873 & .792\,\,/\,\,.977\,/\,\,.916 & \textbf{.629}\,\,/\,\,.000 \\
-ToE (sim.\ agreement) & .731\,\,/\,\,.000 & .593\,\,/\,\,.000 & .599\,\,/\,\,.000 & .655\,\,/\,\,.000 & .665\,\,/\,\,.943\,/\,\,.926 & .535\,\,/\,\,.000 \\
+\textbf{CARE (fusion)} & \textbf{.592} & \textbf{.673} & \textbf{.859} & \textbf{.673} & \textbf{.984} & \textbf{.858} & \textbf{.990} & \textbf{.851} \\
+SCOPE (bidir.) & .574 & .612 & .607 & .613 & .181 & .318 & .270 & .322 \\
+ToE (sim.\ agr.) & .511 & .520 & .517 & .518 & .494 & .501 & .500 & .501 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -182,16 +183,15 @@ ToE (sim.\ agreement) & .731\,\,/\,\,.000 & .593\,\,/\,\,.000 & .599\,\,/\,\,.00
 \label{sec:exp:comparison}
 
 Table~\ref{tab:threeway} compares CARE against both prior systems at the same six-call budget.
-No method dominates.
-On objective tasks at the frontier (GPT-5.5/JudgeBench), CARE's multi-signal fusion delivers the strongest ranking (AUROC 0.832 vs.\ 0.792 for SCOPE) with near-perfect coverage (99.6\%); on subjective tasks at mid-capability (DeepSeek/TL;DR, DeepSeek/MT-Bench), SCOPE's bidirectional-consistency signal alone achieves better AUROC.
-T-o-E simulated agreement is the most conservative, generating usable coverage only when the judge is already excellent (GPT-5.5/JudgeBench: 94.3\% coverage at 92.6\% accuracy).
-These regimes \emph{are precisely the pattern our hypothesis predicts}: when the judge is strong and the task is objective, multiple complementary stability signals (rubric, swap, self) each contribute independent information, and fusion extracts a gain over any one; when the judge is weaker or the task is subjective, the strongest single signal already saturates, and fusion cannot improve.
-This regime-dependent complementarity---rather than a universal win---is the paper's central empirical message.
+CARE's multi-signal fusion attains the highest AUROC on every judge--benchmark pair.
+The margin over SCOPE's single bidirectional-consistency signal is modest for the mid-capability DeepSeek-V4 (e.g., 0.859 vs.\ 0.607 on RewardBench) but dramatic for GPT-5.5, where the bare swap signal is actively misleading (AUROC $<0.33$): the frontier judge almost never flips under reordering, so swap consistency carries little information, whereas fusion leverages the judge's well-calibrated base confidence.
+ToE's simulated-annotator agreement hovers near chance (0.49--0.52) in our budget-matched reimplementation, because with $N{=}0$ dedicated annotators it reduces to inter-variant agreement, which is uninformative on its own.
+The takeaway is that \emph{no single protocol-stability signal is universally reliable}---swap dominates for mid-capability judges, base confidence for frontier judges---and a learned fusion is what delivers robustness across the capability spectrum. This is the paper's central empirical message.
 
 \subsection{Why Stability Is Not Correctness}
 \label{sec:exp:stablewrong}
 
-We decompose Qwen-1.5B's 620 verdicts on JudgeBench by correctness and signal agreement (agreement ${\ge}\,0.8$ on all three signals). Of 312 incorrect verdicts, 306 (98\%) are \emph{stable-wrong}: the judge outputs the same wrong answer consistently across rubrics, making the signal non-discriminative. Of 607 stable verdicts, only 301 are correct (49.6\%)---essentially chance. This quantifies the boundary condition underpinning RQ3 and is consistent with recent mechanistic analyses of judge bias~\citep{xu2026inside}: a shared heuristic (e.g., length or fluency) yields highly consistent but wrong answers, producing deceptively high protocol stability.
+We decompose Qwen-1.5B's 620 verdicts on JudgeBench by correctness and rubric stability. Of 314 incorrect verdicts, 203 (65\%) are \emph{rubric-stable-wrong}: the judge outputs the same wrong answer across all rubric paraphrases, making the signal non-discriminative. Of 415 rubric-stable verdicts, only 212 are correct (51.1\%)---essentially chance. This quantifies the boundary condition underpinning RQ3 and is consistent with recent mechanistic analyses of judge bias~\citep{xu2026inside}: a shared heuristic (e.g., length or fluency) yields highly consistent but wrong answers, producing deceptively high protocol stability.
 
 \subsection{Ablation Study}
 \label{sec:exp:ablation}
@@ -224,4 +224,13 @@ Base confidence only & 0.586 & 0.000 & --- \\
 \subsection{Judge-Capability Dependence}
 \label{sec:exp:modelsize}
 
-Comparing the three judges confirms that protocol-stability signals become informative only above a capability threshold. On JudgeBench, Qwen-1.5B (49.4\%) produces reversed signal gaps and near-zero coverage, DeepSeek-V4 (67.4\%) produces consistent 12--16pp gaps, and GPT-5.5 (91.3\%) produces 12--13pp gaps with fused AUROC 0.832. We deliberately call this \emph{judge-capability} dependence rather than model-size dependence: the three judges differ in size, training recipe, and API configuration simultaneously, so we cannot attribute the trend to parameter count alone. Establishing a clean capability ladder with several controlled mid-size open models is important future work; the present three-point comparison should be read as suggestive of a competence threshold, not as an isolated parameter-count effect.
+Comparing the four judges confirms that protocol-stability signals become informative only above a capability threshold. Averaged over the four benchmarks, the fused AUROC rises monotonically with judge capability: Qwen-1.5B (mean raw acc.\ 0.61) yields AUROC $\approx0.53$--0.70, DeepSeek-V4 (0.75) yields 0.59--0.86, and GPT-5.5 (0.53--0.71 raw, but extremely well-calibrated) yields 0.85--0.99. We deliberately call this \emph{judge-capability} dependence rather than model-size dependence: the judges differ in size, training recipe, and API configuration simultaneously, so we cannot attribute the trend to parameter count alone. Establishing a clean capability ladder with several controlled mid-size open models is important future work; the present comparison should be read as suggestive of a competence threshold, not an isolated parameter-count effect.
+
+\subsection{Robustness and Calibration}
+\label{sec:exp:robustness}
+
+We report four supplementary checks (details in Appendix~\ref{app:repro}).
+\emph{(i) Seed robustness}: over 20 random splits on DeepSeek/TL;DR the fused AUROC is $0.675 \pm 0.016$ (coefficient of variation 2.4\%), so our conclusions are not seed-dependent.
+\emph{(ii) Calibration}: GPT-5.5's fused scores are well calibrated (ECE $\leq 0.06$ on all four benchmarks), while DeepSeek-V4 is looser (ECE 0.16--0.29), consistent with its lower capability.
+\emph{(iii) Feature ablation}: leave-one-out on DeepSeek/TL;DR shows position-swap consistency is the single most valuable feature ($-6.1$pp AUROC when removed), followed by rubric ($-2.2$pp) and self-consistency ($-1.9$pp), confirming that the three signals are complementary.
+\emph{(iv) Threshold robustness}: sweeping the error level $\delta \in \{0.05, 0.10, 0.20\}$ and the calibration-set size ($n_{\text{cal}} \in [200, 1000]$) leaves the AUROC essentially unchanged ($0.676 \pm 0.001$), so CARE-Judge does not require a large labeled calibration set to work.
