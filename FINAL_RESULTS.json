@@ -1,0 +1,138 @@
+{
+  "DeepSeek-V4": {
+    "judgebench": {
+      "n": 620,
+      "raw_acc": 0.681,
+      "auroc": 0.592,
+      "auroc_std": 0.0382,
+      "rubric_gap": 0.041,
+      "pos_gap": 0.153
+    },
+    "tldr": {
+      "n": 2000,
+      "raw_acc": 0.679,
+      "auroc": 0.673,
+      "auroc_std": 0.0166,
+      "rubric_gap": 0.153,
+      "pos_gap": 0.228
+    },
+    "rewardbench": {
+      "n": 2000,
+      "raw_acc": 0.921,
+      "auroc": 0.859,
+      "auroc_std": 0.0084,
+      "rubric_gap": 0.274,
+      "pos_gap": 0.062
+    },
+    "lmaarena": {
+      "n": 2000,
+      "raw_acc": 0.721,
+      "auroc": 0.673,
+      "auroc_std": 0.0216,
+      "rubric_gap": 0.271,
+      "pos_gap": 0.244
+    }
+  },
+  "GPT-5.5": {
+    "judgebench": {
+      "n": 620,
+      "raw_acc": 0.345,
+      "auroc": 0.984,
+      "auroc_std": 0.0054,
+      "rubric_gap": -0.331,
+      "pos_gap": -0.482
+    },
+    "tldr": {
+      "n": 2000,
+      "raw_acc": 0.546,
+      "auroc": 0.858,
+      "auroc_std": 0.0157,
+      "rubric_gap": -0.076,
+      "pos_gap": 0.062
+    },
+    "rewardbench": {
+      "n": 2000,
+      "raw_acc": 0.71,
+      "auroc": 0.99,
+      "auroc_std": 0.0019,
+      "rubric_gap": -0.053,
+      "pos_gap": -0.142
+    },
+    "lmaarena": {
+      "n": 2000,
+      "raw_acc": 0.531,
+      "auroc": 0.851,
+      "auroc_std": 0.0124,
+      "rubric_gap": 0.048,
+      "pos_gap": 0.052
+    }
+  },
+  "GLM-5.2": {
+    "judgebench": {
+      "n": 620,
+      "raw_acc": 0.463,
+      "auroc": 0.523,
+      "auroc_std": 0.034,
+      "rubric_gap": -0.11,
+      "pos_gap": 0.241
+    },
+    "tldr": {
+      "n": 2027,
+      "raw_acc": 0.507,
+      "auroc": 0.513,
+      "auroc_std": 0.02,
+      "rubric_gap": 0,
+      "pos_gap": 0
+    },
+    "rewardbench": {
+      "n": 1999,
+      "raw_acc": 0.0,
+      "auroc": 0,
+      "auroc_std": 0,
+      "rubric_gap": 0,
+      "pos_gap": 0
+    },
+    "lmaarena": {
+      "n": 1996,
+      "raw_acc": 0.479,
+      "auroc": 0.501,
+      "auroc_std": 0.035,
+      "rubric_gap": 0,
+      "pos_gap": 0
+    }
+  },
+  "Qwen-1.5B": {
+    "judgebench": {
+      "n": 620,
+      "raw_acc": 0.494,
+      "auroc": 0.531,
+      "auroc_std": 0.0537,
+      "rubric_gap": 0.052,
+      "pos_gap": 0.084
+    },
+    "tldr": {
+      "n": 769,
+      "raw_acc": 0.588,
+      "auroc": 0.569,
+      "auroc_std": 0.0433,
+      "rubric_gap": 0.045,
+      "pos_gap": 0.138
+    },
+    "rewardbench": {
+      "n": 745,
+      "raw_acc": 0.752,
+      "auroc": 0.691,
+      "auroc_std": 0.0412,
+      "rubric_gap": -0.126,
+      "pos_gap": -0.134
+    },
+    "lmaarena": {
+      "n": 728,
+      "raw_acc": 0.606,
+      "auroc": 0.593,
+      "auroc_std": 0.028,
+      "rubric_gap": 0.098,
+      "pos_gap": 0.152
+    }
+  }
+}
