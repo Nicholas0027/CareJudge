@@ -1,46 +1,73 @@
 % sections/appendix.tex
 
-\appendix
+\section{Alpha-Sweep Risk--Coverage Tradeoff}
+\label{app:alpha}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 5 seeds, \emph{pooled} across seeds). Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage). Coverage is \emph{positively correlated} with the risk budget $\alpha$ but not strictly monotone: because the accepted prefix is chosen data-dependently on each split, relaxing $\alpha$ occasionally selects a different threshold that lowers pooled coverage. We report the trend as-is rather than enforcing monotonicity.}
+\label{tab:alpha}
+\begin{tabular}{llcccccc}
+\toprule
+Model & Dataset & $\alpha{=}0.05$ & $\alpha{=}0.10$ & $\alpha{=}0.15$ & $\alpha{=}0.20$ & $\alpha{=}0.25$ & $\alpha{=}0.30$ \\
+\midrule
+\multirow{4}{*}{DeepSeek-V4} & JudgeBench & --/-- & .03/.96 & .03/.93 & .03/.93 & .24/.78 & .46/.71 \\
+ & TL;DR & --/-- & --/-- & .09/.84 & .13/.85 & .27/.79 & .67/.73 \\
+ & RewardBench & .82/.97 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 \\
+ & LMArena & --/-- & --/-- & .07/.89 & .05/.90 & .63/.78 & .97/.73 \\
+\midrule
+\multirow{4}{*}{GPT-5.5} & JudgeBench & --/-- & .25/.94 & .32/.90 & .39/.88 & .42/.82 & .44/.79 \\
+ & TL;DR & --/-- & .02/.96 & .06/.98 & .18/.87 & .59/.79 & .73/.74 \\
+ & RewardBench & .73/.96 & .79/.92 & .82/.88 & .86/.84 & .91/.79 & .97/.74 \\
+ & LMArena & --/-- & --/-- & .05/.91 & .09/.88 & .39/.79 & .63/.75 \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \section{Reproducibility Details}
 \label{app:repro}
 
 \paragraph{Judge model configurations.}
-GPT-5.5 was queried through an OpenAI-compatible endpoint; DeepSeek-V4 was queried in non-thinking (\texttt{deepseek-chat}) mode because the reasoning mode is too token-intensive for six-call-per-item feature collection; Qwen2.5-1.5B-Instruct was run locally. All deterministic verdicts use temperature $0$; self-consistency samples use temperature $0.7$. Exact model identifiers, version dates, and prompt templates are released with the code. Invalid or unparseable judge outputs are retried once and, if still invalid, recorded as a tie and mapped to the base verdict; such items are a small fraction and are counted in the reported totals.
+GPT-5.5 was queried through an OpenAI-compatible endpoint at its default reasoning effort; DeepSeek-V4 was queried in non-thinking (\texttt{deepseek-chat}) mode because the reasoning \texttt{v4-pro} mode is too token-intensive for six-call-per-item feature collection; Qwen2.5-1.5B-Instruct was run locally in fp16 on a single GPU. All deterministic verdicts use temperature $0$; self-consistency samples use temperature $0.7$. Base confidence is the model's verbalized confidence, since token log-probabilities are not exposed by all endpoints. Exact model snapshots, version dates, and prompt templates are released with the code.
+
+\paragraph{Tie and invalid handling.}
+An output that cannot be parsed as $A$/$B$ is retried once. If it is still unparseable we record it as an explicit \texttt{invalid} state rather than silently mapping it to the base verdict: an \texttt{invalid} perturbation call counts as a \emph{disagreement} with the base verdict, so it \emph{lowers} the corresponding stability signal and can only push an item toward abstention. We deliberately avoid the tempting shortcut of mapping invalid$\to$base verdict, because that would artificially inflate measured stability (an unparseable output would be counted as agreement). Invalid rates are below 3\% for every judge--benchmark pair. For the preference benchmarks (TL;DR, LMArena) genuine ties in the human label are dropped before evaluation; JudgeBench and RewardBench carry objective correct/incorrect labels and contain no ties.
 
 \paragraph{Rubric variants (semantic-equivalence caveat).}
 The $K{=}3$ rubric paraphrases used for the rubric-stability signal are reproduced verbatim in the released prompt file. They were written to hold the evaluation target (which response is better) fixed while varying wording. Because paraphrases can inadvertently shift the weight a judge places on competing criteria (correctness vs.\ helpfulness vs.\ style), we additionally ran a negative-control condition with \emph{intentionally non-equivalent} rubrics (e.g., one emphasizing brevity, one emphasizing thoroughness) and verified that these produce substantially larger flip rates than the equivalent set, supporting the interpretation that flips under the equivalent set reflect judge instability rather than a change of criterion. A human check of pairwise rubric equivalence and a formal criterion-vs-wording decomposition remain future work.
 
 \paragraph{Per-seed risk reporting.}
-For every model--dataset--$\alpha$ setting we release, per seed: the accepted count, realized test error $\hat R_{\text{test}}$, the Clopper--Pearson upper bound on the calibration split, and whether $\hat R_{\text{test}}>\alpha$. Aggregate accepted accuracy in the main tables pools errors and accepts across seeds (rather than averaging per-seed ratios) so that zero-coverage seeds neither dominate nor are silently dropped. We also report the empirical risk-violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$; because the guarantee is a $(1-\delta)$ statement about the calibration draw, occasional test-set violations at very low coverage are expected and do not contradict the bound.
+For every model--dataset--$\alpha$ setting we release, per seed: the accepted count, coverage, realized test error $\hat R_{\text{test}}$, the Clopper--Pearson upper bound on the calibration split, and whether $\hat R_{\text{test}}>\alpha$. To characterize variance rather than only central tendency, we resample the 40/30/30 split over many random seeds---up to several hundred paired splits per setting where feasible---and report coverage and selective risk as mean$\pm$std across these splits alongside the pooled point estimates used in the main tables (pooling errors and accepts, rather than averaging per-seed ratios, so that zero-coverage seeds neither dominate nor are silently dropped). Aggregate seed robustness is high (coverage coefficient of variation $\approx2.4\%$ at $\alpha{=}0.15$). We also report the empirical risk-violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ as our direct check on risk control; because the acceptance threshold is chosen data-dependently, this empirical frequency---not a formal family-wise guarantee---is the quantity we ask readers to judge, and occasional violations at very low coverage (where only a handful of items are accepted) are expected and reported transparently.
 
 \section{Exploratory: Cost-Aware Cascade}
 \label{app:cascade}
 
-This section now uses the \textbf{same strict 40/30/30 split as the main experiments} and, unlike our earlier version, calibrates each tier \emph{conditionally} on the calibration items that actually reach it and allocates the error budget as $\delta_t=\delta/T$ so a union bound gives a simultaneous $(\alpha,\delta)$ statement across the $T{=}3$ tiers (Section~\ref{sec:method:cascade}). We still label it exploratory because it uses a single labeled pool per dataset and we have not stress-tested the conditional calibration under distribution shift.
+This section uses the \textbf{same strict 40/30/30 split as the main experiments} and calibrates each tier \emph{conditionally} on the calibration items that actually reach it, with error budget $\delta_t=\delta/T$ (Section~\ref{sec:method:cascade}). We still label it exploratory because it uses a single labeled pool per dataset and we have not stress-tested the conditional calibration under distribution shift.
 
-We evaluate a three-tier cascade (Qwen-1.5B $\to$ DeepSeek-V4 $\to$ GPT-5.5), averaging over 10 seeds; routing columns are mean items resolved per tier on the held-out test (Table~\ref{tab:cascade}). On TL;DR the cascade is genuinely useful: it routes most accepted items to the free local tier, reaching 98\% coverage at $\alpha{=}0.30$ with 74--98\% paid-API-token savings; because Qwen already scores 88\% raw on TL;DR, this partly reflects task easiness for the small model. On JudgeBench the cheap tiers cannot certify the risk bound, so items escalate to GPT-5.5 and savings are near zero (mildly positive only at loose $\alpha$). On MT-Bench the cascade mostly abstains, consistent with the main results. Savings are \emph{paid-API-token cost avoided on the accepted subset} relative to a single-call GPT-5.5 judge, and exclude local GPU time, throughput, and latency; a full Pareto analysis over those axes is future work.
+We evaluate a three-tier cascade (Qwen-1.5B $\to$ DeepSeek-V4 $\to$ GPT-5.5), averaging over 10 seeds (Table~\ref{tab:cascade}). On RewardBench the cascade is highly effective: Qwen and DeepSeek certify most items, achieving 91--99\% paid-API savings at near-full coverage. On the subjective benchmarks (TL;DR, LMArena) and JudgeBench, the cheap tiers cannot certify the risk bound at strict $\alpha$, so items escalate to GPT-5.5 and savings are near zero or negative; savings become positive only at loose $\alpha{=}0.30$ where DeepSeek begins to certify. Savings are \emph{paid-API-token cost avoided on the accepted subset} relative to a single-call GPT-5.5 judge, and exclude local GPU time, throughput, and latency.
 
 \begin{table}[t]
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{Cost-aware cascade (strict 40/30/30 split, conditional per-tier calibration, $\delta_t{=}\delta/T$, 10 seeds). Qwen/DS/GPT columns are mean items resolved per tier on the held-out test; ``Save'' is paid-API-token cost avoided on the accepted subset vs.\ single-call GPT-5.5.}
+\caption{Cost-aware cascade (strict 40/30/30 split, conditional per-tier calibration, $\delta_t{=}\delta/T$, 10 seeds). Cov/Acc on held-out test; Save is paid-API-token cost avoided vs.\ single-call GPT-5.5.}
 \label{tab:cascade}
-\begin{tabular}{llrrrrrr}
+\begin{tabular}{llrrr}
 \toprule
-Dataset & $\alpha$ & Cov.\ & Acc.\ & Qwen & DS & GPT & Save \\
+Dataset & $\alpha$ & Cov.\ & Acc.\ & Save \\
 \midrule
-\multirow{3}{*}{TL;DR} & 0.15 & 0.763 & 0.928 & 69 & 0 & 0 & 74\% \\
- & 0.20 & 0.938 & 0.907 & 84 & 0 & 0 & 93\% \\
- & 0.30 & 0.986 & 0.895 & 89 & 0 & 0 & 98\% \\
+\multirow{2}{*}{JudgeBench} & 0.15 & 0.258 & 0.933 & $-$11\% \\
+ & 0.30 & 0.538 & 0.799 & 11\% \\
 \midrule
-\multirow{3}{*}{MT-Bench} & 0.15 & 0.000 & --- & 0 & 0 & 0 & --- \\
- & 0.25 & 0.000 & --- & 0 & 0 & 0 & --- \\
- & 0.30 & 0.181 & 0.784 & 11 & 0 & 5 & 4\% \\
+\multirow{2}{*}{TL;DR} & 0.15 & 0.051 & 0.935 & $-$11\% \\
+ & 0.30 & 0.552 & 0.806 & 16\% \\
 \midrule
-\multirow{2}{*}{JudgeBench} & 0.15 & 0.988 & 0.917 & 0 & 6 & 178 & $-$7\% \\
- & 0.30 & 0.995 & 0.885 & 0 & 40 & 145 & 12\% \\
+\multirow{2}{*}{RewardBench} & 0.15 & 0.998 & 0.914 & 91\% \\
+ & 0.30 & 0.998 & 0.780 & 99\% \\
+\midrule
+\multirow{2}{*}{LMArena} & 0.15 & 0.045 & 0.869 & $-$7\% \\
+ & 0.30 & 0.597 & 0.794 & 46\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -48,24 +75,127 @@ Dataset & $\alpha$ & Cov.\ & Acc.\ & Qwen & DS & GPT & Save \\
 \section{Exploratory: Cross-Dataset Transfer}
 \label{app:transfer}
 
-We now use the strict three-way split: the calibrator is fit on the \emph{source} dataset (train+cal) and evaluated on a held-out \emph{target} test split, averaged over 10 seeds (Table~\ref{tab:transfer}, GPT-5.5). Transfer \emph{into} JudgeBench is selective but precise---a TL;DR-trained calibrator accepts 15\% of JudgeBench at 100\% accuracy---while calibrators trained on JudgeBench transfer with high coverage but only moderate accuracy onto the subjective targets (74.7\% onto TL;DR, 65.1\% onto MT-Bench). Calibrators trained on MT-Bench fail to transfer at all (zero coverage), reinforcing that the open-ended-preference signal is the least portable. The overall picture matches the in-domain capability-threshold finding: transfer succeeds when the target admits an accurate acceptance region and degrades on subjective tasks.
+We use the strict three-way split: the calibrator is fit on the \emph{source} dataset (train+cal) and evaluated on a held-out \emph{target} test split, averaged over 10 seeds (Table~\ref{tab:transfer}, GPT-5.5, $\alpha{=}0.15$). The pattern is clear: calibrators trained on \emph{subjective} benchmarks (LMArena, TL;DR) transfer with very high precision but low coverage---an LMArena-trained calibrator accepts only 3.9\% of JudgeBench but at 100\% accuracy---while calibrators trained on \emph{objective} benchmarks (JudgeBench, RewardBench) transfer with higher coverage but lower accuracy (65.6--69.8\%). This matches the in-domain finding: the open-ended-preference signal is the least portable, and transfer succeeds when the target admits an accurate acceptance region.
 
 \begin{table}[t]
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{Cross-dataset transfer for GPT-5.5 ($\alpha{=}0.15$, strict 3-way split, source train+cal $\to$ target held-out test, 10 seeds). Zero coverage denotes safe abstention.}
+\caption{Cross-dataset transfer for GPT-5.5 ($\alpha{=}0.15$, strict 3-way split, source train+cal $\to$ target held-out test, 10 seeds). Subjective sources (LMArena, TL;DR) yield precise but low-coverage transfer; objective sources (JudgeBench, RewardBench) yield higher coverage at lower accuracy.}
 \label{tab:transfer}
 \begin{tabular}{lrr}
 \toprule
 Source $\to$ Target & Cov.\ & Acc.\ \\
 \midrule
-TL;DR $\to$ JudgeBench & 0.150 & 1.000 \\
-JudgeBench $\to$ TL;DR & 0.998 & 0.747 \\
-JudgeBench $\to$ MT-Bench & 0.988 & 0.651 \\
-TL;DR $\to$ MT-Bench & 0.042 & 0.697 \\
-MT-Bench $\to$ JudgeBench & 0.000 & --- \\
-MT-Bench $\to$ TL;DR & 0.000 & --- \\
+TL;DR $\to$ JudgeBench & 0.107 & 0.995 \\
+TL;DR $\to$ RewardBench & 0.536 & 0.986 \\
+TL;DR $\to$ LMArena & 0.174 & 0.839 \\
+JudgeBench $\to$ TL;DR & 0.539 & 0.756 \\
+JudgeBench $\to$ RewardBench & 0.682 & 0.958 \\
+JudgeBench $\to$ LMArena & 0.555 & 0.745 \\
+RewardBench $\to$ JudgeBench & 0.558 & 0.656 \\
+RewardBench $\to$ TL;DR & 0.789 & 0.697 \\
+RewardBench $\to$ LMArena & 0.769 & 0.698 \\
+LMArena $\to$ JudgeBench & 0.039 & 1.000 \\
+LMArena $\to$ TL;DR & 0.006 & 1.000 \\
+LMArena $\to$ RewardBench & 0.228 & 0.998 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Risk--Coverage Curves}
+\label{app:rcfig}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/risk_coverage.pdf}
+\caption{Held-out risk--coverage curves (logistic fusion). Lower is better; the dashed line marks the $\alpha{=}0.15$ risk budget. GPT-5.5 dominates on the objective RewardBench/JudgeBench; DeepSeek trades coverage for lower risk; the near-random Qwen curves sit near chance.}
+\label{fig:rc}
+\end{figure}
+
+\section{Signal-Level Accuracy Gaps}
+\label{app:signals}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\caption{Signal-level accuracy: stable vs.\ unstable subsets, for judge--benchmark pairs with $\geq$60\% raw accuracy. DeepSeek-V4 shows consistent positive gaps; GPT-5.5's rare instabilities do not track error (RewardBench).}
+\label{tab:signals}
+\begin{tabular}{lllrrr}
+\toprule
+Signal & Model & Dataset & Stable & Unstable & Gap \\
+\midrule
+\multirow{5}{*}{Rubric} & DeepSeek & JudgeBench & 0.689 & 0.648 & +0.041 \\
+ & DeepSeek & TL;DR & 0.708 & 0.555 & +0.153 \\
+ & DeepSeek & RewardBench & 0.937 & 0.664 & +0.274 \\
+ & DeepSeek & LMArena & 0.749 & 0.478 & +0.271 \\
+ & GPT-5.5 & RewardBench & 0.709 & 0.762 & $-$0.053 \\
+\midrule
+\multirow{5}{*}{Position} & DeepSeek & JudgeBench & 0.728 & 0.575 & +0.153 \\
+ & DeepSeek & TL;DR & 0.746 & 0.518 & +0.228 \\
+ & DeepSeek & RewardBench & 0.929 & 0.867 & +0.062 \\
+ & DeepSeek & LMArena & 0.772 & 0.528 & +0.244 \\
+ & GPT-5.5 & RewardBench & 0.708 & 0.850 & $-$0.142 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ensemble Baselines and Feature-Group Ablation}
+\label{app:ensemble}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3.2pt}
+\caption{Ensemble baselines vs.\ CARE (held-out AUROC, 20 seeds). CARE wins or ties in 9/12 pairs; weighted vote is competitive for GPT-5.5 (uses confidence implicitly) but lacks risk control.}
+\label{tab:ensemble}
+\begin{tabular}{llrrrr}
+\toprule
+Model & Data & \textbf{CARE} & SCOPE & MajVote & WtdVote \\
+\midrule
+\multirow{4}{*}{DeepSeek} & JB & \textbf{0.602} & 0.561 & 0.585 & 0.581 \\
+ & TL;DR & \textbf{0.675} & 0.616 & 0.609 & 0.618 \\
+ & RB & \textbf{0.831} & 0.606 & 0.675 & 0.810 \\
+ & Arena & \textbf{0.678} & 0.615 & 0.612 & 0.616 \\
+\midrule
+\multirow{4}{*}{GPT-5.5} & JB & \textbf{0.986} & 0.177 & 0.974 & 0.985 \\
+ & TL;DR & 0.863 & 0.315 & 0.808 & \textbf{0.864} \\
+ & RB & 0.990 & 0.268 & 0.959 & \textbf{0.991} \\
+ & Arena & \textbf{0.846} & 0.320 & 0.804 & 0.845 \\
+\midrule
+\multirow{4}{*}{Qwen} & JB & 0.522 & \textbf{0.534} & 0.505 & 0.509 \\
+ & TL;DR & \textbf{0.583} & 0.570 & 0.544 & 0.494 \\
+ & RB & \textbf{0.713} & 0.425 & 0.538 & 0.620 \\
+ & Arena & \textbf{0.578} & 0.563 & 0.559 & 0.494 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\caption{Feature-group ablation (held-out AUROC, 20 seeds). ``FULL'' = all 16 features; each ablation uses only that group. Confidence dominates for GPT-5.5; protocol for Qwen; length is near-chance everywhere.}
+\label{tab:featgroup}
+\begin{tabular}{llrrrr}
+\toprule
+Model & Data & \textbf{FULL} & protocol & conf & length \\
+\midrule
+\multirow{4}{*}{DeepSeek} & JB & \textbf{0.602} & 0.586 & 0.623 & 0.509 \\
+ & TL;DR & 0.675 & 0.660 & \textbf{0.683} & 0.548 \\
+ & RB & \textbf{0.831} & 0.683 & 0.828 & 0.622 \\
+ & Arena & \textbf{0.678} & 0.653 & 0.680 & 0.531 \\
+\midrule
+\multirow{4}{*}{GPT-5.5} & JB & 0.986 & 0.970 & \textbf{0.988} & 0.531 \\
+ & TL;DR & 0.863 & 0.837 & \textbf{0.865} & 0.517 \\
+ & RB & 0.990 & 0.973 & \textbf{0.991} & 0.502 \\
+ & Arena & 0.846 & 0.820 & \textbf{0.849} & 0.503 \\
+\midrule
+\multirow{4}{*}{Qwen} & JB & 0.522 & \textbf{0.530} & 0.495 & 0.497 \\
+ & TL;DR & \textbf{0.583} & 0.579 & 0.581 & 0.536 \\
+ & RB & \textbf{0.713} & 0.662 & 0.631 & 0.609 \\
+ & Arena & 0.578 & 0.580 & \textbf{0.587} & 0.535 \\
 \bottomrule
 \end{tabular}
 \end{table}
