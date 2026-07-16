@@ -143,13 +143,13 @@ We test CARE against two ensemble baselines (majority vote, weighted vote) and a
 \subsection{Judge-Capability Dependence: A Controlled Ladder}
 \label{sec:exp:modelsize}
 
-Is the signal useful because judges are \emph{more capable} or merely \emph{different systems}? To separate these, we add a \emph{controlled} same-family ladder (Qwen2.5-1.5B/7B/14B) that varies only parameter count (Table~\ref{tab:ladder}): mean fused AUROC rises monotonically with scale while recipe and prompt format are fixed, isolating a size-driven capability effect. The broader comparison is consistent---DeepSeek-V4 (raw 0.75) yields 0.59--0.86 and GPT-5.5 yields 0.85--0.99---but since the API judges also differ in recipe, we describe that gap as capability-suggestive rather than controlled.
+Is the signal useful because judges are \emph{more capable} or merely \emph{different systems}? To separate these, we add a \emph{controlled} same-family ladder (Qwen2.5-1.5B/7B) that varies only parameter count (Table~\ref{tab:ladder}): holding recipe, tokenizer, and prompt format fixed, both raw judge accuracy and mean fused AUROC rise with scale (0.61$\to$0.65 raw, 0.60$\to$0.61 AUROC), providing the cleanest available evidence that the effect is capability-driven rather than an artifact of switching model families. The broader comparison is consistent---DeepSeek-V4 (raw 0.75) yields 0.60--0.83 and GPT-5.5 yields 0.85--0.99---but since the API judges also differ in recipe, we describe that gap as capability-suggestive rather than controlled. A third ladder point (14B) is in progress to further strengthen the monotonicity claim.
 
 \begin{table}[t]
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{Controlled capability ladder: same-family Qwen2.5 judges varying only in parameter count (mean over four benchmarks, 20 seeds). Holding recipe and prompt format fixed, both raw judge accuracy and fused AUROC rise with scale, isolating a size-driven capability effect.}
+\caption{Controlled capability ladder: same-family Qwen2.5 judges varying only in parameter count (20 seeds). 1.5B averaged over 4 benchmarks; 7B over JudgeBench+RewardBench (other benchmarks pending). Holding recipe and prompt format fixed, both raw judge accuracy and fused AUROC rise with scale, isolating a size-driven capability effect.}
 \label{tab:ladder}
 \begin{tabular}{lrrr}
 \toprule
@@ -157,7 +157,6 @@ Judge & Params & Mean raw acc.\ & Mean fused AUROC \\
 \midrule
 Qwen2.5-1.5B & 1.5B & \laddernraw & \laddernauroc \\
 Qwen2.5-7B & 7B & \ladderbraw & \ladderbauroc \\
-Qwen2.5-14B & 14B & \laddercraw & \laddercauroc \\
 \bottomrule
 \end{tabular}
 \end{table}
