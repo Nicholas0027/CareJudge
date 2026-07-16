@@ -1,0 +1,16 @@
+{
+  "equivalent": {
+    "label": "equivalent",
+    "flips": 189,
+    "total": 610,
+    "flip_rate": 0.30983606557377047
+  },
+  "non_equivalent": {
+    "label": "non-equivalent",
+    "flips": 102,
+    "total": 610,
+    "flip_rate": 0.16721311475409836
+  },
+  "ratio": 0.5396825396825398,
+  "interpretation": "Flip rates are similar \u2014 criterion vs wording not clearly separated."
+}
