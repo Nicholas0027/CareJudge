@@ -21,7 +21,7 @@ We compute:
     \text{rubric\_flip} &= \mathbb{1}\!\left[|\{v_1, \ldots, v_K\}| > 1\right], \label{eq:rubric_flip}
 \end{align}
 where $\text{rubric\_flip} = 1$ if any rubric variant produces a different winner.
-The intuition is that a verdict that changes under paraphrase is \emph{protocol-dependent} and therefore not robust to the stated evaluation specification. We deliberately avoid the stronger claim that such a verdict is ``content-irrelevant,'' because a paraphrase can also shift the relative weight the judge places on competing criteria (helpfulness, clarity, style) rather than only its sensitivity to surface wording; the Appendix reports a negative-control experiment with intentionally non-equivalent rubrics to separate wording perturbation from criterion perturbation.
+The intuition is that a verdict that changes under paraphrase is \emph{protocol-dependent} and not robust to the stated specification. We avoid the stronger claim that it is ``content-irrelevant,'' since a paraphrase can also shift the weight a judge places on competing criteria; a negative-control experiment with intentionally non-equivalent rubrics (Appendix~\ref{app:repro}) separates wording from criterion perturbation.
 
 \paragraph{Position-Swap Consistency.}
 We judge the item in both response orderings: $(q, a_1, a_2)$ and $(q, a_2, a_1)$.
@@ -42,21 +42,20 @@ We form a set of $S$ judgments under the base rubric that pools the deterministi
 In all reported experiments $S=3$ (one $\tau{=}0$ base verdict and two $\tau{=}0.7$ samples), so the score is genuinely informative rather than degenerate.
 An optional \emph{adaptive-$k$} early-stopping rule ($\text{self\_vote\_share}\geq\tau_{\text{stop}}$ after a minimum of two samples) is available to reduce cost but was disabled in the main experiments.
 
-\paragraph{Simulated Annotators (optional; disabled in main runs).}
-Following~\citet{jung2025trust}, the framework can construct $N$ few-shot judge personas conditioned on labeled demonstrations and use their agreement as an additional signal. To avoid calibration leakage, any such demonstrations must be drawn only from the training split $D_{\text{train}}$, never from the calibration split $D_{\text{cal}}$ used for thresholding (Section~\ref{sec:method:risk}). Because this signal reproduces Trust-or-Escalate rather than testing our hypothesis, we disable it in all main experiments ($N{=}0$); the corresponding feature is then a constant fallback and carries no information. We include it only in a supplementary comparison against a simulated-annotator-only baseline.
-
 \paragraph{Feature Vector.}
-With simulated annotators disabled, CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict)---and forms the feature vector
+CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict)---and forms a $14$-dimensional feature vector grouped into three families,
 \begin{equation}
 \begin{aligned}
     \boldsymbol{\phi}(x) = \big[\,
-    &\text{base\_conf},\; \text{rubric\_vote\_share},\; \text{rubric\_flip},\\
-    &\text{swap\_consistency},\; \text{self\_vote\_share},\; \text{sim\_vote\_share},\\
-    &\text{mean\_conf},\; \text{std\_conf},\; \text{length\_gap}\,\big],
+    &\underbrace{\text{swap\_consistency},\, \text{swap\_conf\_gap},}_{\text{protocol: position}}\\[-1pt]
+    &\underbrace{\text{rubric\_vote\_share},\, \text{rubric\_entropy},\, \text{rubric\_flip},}_{\text{protocol: rubric}}\\[-1pt]
+    &\underbrace{\text{self\_vote\_share},\, \text{self\_entropy},}_{\text{protocol: self-consistency}}\\[-1pt]
+    &\underbrace{\text{base\_conf},\, \text{mean\_conf},\, \text{std\_conf},}_{\text{confidence}}\\[-1pt]
+    &\underbrace{\text{length\_gap},\, \text{score\_margin}}_{\text{length}}\,\big].
 \end{aligned}
     \label{eq:features}
 \end{equation}
-where $\text{sim\_vote\_share}$ is the constant fallback noted above.
+The three protocol-stability families (position, rubric, self-consistency) constitute the paper's contributed signal; the confidence and length families are standard baselines included so the learned calibrator can exploit them where informative. We deliberately \emph{exclude} the simulated-annotator signal from the main feature vector: reproducing Trust-or-Escalate's few-shot personas is orthogonal to our hypothesis, and including a disabled ($N{=}0$) constant feature would only add a spurious degree of freedom to the calibrator. We instead report a dedicated simulated-annotator baseline (Trust-or-Escalate) in the head-to-head comparison (Section~\ref{sec:exp:comparison}), and a leakage-controlled construction (demonstrations drawn only from $D_{\text{train}}$, never $D_{\text{cal}}$) is described in Appendix~\ref{app:repro} for completeness.
 
 \subsection{Correctness Calibration}
 \label{sec:method:calibration}
