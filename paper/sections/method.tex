@@ -21,7 +21,7 @@ We compute:
     \text{rubric\_flip} &= \mathbb{1}\!\left[|\{v_1, \ldots, v_K\}| > 1\right], \label{eq:rubric_flip}
 \end{align}
 where $\text{rubric\_flip} = 1$ if any rubric variant produces a different winner.
-The intuition is that a verdict that changes under paraphrase is \emph{protocol-dependent} and not robust to the stated specification. We avoid the stronger claim that it is ``content-irrelevant,'' since a paraphrase can also shift the weight a judge places on competing criteria; a negative-control experiment with intentionally non-equivalent rubrics (Appendix~\ref{app:repro}) finds that the distinction between wording and criterion perturbation is itself competence-gated---on a near-random judge both produce similar flip rates, reinforcing that the signal should not be trusted below the competence threshold.
+The intuition is that a verdict that changes under paraphrase is \emph{protocol-dependent} and not robust to the stated specification. We avoid the stronger claim that it is ``content-irrelevant,'' since a paraphrase can also shift the weight a judge places on competing criteria; a negative-control experiment with intentionally non-equivalent rubrics (Appendix~\ref{app:repro}) confirms that on a mid-capability judge, non-equivalent rubrics produce $2.2\times$ higher flip rates than equivalent ones, validating that equivalent-rubric flips reflect genuine instability---while on a near-random judge the two conditions are indistinguishable, reinforcing that the signal should not be trusted below the competence threshold.
 
 \paragraph{Position-Swap Consistency.}
 We judge the item in both response orderings: $(q, a_1, a_2)$ and $(q, a_2, a_1)$.

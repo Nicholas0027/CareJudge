@@ -1,0 +1,18 @@
+{
+  "judge": "DeepSeek-V4 (deepseek-chat)",
+  "benchmark": "JudgeBench (620 items)",
+  "equivalent": {
+    "label": "equivalent",
+    "flips": 46,
+    "total": 359,
+    "flip_rate": 0.12813370473537605
+  },
+  "non_equivalent": {
+    "label": "non-equivalent",
+    "flips": 151,
+    "total": 539,
+    "flip_rate": 0.28014842300556586
+  },
+  "ratio": 2.1863757360651768,
+  "interpretation": "Non-equivalent rubrics produce substantially higher flip rates, confirming that equivalent-rubric flips reflect judge instability rather than criterion changes."
+}
