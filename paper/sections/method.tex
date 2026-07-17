@@ -43,19 +43,19 @@ In all reported experiments $S=3$ (one $\tau{=}0$ base verdict and two $\tau{=}0
 An optional \emph{adaptive-$k$} early-stopping rule ($\text{self\_vote\_share}\geq\tau_{\text{stop}}$ after a minimum of two samples) is available to reduce cost but was disabled in the main experiments.
 
 \paragraph{Feature Vector.}
-CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict)---and forms a $14$-dimensional feature vector grouped into three families,
+CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict)---and forms a $13$-dimensional feature vector grouped into three families (full definitions in Appendix~\ref{app:features}, Table~\ref{tab:featdef}),
 \begin{equation}
 \begin{aligned}
     \boldsymbol{\phi}(x) = \big[\,
     &\underbrace{\text{swap\_consistency},\, \text{swap\_conf\_gap},}_{\text{protocol: position}}\\[-1pt]
     &\underbrace{\text{rubric\_vote\_share},\, \text{rubric\_entropy},\, \text{rubric\_flip},}_{\text{protocol: rubric}}\\[-1pt]
     &\underbrace{\text{self\_vote\_share},\, \text{self\_entropy},}_{\text{protocol: self-consistency}}\\[-1pt]
-    &\underbrace{\text{base\_conf},\, \text{mean\_conf},\, \text{std\_conf},}_{\text{confidence}}\\[-1pt]
+    &\underbrace{\text{confidence},\, \text{base\_conf},\, \text{mean\_conf},\, \text{std\_conf},}_{\text{confidence}}\\[-1pt]
     &\underbrace{\text{length\_gap},\, \text{score\_margin}}_{\text{length}}\,\big].
 \end{aligned}
     \label{eq:features}
 \end{equation}
-The three protocol-stability families (position, rubric, self-consistency) constitute the paper's contributed signal; the confidence and length families are standard baselines included so the learned calibrator can exploit them where informative. We deliberately \emph{exclude} the simulated-annotator signal from the main feature vector: reproducing Trust-or-Escalate's few-shot personas is orthogonal to our hypothesis, and including a disabled ($N{=}0$) constant feature would only add a spurious degree of freedom to the calibrator. We instead report a dedicated simulated-annotator baseline (Trust-or-Escalate) in the head-to-head comparison (Section~\ref{sec:exp:comparison}), and a leakage-controlled construction (demonstrations drawn only from $D_{\text{train}}$, never $D_{\text{cal}}$) is described in Appendix~\ref{app:repro} for completeness.
+The three protocol-stability families (position, rubric, self-consistency) constitute the paper's contributed signal; the confidence and length families are standard baselines included so the calibrator can exploit them where informative. We deliberately \emph{exclude} the simulated-annotator signal from the feature vector---reproducing Trust-or-Escalate's few-shot personas is orthogonal to our hypothesis, and a disabled ($N{=}0$) constant feature would only add a spurious degree of freedom---and instead report a dedicated Trust-or-Escalate baseline in the head-to-head comparison (Section~\ref{sec:exp:comparison}), with a leakage-controlled construction (demonstrations from $D_{\text{train}}$ only) described in Appendix~\ref{app:repro}.
 
 \subsection{Correctness Calibration}
 \label{sec:method:calibration}
@@ -79,7 +79,7 @@ Given a user-specified risk tolerance $\alpha \in (0,1)$ and error level $\delta
 \end{equation}
 where the outer probability is over the calibration draw.
 We select $\hat{\lambda}$ by an \emph{empirical prefix search}: we sort the calibration items by descending confidence and, among prefixes of size at least a minimum-acceptance floor $m$, choose the largest accepted prefix whose $(1{-}\delta)$ upper confidence bound on the accepted-set error rate is at most $\alpha$; the threshold is the confidence of the last accepted item.
-We do not claim this adaptive search realizes exact family-wise error control in the sense of a pre-registered fixed-sequence test---because the acceptance set is chosen data-dependently, it involves an implicit multiplicity that we do not formally correct. We therefore treat Eq.~\eqref{eq:guarantee} as the design target of the procedure and validate risk control \emph{empirically}, reporting the realized violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over many held-out splits (Section~\ref{sec:experiments}, Appendix~\ref{app:repro}). We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
+We do not claim this adaptive search realizes exact family-wise error control: because the acceptance set is chosen data-dependently, it involves an implicit multiplicity we do not formally correct. We therefore treat Eq.~\eqref{eq:guarantee} as the design target and validate risk control \emph{empirically}, reporting the realized violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over many held-out splits (Section~\ref{sec:experiments}, Appendix~\ref{app:repro}). We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
 \begin{equation}
     \text{CP}_{\text{upper}}(e, n, \delta) = \sup\!\left\{p : P\!\left(\text{Bin}(n, p) \leq e\right) \geq \delta\right\},
     \label{eq:cp}

@@ -12,6 +12,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{placeins}
 
 \pdfinfo{
 /TemplateVersion (2027.1)
@@ -26,9 +27,9 @@
 \setcounter{secnumdepth}{2} % section numbers are desired
 
 % --- Capability-ladder values (controlled Qwen2.5-1.5B/7B/14B, JudgeBench, 20 seeds) ---
-\newcommand{\laddernraw}{0.49}\newcommand{\laddernauroc}{0.52}
-\newcommand{\ladderbraw}{0.57}\newcommand{\ladderbauroc}{0.55}
-\newcommand{\laddercraw}{0.60}\newcommand{\laddercauroc}{0.54}
+\newcommand{\laddernraw}{0.49}\newcommand{\laddernauroc}{$.52{\pm}.06$}
+\newcommand{\ladderbraw}{0.57}\newcommand{\ladderbauroc}{$.55{\pm}.04$}
+\newcommand{\laddercraw}{0.60}\newcommand{\laddercauroc}{$.54{\pm}.04$}
 
 % Title (mixed case)
 \title{When Should LLM Judges Abstain? Multi-View Protocol Instability as a Per-Instance Signal for Selective LLM Judging}
