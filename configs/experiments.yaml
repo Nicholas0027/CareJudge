@@ -1,0 +1,18 @@
+datasets:
+  mini: examples/mini_pairs.jsonl
+  judgebench: data/judgebench.jsonl
+  rewardbench2: data/rewardbench2.jsonl
+  lmarena: data/lmarena.jsonl
+  tldr: data/tldr_pairs.jsonl
+
+judges:
+  local_mock: mock:0.72
+  cheap_api: litellm:gpt-4o-mini
+  strong_api: litellm:gpt-4o
+
+care:
+  k_self: 5
+  num_rubrics: 5
+  alpha: 0.10
+  delta: 0.10
+  min_keep: 20
