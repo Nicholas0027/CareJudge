@@ -11,22 +11,28 @@ argument (§5.2) — not in the appendix. Completing the two subjective points i
 what carries the mid-capability-restricted significance test below `p < 0.05`
 and makes the headline effect sharp ("鲜明").
 
-## What is already done
-`outputs/final_analysis.json` already contains Qwen2.5-7B on:
+## STATUS: COMPLETED (RTX 5090, ~7h wall-clock, WORKERS=2)
+All four Qwen2.5-7B benchmarks are now in `outputs/final_analysis.json`:
 - `judgebench` (n=619, raw 0.570, CARE AUROC 0.548±0.035)
 - `rewardbench` (n=1000, raw 0.857, CARE AUROC 0.643±0.042)
+- `tldr` (n=2000, raw 0.628, CARE AUROC 0.636±0.019) — **ΔCI [+0.014,+0.026] excludes zero**
+- `lmaarena` (n=1952, raw 0.643, CARE AUROC 0.599±0.017) — **ΔCI [+0.003,+0.018] excludes zero**
 
-Both are above the competence floor → the theory predicts positive fusion gains.
+Both subjective points show significant positive fusion gains, exactly as
+competence-gating predicted. Global Wilcoxon: 17 pairs, p=0.066, 10/17 wins.
+Paper Table 1, §5.2 (RQ2), §5.7, and the abstract have been backfilled with
+these measured numbers. (48/2000 LMArena items failed to parse, 2.4%, within
+the expected invalid-output rate.)
 
-## What E1 collects (the missing cells)
-| Judge | Benchmark | Status |
+## How it was run (reproducible)
+| Judge | Benchmark | Result |
 |-------|-----------|--------|
-| Qwen2.5-7B | tldr_2k (2000) | **TO COLLECT** |
-| Qwen2.5-7B | lmaarena_2k (2000) | **TO COLLECT** |
+| Qwen2.5-7B | tldr_2k (2000) | DONE |
+| Qwen2.5-7B | lmaarena_2k (1952/2000) | DONE |
 
-That's it — no new code, no new model. `collect_ladder.py` is already
-parameterized by `--model/--tag/--bench`, and `final_analysis.py` auto-includes
-any `outputs/scale/<tag>_<bench>_features.jsonl` it finds.
+No new code, no new model. `collect_ladder.py` is parameterized by
+`--model/--tag/--bench`, and `final_analysis.py` auto-includes any
+`outputs/scale/<tag>_<bench>_features.jsonl` it finds.
 
 ## How to run (on the Lab machine)
 ```bash
