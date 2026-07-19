@@ -1,4 +1,4 @@
-\begin{thebibliography}{31}
+\begin{thebibliography}{32}
 \providecommand{\natexlab}[1]{#1}
 
 \bibitem[{Anghel et~al.(2025{\natexlab{a}})Anghel, Anghel, Pecheanu, Cocu,
@@ -130,6 +130,12 @@ Ling, Z.; Liu, S.; Tang, Y.; Yang, J.; Fu, S.; Huang, C.; Huang, K.; Wan, Y.;
 Ouyang, L.; Wu, J.; Jiang, X.; et~al. 2022.
 \newblock Training Language Models to Follow Instructions with Human Feedback.
 \newblock In \emph{NeurIPS}.
+
+\bibitem[{Panickssery, Bowman, and Feng(2024)}]{panickssery2024evaluators}
+Panickssery, A.; Bowman, S.~R.; and Feng, S. 2024.
+\newblock LLM Evaluators Recognize and Favor Their Own Generations.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}.
 
 \bibitem[{Sheng et~al.(2025)Sheng, Liu, He, Zhao, and
   Kang}]{sheng2025analyzing}

@@ -10,18 +10,29 @@ from openai import OpenAI
 
 JUDGE_NAME = sys.argv[1]
 BENCH_NAME = sys.argv[2]
+LIMIT   = int(sys.argv[3]) if len(sys.argv) > 3 else 0   # 0 = all items
+WORKERS = int(sys.argv[4]) if len(sys.argv) > 4 else 8
 R = ["You are an expert evaluator. Compare Response A and Response B. Output ONLY the letter A or B.",
      "Which response is better? Compare A and B carefully and output ONLY A or B.",
      "Compare the two responses. Which one would a careful evaluator prefer? Output ONLY A or B."]
 items = [PairItem(id=r['id'],prompt=r['prompt'],response_a=r['response_a'],response_b=r['response_b'],label=r.get('label'))
          for r in [json.loads(l) for l in open(f'data/{BENCH_NAME}_2k.jsonl') if l.strip()]]
-pfx = {'ds':'deepseek-chat','gpt55':'gpt-5_5','glm':'glm-5.2','qwen':'qwen-1.5b'}[JUDGE_NAME]
+if LIMIT > 0:
+    items = items[:LIMIT]   # deterministic prefix subset (documented n in paper)
+pfx = {'ds':'deepseek-chat','gpt55':'gpt-5_5','glm':'glm-5.2','qwen':'qwen-1.5b',
+       'gpt54mini':'gpt-5_4-mini','luna':'gpt-5_6-luna'}[JUDGE_NAME]
 if JUDGE_NAME=='ds':
     from care_judge.judges.deepseek_compat import DeepSeekJudge
     j=DeepSeekJudge(model='deepseek-chat')
 elif JUDGE_NAME=='gpt55':
     from care_judge.judges.openai_compat import OpenAICompatJudge
     j=OpenAICompatJudge(model='gpt-5.5')
+elif JUDGE_NAME=='gpt54mini':
+    from care_judge.judges.openai_compat import OpenAICompatJudge
+    j=OpenAICompatJudge(model='gpt-5.4-mini')
+elif JUDGE_NAME=='luna':
+    from care_judge.judges.openai_compat import OpenAICompatJudge
+    j=OpenAICompatJudge(model='gpt-5.6-luna')
 elif JUDGE_NAME=='glm':
     class G:
         def judge(self, item, rubric, temp):
@@ -43,7 +54,7 @@ def process(it):
     try:return it.id,collect_with_call_trace(it,j,R,k_self=3,temperature=0.7)
     except:return it.id,None
 t0=time.time()
-with ThreadPoolExecutor(max_workers=5)as ex:
+with ThreadPoolExecutor(max_workers=WORKERS)as ex:
     futs=[ex.submit(process,it)for it in items]
     with open(out,'a')as f:
         for i,fut in enumerate(as_completed(futs)):
