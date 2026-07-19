@@ -1,10 +1,18 @@
-\begin{thebibliography}{22}
+\begin{thebibliography}{31}
 \providecommand{\natexlab}[1]{#1}
 
-\bibitem[{Anghel et~al.(2025)Anghel, Anghel, Pecheanu, Cr\u{a}ciun, Cocu, and
-  Niculita}]{anghel2025pearl}
+\bibitem[{Anghel et~al.(2025{\natexlab{a}})Anghel, Anghel, Pecheanu, Cocu,
+  Istrate, and Andrei}]{anghel2025diagnosing}
+Anghel, C.; Anghel, A.~A.; Pecheanu, E.; Cocu, A.; Istrate, A.; and Andrei,
+  C.~A. 2025{\natexlab{a}}.
+\newblock Diagnosing Bias and Instability in LLM Evaluation: A Scalable
+  Pairwise Meta-Evaluator.
+\newblock \emph{Information}, 16(8): 652.
+
+\bibitem[{Anghel et~al.(2025{\natexlab{b}})Anghel, Anghel, Pecheanu,
+  Cr\u{a}ciun, Cocu, and Niculita}]{anghel2025pearl}
 Anghel, C.; Anghel, A.~A.; Pecheanu, E.; Cr\u{a}ciun, M.; Cocu, A.; and
-  Niculita, C. 2025.
+  Niculita, C. 2025{\natexlab{b}}.
 \newblock PEARL: A Rubric-Driven Multi-Metric Framework for LLM Evaluation.
 \newblock \emph{Information}, 16(11).
 
@@ -14,10 +22,12 @@ Badshah, S.; Emami, A.; and Sajjad, H. 2026.
 \newblock arXiv:2602.13110.
 \newblock arXiv:2602.13110.
 
-\bibitem[{Bauer(1991)}]{bauer1991multiple}
-Bauer, P. 1991.
-\newblock A Note on Multiple Testing Procedures in Structural Break Tests.
-\newblock \emph{Journal of Statistical Planning and Inference}.
+\bibitem[{Choi et~al.(2026)Choi, Park, Cho, Park, and Kim}]{choi2026diagnosing}
+Choi, J.; Park, S.; Cho, C.; Park, H.; and Kim, B. 2026.
+\newblock Diagnosing the Reliability of LLM-as-a-Judge via Item Response
+  Theory.
+\newblock arXiv:2602.00521.
+\newblock arXiv:2602.00521.
 
 \bibitem[{Clopper and Pearson(1934)}]{clopper1934use}
 Clopper, C.~J.; and Pearson, E.~S. 1934.
@@ -35,11 +45,37 @@ Geifman, Y.; and El-Yaniv, R. 2017.
 \newblock Selective Classification for Deep Neural Networks.
 \newblock In \emph{NeurIPS}.
 
+\bibitem[{Guan et~al.(2025)Guan, Roosta, Passban, and
+  Rezagholizadeh}]{bryan2025order}
+Guan, B.; Roosta, T.; Passban, P.; and Rezagholizadeh, M. 2025.
+\newblock The Order Effect: Investigating Prompt Sensitivity to Input Order in
+  LLMs.
+\newblock In \emph{arXiv:2502.04134}.
+
+\bibitem[{Gupta and Kumar(2026)}]{gupta2026diagnosing}
+Gupta, M.; and Kumar, D. 2026.
+\newblock Diagnosing LLM Judge Reliability: Conformal Prediction Sets and
+  Transitivity Violations.
+\newblock arXiv:2604.15302.
+\newblock arXiv:2604.15302.
+
 \bibitem[{Hong et~al.(2026)Hong, Yao, Shen, Xu, Wei, and Dong}]{hong2026from}
 Hong, Y.; Yao, H.; Shen, B.; Xu, W.; Wei, H.; and Dong, Y. 2026.
 \newblock From Rubrics to Reliable Scores: Evidence-Grounded Text Evaluation
   with LLM Judges.
 \newblock In \emph{arXiv:2601.08654}.
+
+\bibitem[{Hua et~al.(2025)Hua, Tang, Gu, Gu, Wong, and Qin}]{hua2025flaw}
+Hua, A.; Tang, K.; Gu, C.; Gu, J.-Y.; Wong, E.; and Qin, Y. 2025.
+\newblock Flaw or Artifact? Rethinking Prompt Sensitivity in Evaluating LLMs.
+\newblock \emph{Proceedings of EMNLP}, 19900--19910.
+
+\bibitem[{Huang, Sun, and Yang(2026)}]{huang2026prompt}
+Huang, D.; Sun, J.; and Yang, P. 2026.
+\newblock Prompt Perturbation for Reliable LLM Evaluation over Comparison
+  Graphs.
+\newblock arXiv:2606.17634.
+\newblock arXiv:2606.17634.
 
 \bibitem[{Jung, Brahman, and Choi(2025)}]{jung2025trust}
 Jung, J.; Brahman, F.; and Choi, Y. 2025.
@@ -59,10 +95,10 @@ Lambert, N.; Pyatkin, V.; Morrison, J.; et~al. 2024.
 \newblock RewardBench: Evaluating Reward Models for Language Modeling.
 \newblock In \emph{arXiv:2403.13787}.
 
-\bibitem[{Li et~al.(2025)Li, Sun, Huang, Zhong, Jiang, Han, Zhang, Wang, and
-  Liu}]{li2025preference}
+\bibitem[{Li et~al.(2025{\natexlab{a}})Li, Sun, Huang, Zhong, Jiang, Han,
+  Zhang, Wang, and Liu}]{li2025preference}
 Li, D.; Sun, R.; Huang, Y.; Zhong, M.; Jiang, B.; Han, J.; Zhang, X.; Wang, W.;
-  and Liu, H. 2025.
+  and Liu, H. 2025{\natexlab{a}}.
 \newblock Preference Leakage: A Contamination Problem in LLM-as-a-judge.
 \newblock arXiv:2502.01534.
 \newblock arXiv:2502.01534.
@@ -73,6 +109,22 @@ Li, H.; Dong, Q.; Chen, J.; Su, H.; Zhou, Y.; Ai, Q.; Ye, Z.; and Liu, Y. 2024.
 \newblock LLMs-as-Judges: A Comprehensive Survey on LLM-based Evaluation
   Methods.
 \newblock \emph{arXiv preprint arXiv:2412.05579}.
+
+\bibitem[{Li et~al.(2025{\natexlab{b}})Li, Zhang, Lin, Xiong, and
+  Xu}]{li2025autoprompt}
+Li, J.; Zhang, H.; Lin, P.; Xiong, J.; and Xu, W. 2025{\natexlab{b}}.
+\newblock Auto-Prompt Ensemble for LLM Judge.
+\newblock arXiv:2510.06538.
+\newblock arXiv:2510.06538.
+
+\bibitem[{Ling et~al.(2025)Ling, Liu, Tang, Yang, Fu, Huang, Huang, Wan, Hou,
+  and Hu}]{ling2025abstention}
+Ling, Z.; Liu, S.; Tang, Y.; Yang, J.; Fu, S.; Huang, C.; Huang, K.; Wan, Y.;
+  Hou, Z.; and Hu, X. 2025.
+\newblock LLM Abstention Can Be a Prompt Artifact, in Addition to Genuine
+  Uncertainty.
+\newblock arXiv:2507.16199.
+\newblock arXiv:2507.16199.
 
 \bibitem[{Ouyang et~al.(2022)Ouyang, Wu, Jiang et~al.}]{ouyang2022training}
 Ouyang, L.; Wu, J.; Jiang, X.; et~al. 2022.
@@ -87,12 +139,12 @@ Sheng, H.; Liu, X.; He, H.; Zhao, J.; and Kang, J. 2025.
 \newblock arXiv:2509.18658.
 \newblock arXiv:2509.18658.
 
-\bibitem[{Stiennon et~al.(2020)Stiennon, Long, Hou, Wu, Ziegler, Radford,
-  Amodei, and Christiano}]{stiennon2020learning}
-Stiennon, N.; Long, L.; Hou, Y.; Wu, J.; Ziegler, D.; Radford, R.; Amodei, D.;
-  and Christiano, P. 2020.
-\newblock Learning to Summarize with Human Feedback.
-\newblock \emph{NeurIPS}.
+\bibitem[{Stiennon et~al.(2020)Stiennon, Ouyang, Wu, Ziegler, Lowe, Voss,
+  Radford, Amodei, and Christiano}]{stiennon2020learning}
+Stiennon, N.; Ouyang, L.; Wu, J.; Ziegler, D.~M.; Lowe, R.; Voss, C.; Radford,
+  A.; Amodei, D.; and Christiano, P.~F. 2020.
+\newblock Learning to summarize from human feedback.
+\newblock In \emph{NeurIPS}.
 
 \bibitem[{Tan et~al.(2024)Tan, Zhuang, Montgomery, Tang, Cuadron, and
   Wang}]{tan2024judgebench}
@@ -101,12 +153,27 @@ Tan, S.; Zhuang, S.; Montgomery, K.~L.; Tang, W.; Cuadron, A.; and Wang, C.
 \newblock JudgeBench: A Benchmark for Evaluating LLM-Based Judges.
 \newblock In \emph{arXiv:2410.12784}.
 
+\bibitem[{Tayebati et~al.(2025)Tayebati, Kumar, Darabi, Jayasuriya, Krishnan,
+  and Trivedi}]{tayebati2025learning}
+Tayebati, S.; Kumar, D.; Darabi, N.; Jayasuriya, D.; Krishnan, R.; and Trivedi,
+  A.~R. 2025.
+\newblock Learning Conformal Abstention Policies for Adaptive Risk Management
+  in Large Language and Vision-Language Models.
+\newblock arXiv:2502.06884.
+\newblock arXiv:2502.06884.
+
 \bibitem[{Wang et~al.(2023)Wang, Li, Chen, Zhu, Lin, Cao, Liu, Liu, and
   Sui}]{wang2023faireval}
 Wang, P.; Li, L.; Chen, L.; Zhu, D.; Lin, B.; Cao, Y.; Liu, Q.; Liu, T.; and
   Sui, Z. 2023.
 \newblock Large Language Models are not Fair Evaluators.
 \newblock In \emph{arXiv:2305.17926}.
+
+\bibitem[{Wang et~al.(2025)Wang, Wang, Zhang, Chen, Zhu, Shi, and
+  Xu}]{wang2025sconu}
+Wang, Z.; Wang, Q.; Zhang, Y.; Chen, T.; Zhu, X.; Shi, X.; and Xu, K. 2025.
+\newblock SConU: Selective Conformal Uncertainty in Large Language Models.
+\newblock 19052--19075.
 
 \bibitem[{Wei et~al.(2024)Wei, He, Xia, Liu, Wong, Lin, and
   Han}]{wei2024systematic}

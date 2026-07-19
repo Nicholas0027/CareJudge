@@ -55,7 +55,7 @@ CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-c
 \end{aligned}
     \label{eq:features}
 \end{equation}
-The three protocol-stability families (position, rubric, self-consistency) constitute the paper's contributed signal; the confidence and length families are standard baselines included so the calibrator can exploit them where informative. We deliberately \emph{exclude} the simulated-annotator signal from the feature vector---reproducing Trust-or-Escalate's few-shot personas is orthogonal to our hypothesis, and a disabled ($N{=}0$) constant feature would only add a spurious degree of freedom---and instead report a dedicated Trust-or-Escalate baseline in the head-to-head comparison (Section~\ref{sec:exp:comparison}), with a leakage-controlled construction (demonstrations from $D_{\text{train}}$ only) described in Appendix~\ref{app:repro}.
+The three protocol-stability families (position, rubric, self-consistency) are the contributed signal; the confidence and length families are standard baselines the calibrator may exploit where informative. We \emph{exclude} the simulated-annotator signal from $\boldsymbol\phi$ (a disabled $N{=}0$ feature would only add a spurious degree of freedom) and instead report Trust-or-Escalate as a dedicated, leakage-controlled baseline in the head-to-head comparison (Section~\ref{sec:exp:comparison}, Appendix~\ref{app:repro}).
 
 \subsection{Correctness Calibration}
 \label{sec:method:calibration}
@@ -72,51 +72,20 @@ The calibrator is fit on a \emph{training split} $D_{\text{train}}$ that is disj
 \subsection{Empirical Risk-Targeted Threshold Calibration}
 \label{sec:method:risk}
 
-Given a user-specified risk tolerance $\alpha \in (0,1)$ and error level $\delta \in (0,1)$, our goal is to select an acceptance threshold $\hat{\lambda}$ on a \emph{calibration split} $D_{\text{cal}}$ (disjoint from $D_{\text{train}}$) that targets the calibration-conditional risk criterion
+Given a risk tolerance $\alpha$ and error level $\delta$, we select an acceptance threshold $\hat{\lambda}$ on a \emph{calibration split} $D_{\text{cal}}$ (disjoint from $D_{\text{train}}$) targeting the calibration-conditional criterion
 \begin{equation}
     P\!\left(P\!\left(\hat{f}(x) \neq y \mid \hat{c}(x) \geq \hat{\lambda}\right) \leq \alpha\right) \geq 1 - \delta,
     \label{eq:guarantee}
 \end{equation}
-where the outer probability is over the calibration draw.
-We select $\hat{\lambda}$ by an \emph{empirical prefix search}: we sort the calibration items by descending confidence and, among prefixes of size at least a minimum-acceptance floor $m$, choose the largest accepted prefix whose $(1{-}\delta)$ upper confidence bound on the accepted-set error rate is at most $\alpha$; the threshold is the confidence of the last accepted item.
-We do not claim this adaptive search realizes exact family-wise error control: because the acceptance set is chosen data-dependently, it involves an implicit multiplicity we do not formally correct. We therefore treat Eq.~\eqref{eq:guarantee} as the design target and validate risk control \emph{empirically}, reporting the realized violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over many held-out splits (Section~\ref{sec:experiments}, Appendix~\ref{app:repro}). We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
+with the outer probability over the calibration draw. We select $\hat{\lambda}$ by an \emph{empirical prefix search}: sort $D_{\text{cal}}$ by descending confidence and, among prefixes of size $\geq m$, take the largest whose $(1{-}\delta)$ upper bound on accepted-set error is $\leq\alpha$. Because the acceptance set is chosen data-dependently this is not exact family-wise control; we treat Eq.~\eqref{eq:guarantee} as a design target and validate it \emph{empirically} via the realized violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over many held-out splits (Section~\ref{sec:experiments}). We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
 \begin{equation}
     \text{CP}_{\text{upper}}(e, n, \delta) = \sup\!\left\{p : P\!\left(\text{Bin}(n, p) \leq e\right) \geq \delta\right\},
     \label{eq:cp}
 \end{equation}
-where $e$ is the number of errors among the $n$ accepted calibration items, computed via bisection on the binomial CDF.
-Algorithm~\ref{alg:care} states the complete train/calibrate/test procedure, including the minimum-acceptance floor $m$ that prevents certifying a threshold on too few calibration points.
-
-\begin{algorithm}[t]
-\caption{CARE-Judge selective evaluation}
-\label{alg:care}
-\begin{algorithmic}[1]
-\STATE \textbf{Input:} labeled items $D$; risk $\alpha$, level $\delta$; min-accept $m$
-\STATE Split $D$ into disjoint $D_{\text{train}}, D_{\text{cal}}, D_{\text{test}}$ (40/30/30)
-\STATE Fit calibrator $\hat p$ on $\{(\boldsymbol\phi(x), \mathbb{1}[\hat f(x){=}y])\}_{x\in D_{\text{train}}}$
-\STATE Sort $D_{\text{cal}}$ by $\hat p$ descending: $c_{(1)}\ge\cdots\ge c_{(n)}$
-\STATE $\hat\lambda \gets \infty$ \COMMENT{accept nothing by default}
-\FOR{$i = m$ \TO $n$}
-  \STATE $e_i \gets \#\{j\le i: \hat f(x_{(j)})\ne y_{(j)}\}$ \COMMENT{errors in top-$i$ prefix}
-  \IF{$\text{CP}_{\text{upper}}(e_i, i, \delta) \le \alpha$}
-    \STATE $\hat\lambda \gets \hat p(x_{(i)})$ \COMMENT{largest certified prefix so far}
-  \ENDIF
-\ENDFOR
-\STATE \textbf{Output:} on $D_{\text{test}}$, accept $x$ iff $\hat p(x)\ge\hat\lambda$, else abstain
-\STATE \textbf{Report:} empirical violation rate $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over splits
-\end{algorithmic}
-\end{algorithm}
-
-The selective evaluator is then applied to a \emph{held-out test split} $D_{\text{test}}$:
+where $e$ is the number of errors among the $n$ accepted calibration items, computed via bisection on the binomial CDF. The complete train/calibrate/test procedure, including the minimum-acceptance floor $m$ that prevents certifying on too few points, is given as Algorithm~\ref{alg:care} in Appendix~\ref{app:algo}. The selective evaluator is then applied to a \emph{held-out test split} $D_{\text{test}}$:
 \begin{equation}
     (\hat{f}, \hat{c})(x) = \begin{cases} \hat{f}(x) & \text{if } \hat{c}(x) \geq \hat{\lambda}, \\ \emptyset & \text{otherwise (abstain).} \end{cases}
     \label{eq:selective}
 \end{equation}
 
-All reported metrics (coverage, selective risk, accepted accuracy, calibration error) are measured on the held-out $D_{\text{test}}$, and the empirical risk-violation rate over many splits is our primary evidence that the target of Eq.~\eqref{eq:guarantee} is met in practice.
-
-\subsection{Cost-Aware Cascade (Exploratory)}
-\label{sec:method:cascade}
-
-As an application, we arrange multiple judges $\mathcal{M} = (M_1, \ldots, M_T)$ in order of increasing cost. Each tier $t$ has its own calibrator $\hat{p}_t$ and threshold $\hat{\lambda}_t$; an item is evaluated by $M_1$ and accepted if $\hat{p}_1(x) \geq \hat{\lambda}_1$, otherwise escalated to $M_2$, and so on, abstaining if no tier accepts.
-To keep per-tier risk control meaningful, we calibrate each tier \emph{conditionally}: tier $t$'s threshold is selected on the subset of $D_{\text{cal}}$ that was rejected by tiers $1{:}t{-}1$, i.e.\ on the distribution of items that actually reach $M_t$ at deployment, and we split the error budget as $\delta_t = \delta/T$ so that a union bound caps the probability that any tier's calibration draw fails at $\delta$. Because the per-tier threshold search is the same empirical procedure as above (not a formally corrected sequential test), we again validate the cascade empirically and present it only as an exploratory application (Appendix~\ref{app:cascade}); a formal deployment-time cascade theorem is future work.
+All reported metrics (coverage, selective risk, accepted accuracy, calibration error) are measured on the held-out $D_{\text{test}}$; the empirical violation rate over many splits is our primary evidence that Eq.~\eqref{eq:guarantee} holds in practice. As an application, the same threshold rule extends to a cost-aware cheap-to-strong \emph{cascade} with per-tier conditional calibration and a $\delta_t{=}\delta/T$ union-bound error budget; we treat it as exploratory and defer it to Appendix~\ref{app:cascade}.
