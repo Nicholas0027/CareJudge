@@ -1,10 +1,31 @@
 #!/usr/bin/env python3
-"""Generate risk-coverage curves and signal-gap bar chart for the paper (PDF, colorblind-safe)."""
+"""Generate risk-coverage curves and signal-gap bar chart for the paper (PDF, colorblind-safe).
+
+All text is rendered in the Bitter font family (OFL). Static weights are
+instantiated under assets/fonts/ (Bitter-Regular/Medium/SemiBold/Bold.ttf).
+"""
 import json, sys
 from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib import font_manager as fm
+
+# --- Register the Bitter font family so every glyph in the figures uses it ---
+FONT_DIR = Path("assets/fonts")
+for _f in ["Bitter-Regular.ttf", "Bitter-Medium.ttf", "Bitter-SemiBold.ttf", "Bitter-Bold.ttf"]:
+    _p = FONT_DIR / _f
+    if _p.exists():
+        fm.fontManager.addfont(str(_p))
+# Embed fonts as real glyphs (TrueType) in the PDF, not Type-3 bitmaps.
+matplotlib.rcParams.update({
+    "font.family": "Bitter",
+    "font.serif": ["Bitter"],
+    "mathtext.fontset": "dejavuserif",  # math falls back cleanly; no axis labels use mathtext here
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+    "axes.unicode_minus": False,
+})
 
 RIG = Path("outputs/rigorous")
 OUT = Path("paper/figures"); OUT.mkdir(parents=True, exist_ok=True)
@@ -31,12 +52,12 @@ def rc_figure():
             key = d.split("_")[0]
             ax.plot(cov, risk, label=labels[key], color=colors[key], lw=1.8)
         ax.axhline(0.15, ls="--", color=CB["black"], lw=0.8, alpha=0.6)
-        ax.set_title(title, fontsize=10)
+        ax.set_title(title, fontsize=10, fontweight="bold")
         ax.set_xlabel("Coverage", fontsize=9)
         ax.set_xlim(0, 1); ax.set_ylim(0, 0.6)
         ax.grid(alpha=0.25, lw=0.4)
         ax.tick_params(labelsize=8)
-    axes[0].set_ylabel("Selective risk\n(accepted error)", fontsize=9)
+    axes[0].set_ylabel("Selective risk\n(accepted error)", fontsize=9, fontweight="bold")
     axes[1].legend(fontsize=8, loc="upper right", framealpha=0.9)
     fig.tight_layout()
     fig.savefig(OUT / "risk_coverage.pdf", bbox_inches="tight")
@@ -59,7 +80,7 @@ def gap_figure():
     ax.bar([i - w/2 for i in x], stable, w, label="Rubric-stable", color=CB["green"])
     ax.bar([i + w/2 for i in x], unstable, w, label="Rubric-unstable", color=CB["orange"])
     ax.axhline(0.5, ls=":", color=CB["black"], lw=0.8, alpha=0.6)
-    ax.set_ylabel("Judge accuracy", fontsize=9)
+    ax.set_ylabel("Judge accuracy", fontsize=9, fontweight="bold")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=7.5, rotation=15)
     ax.set_ylim(0, 1.0); ax.grid(axis="y", alpha=0.25, lw=0.4)
     ax.legend(fontsize=8, loc="upper right")
