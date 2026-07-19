@@ -1,0 +1,95 @@
+Total items qwen-7b/tldr: 2000
+Already done: 0
+Remaining: 2000
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:00<01:44,  3.24it/s]Loading weights:   1%|          | 2/339 [00:00<01:20,  4.18it/s]Loading weights:   0%|          | 1/339 [00:00<03:23,  1.66it/s]Loading weights:   1%|          | 4/339 [00:00<01:01,  5.43it/s]Loading weights:   2%|▏         | 6/339 [00:00<00:47,  7.00it/s]Loading weights:   6%|▋         | 22/339 [00:01<00:10, 30.73it/s]Loading weights:   1%|          | 2/339 [00:01<03:04,  1.83it/s]Loading weights:   8%|▊         | 26/339 [00:01<00:09, 32.39it/s]Loading weights:   5%|▍         | 16/339 [00:01<00:17, 18.07it/s]Loading weights:  12%|█▏        | 39/339 [00:01<00:05, 51.76it/s]Loading weights:   6%|▌         | 20/339 [00:01<00:15, 20.95it/s]Loading weights:  14%|█▎        | 46/339 [00:01<00:06, 46.35it/s]Loading weights:   9%|▊         | 29/339 [00:01<00:11, 28.00it/s]Loading weights:  15%|█▌        | 52/339 [00:01<00:07, 40.50it/s]Loading weights:  11%|█         | 37/339 [00:01<00:09, 31.99it/s]Loading weights:  17%|█▋        | 57/339 [00:01<00:06, 42.07it/s]Loading weights:  14%|█▎        | 46/339 [00:01<00:07, 41.18it/s]Loading weights:  19%|█▉        | 64/339 [00:02<00:06, 39.42it/s]Loading weights:  15%|█▌        | 52/339 [00:02<00:07, 37.78it/s]Loading weights:  22%|██▏       | 75/339 [00:02<00:05, 45.20it/s]Loading weights:  19%|█▊        | 63/339 [00:02<00:05, 51.58it/s]Loading weights:  24%|██▍       | 82/339 [00:02<00:06, 42.05it/s]Loading weights:  28%|██▊       | 94/339 [00:02<00:04, 56.76it/s]Loading weights:  21%|██        | 70/339 [00:02<00:07, 34.02it/s]Loading weights:  30%|██▉       | 101/339 [00:02<00:04, 58.38it/s]Loading weights:  32%|███▏      | 108/339 [00:02<00:04, 49.95it/s]Loading weights:  22%|██▏       | 76/339 [00:02<00:09, 29.12it/s]Loading weights:  34%|███▎      | 114/339 [00:03<00:05, 43.42it/s]Loading weights:  26%|██▌       | 88/339 [00:03<00:06, 41.80it/s]Loading weights:  28%|██▊       | 95/339 [00:03<00:06, 39.99it/s]Loading weights:  37%|███▋      | 124/339 [00:03<00:05, 39.26it/s]Loading weights:  39%|███▉      | 132/339 [00:03<00:04, 45.54it/s]Loading weights:  31%|███▏      | 106/339 [00:03<00:05, 39.13it/s]Loading weights:  42%|████▏     | 144/339 [00:03<00:03, 50.79it/s]Loading weights:  45%|████▌     | 154/339 [00:03<00:03, 59.13it/s]Loading weights:  47%|████▋     | 161/339 [00:03<00:02, 61.29it/s]Loading weights:  33%|███▎      | 112/339 [00:03<00:07, 28.54it/s]Loading weights:  51%|█████     | 172/339 [00:04<00:02, 59.55it/s]Loading weights:  35%|███▌      | 120/339 [00:04<00:06, 35.27it/s]Loading weights:  53%|█████▎    | 179/339 [00:04<00:03, 51.08it/s]Loading weights:  37%|███▋      | 126/339 [00:04<00:06, 34.03it/s]Loading weights:  39%|███▉      | 132/339 [00:04<00:06, 32.83it/s]Loading weights:  55%|█████▍    | 185/339 [00:04<00:03, 43.62it/s]Loading weights:  57%|█████▋    | 194/339 [00:04<00:03, 43.62it/s]Loading weights:  61%|██████    | 207/339 [00:04<00:02, 50.90it/s]Loading weights:  63%|██████▎   | 214/339 [00:05<00:02, 46.55it/s]Loading weights:  68%|██████▊   | 229/339 [00:05<00:01, 64.84it/s]Loading weights:  43%|████▎     | 146/339 [00:05<00:08, 23.35it/s]Loading weights:  70%|██████▉   | 237/339 [00:05<00:01, 56.89it/s]Loading weights:  46%|████▋     | 157/339 [00:05<00:05, 31.92it/s]Loading weights:  72%|███████▏  | 244/339 [00:05<00:01, 49.64it/s]Loading weights:  76%|███████▌  | 256/339 [00:05<00:01, 53.18it/s]Loading weights:  78%|███████▊  | 264/339 [00:05<00:01, 57.70it/s]Loading weights:  48%|████▊     | 163/339 [00:05<00:08, 21.99it/s]Loading weights:  81%|████████▏ | 276/339 [00:06<00:01, 58.53it/s]Loading weights:  50%|████▉     | 168/339 [00:06<00:06, 24.59it/s]Loading weights:  51%|█████▏    | 174/339 [00:06<00:05, 28.84it/s]Loading weights:  83%|████████▎ | 283/339 [00:06<00:01, 43.75it/s]Loading weights:  54%|█████▎    | 182/339 [00:06<00:04, 31.98it/s]Loading weights:  85%|████████▌ | 289/339 [00:06<00:01, 45.82it/s]Loading weights:  55%|█████▌    | 187/339 [00:06<00:05, 30.31it/s]Loading weights:  87%|████████▋ | 295/339 [00:06<00:00, 47.30it/s]Loading weights:  90%|████████▉ | 304/339 [00:06<00:00, 47.17it/s]Loading weights:  58%|█████▊    | 196/339 [00:06<00:05, 26.89it/s]Loading weights:  91%|█████████▏| 310/339 [00:06<00:00, 42.36it/s]Loading weights:  60%|██████    | 204/339 [00:07<00:03, 33.77it/s]Loading weights:  94%|█████████▎| 317/339 [00:07<00:00, 46.73it/s]Loading weights:  96%|█████████▌| 324/339 [00:07<00:00, 43.57it/s]Loading weights:  62%|██████▏   | 209/339 [00:07<00:04, 31.17it/s]Loading weights:  97%|█████████▋| 329/339 [00:07<00:00, 44.84it/s]Loading weights:  64%|██████▍   | 217/339 [00:07<00:03, 34.22it/s]Loading weights: 100%|██████████| 339/339 [00:07<00:00, 45.26it/s]
+Loading weights:  68%|██████▊   | 231/339 [00:07<00:02, 52.16it/s]Loading weights:  71%|███████   | 239/339 [00:07<00:01, 56.79it/s]Loading weights:  73%|███████▎  | 247/339 [00:07<00:01, 51.43it/s]Loading weights:  76%|███████▌  | 256/339 [00:07<00:01, 57.06it/s]Loading weights:  78%|███████▊  | 266/339 [00:08<00:01, 55.91it/s]Loading weights:  83%|████████▎ | 280/339 [00:08<00:00, 60.69it/s]Loading weights:  86%|████████▌ | 291/339 [00:08<00:00, 70.36it/s]Loading weights:  89%|████████▉ | 303/339 [00:08<00:00, 80.46it/s]Loading weights:  92%|█████████▏| 312/339 [00:08<00:00, 67.83it/s]Loading weights:  95%|█████████▍| 322/339 [00:08<00:00, 74.28it/s]Loading weights:  98%|█████████▊| 331/339 [00:08<00:00, 77.27it/s]Loading weights: 100%|██████████| 339/339 [00:08<00:00, 38.02it/s]
+[LocalHFJudge] Loaded Qwen/Qwen2.5-7B-Instruct on cuda in 19.0s
+[Worker 1698] Loaded Qwen/Qwen2.5-7B-Instruct
+[LocalHFJudge] Loaded Qwen/Qwen2.5-7B-Instruct on cuda in 19.5s
+[Worker 1699] Loaded Qwen/Qwen2.5-7B-Instruct
+  25/2000 (25w 0f) rate=513/h
+  50/2000 (50w 0f) rate=598/h
+  75/2000 (75w 0f) rate=626/h
+  100/2000 (100w 0f) rate=639/h
+  125/2000 (125w 0f) rate=629/h
+  150/2000 (150w 0f) rate=639/h
+  175/2000 (175w 0f) rate=642/h
+  200/2000 (200w 0f) rate=650/h
+  225/2000 (225w 0f) rate=644/h
+  250/2000 (250w 0f) rate=649/h
+  275/2000 (275w 0f) rate=652/h
+  300/2000 (300w 0f) rate=654/h
+  325/2000 (325w 0f) rate=650/h
+  350/2000 (350w 0f) rate=654/h
+  375/2000 (375w 0f) rate=656/h
+  400/2000 (400w 0f) rate=658/h
+  425/2000 (425w 0f) rate=656/h
+  450/2000 (450w 0f) rate=659/h
+  475/2000 (475w 0f) rate=660/h
+  500/2000 (500w 0f) rate=662/h
+  525/2000 (525w 0f) rate=662/h
+  550/2000 (550w 0f) rate=663/h
+  575/2000 (575w 0f) rate=661/h
+  600/2000 (600w 0f) rate=663/h
+  625/2000 (625w 0f) rate=663/h
+  650/2000 (650w 0f) rate=663/h
+  675/2000 (675w 0f) rate=663/h
+  700/2000 (700w 0f) rate=664/h
+  725/2000 (725w 0f) rate=662/h
+  750/2000 (750w 0f) rate=663/h
+  775/2000 (775w 0f) rate=663/h
+  800/2000 (800w 0f) rate=664/h
+  825/2000 (825w 0f) rate=663/h
+  850/2000 (850w 0f) rate=664/h
+  875/2000 (875w 0f) rate=663/h
+  900/2000 (900w 0f) rate=664/h
+  925/2000 (925w 0f) rate=662/h
+  950/2000 (950w 0f) rate=662/h
+  975/2000 (975w 0f) rate=663/h
+  1000/2000 (1000w 0f) rate=665/h
+  1025/2000 (1025w 0f) rate=663/h
+  1050/2000 (1050w 0f) rate=664/h
+  1075/2000 (1075w 0f) rate=664/h
+  1100/2000 (1100w 0f) rate=665/h
+  1125/2000 (1125w 0f) rate=663/h
+  1150/2000 (1150w 0f) rate=664/h
+  1175/2000 (1175w 0f) rate=664/h
+  1200/2000 (1200w 0f) rate=664/h
+  1225/2000 (1225w 0f) rate=663/h
+  1250/2000 (1250w 0f) rate=664/h
+  1275/2000 (1275w 0f) rate=664/h
+  1300/2000 (1300w 0f) rate=665/h
+  1325/2000 (1325w 0f) rate=664/h
+  1350/2000 (1350w 0f) rate=664/h
+  1375/2000 (1375w 0f) rate=664/h
+  1400/2000 (1400w 0f) rate=665/h
+  1425/2000 (1425w 0f) rate=664/h
+  1450/2000 (1450w 0f) rate=665/h
+  1475/2000 (1475w 0f) rate=665/h
+  1500/2000 (1500w 0f) rate=665/h
+  1525/2000 (1525w 0f) rate=664/h
+  1550/2000 (1550w 0f) rate=665/h
+  1575/2000 (1575w 0f) rate=664/h
+  1600/2000 (1600w 0f) rate=665/h
+  1625/2000 (1625w 0f) rate=665/h
+  1650/2000 (1650w 0f) rate=665/h
+  1675/2000 (1675w 0f) rate=665/h
+  1700/2000 (1700w 0f) rate=666/h
+  1725/2000 (1725w 0f) rate=665/h
+  1750/2000 (1750w 0f) rate=666/h
+  1775/2000 (1775w 0f) rate=665/h
+  1800/2000 (1800w 0f) rate=666/h
+  1825/2000 (1825w 0f) rate=666/h
+  1850/2000 (1850w 0f) rate=666/h
+  1875/2000 (1875w 0f) rate=666/h
+  1900/2000 (1900w 0f) rate=666/h
+  1925/2000 (1925w 0f) rate=666/h
+  1950/2000 (1950w 0f) rate=667/h
+  1975/2000 (1975w 0f) rate=666/h
+  2000/2000 (2000w 0f) rate=667/h
+DONE qwen-7b/tldr: 2000 written, 0 failed in 180.0min
+Final: 2000 records
