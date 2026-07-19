@@ -60,14 +60,7 @@ The three protocol-stability families (position, rubric, self-consistency) are t
 \subsection{Correctness Calibration}
 \label{sec:method:calibration}
 
-We fit a calibrator $\hat{p}: \mathbb{R}^d \to [0,1]$ that predicts the probability that the judge's verdict is correct given the feature vector:
-\begin{equation}
-    \hat{p}(x) = P\!\left(\hat{f}(x) = y \mid \boldsymbol{\phi}(x)\right),
-    \label{eq:calibrator}
-\end{equation}
-where $y$ is the reference label.
-We support logistic regression, isotonic regression, and gradient-boosted classifiers.
-The calibrator is fit on a \emph{training split} $D_{\text{train}}$ that is disjoint from both the threshold-selection set and the evaluation set.
+We fit a calibrator $\hat{p}(x) = P(\hat{f}(x){=}y \mid \boldsymbol{\phi}(x))$ predicting the probability that the judge's verdict is correct given the features ($y$ the reference label), supporting logistic, isotonic, and gradient-boosted variants. It is fit on a \emph{training split} $D_{\text{train}}$ disjoint from both the threshold-selection and evaluation sets.
 
 \subsection{Empirical Risk-Targeted Threshold Calibration}
 \label{sec:method:risk}

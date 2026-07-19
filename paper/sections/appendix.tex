@@ -63,6 +63,29 @@ An output that cannot be parsed as $A$/$B$ is retried once. If it is still unpar
 \paragraph{Rubric variants and the negative control (full detail).}
 The $K{=}3$ rubric paraphrases used for the rubric-stability signal are reproduced verbatim in the released prompt file. They were written to hold the evaluation target (which response is better) fixed while varying wording. The negative-control experiment summarized in Section~\ref{sec:exp:main} used an \emph{intentionally non-equivalent} rubric set (one emphasizing brevity, one thoroughness, one formality) on both a mid-capability judge (DeepSeek-V4) and a near-random judge (Qwen2.5-1.5B), both on JudgeBench. The full per-condition counts are: \textbf{DeepSeek-V4}---equivalent set flip rate 12.8\% (46/359) vs.\ non-equivalent 28.0\% (151/539), a $2.2\times$ ratio; \textbf{Qwen2.5-1.5B}---equivalent 31.0\% (189/610) vs.\ non-equivalent 16.7\% (102/610), i.e.\ the non-equivalent set was if anything \emph{more} stable. The mid-capability judge moves when the criterion genuinely changes (so equivalent-rubric flips are a conservative floor on real instability), whereas the near-random judge latches onto surface features regardless of rubric content. This closes the loop on the competence-gated asymmetry.
 
+\section{Head-to-Head System Comparison (Full Table)}
+\label{app:threeway}
+Table~\ref{tab:threeway} reports the full three-way \emph{system} comparison summarized in Section~\ref{sec:exp:comparison}, at the matched six-call budget.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\caption{Three-way system comparison: held-out AUROC at the matched six-call budget (20 seeds, strict 40/30/30 split). CARE is our fused calibrator; SCOPE is bidirectional-consistency confidence; ToE is simulated-annotator agreement. Best per column in \textbf{bold}. Against full systems (not isolated raw signals) CARE wins all eight pairs.}
+\label{tab:threeway}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+& \multicolumn{4}{c}{DeepSeek-V4} & \multicolumn{4}{c}{GPT-5.5} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Method & JB & TL;DR & RB & Arena & JB & TL;DR & RB & Arena \\
+\midrule
+\textbf{CARE (fusion)} & \textbf{.603} & \textbf{.675} & \textbf{.831} & \textbf{.678} & \textbf{.986} & \textbf{.862} & \textbf{.990} & \textbf{.845} \\
+SCOPE (bidir.) & .561 & .616 & .606 & .615 & .177 & .315 & .268 & .320 \\
+ToE (sim.\ agr.) & .510 & .519 & .513 & .517 & .494 & .500 & .500 & .502 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Feature Definitions}
 \label{app:features}
 Table~\ref{tab:featdef} defines all 13 features of the vector $\boldsymbol\phi(x)$ in Eq.~\eqref{eq:features}. Confidence values are the judge's verbalized self-reported confidence in $[0,1]$; entropies are computed over the empirical winner distribution across the relevant call set and normalized to $[0,1]$.
