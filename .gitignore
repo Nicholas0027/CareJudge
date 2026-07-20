@@ -31,3 +31,11 @@ Thumbs.db
 .env
 *.key
 *.pem
+
+# LaTeX build artifacts
+paper/main.aux
+paper/main.blg
+paper/main.log
+paper/main.out
+paper/main.fls
+paper/main.fdb_latexmk

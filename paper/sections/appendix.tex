@@ -58,7 +58,7 @@ GPT-5.5 was queried through an OpenAI-compatible endpoint at its default reasoni
 All local judges (the Qwen2.5 ladder) were run on a single 32\,GB consumer GPU (RTX 5090). The 1.5B judge collects features at $\approx$1{,}500 items/hour, the 7B at $\approx$450/hour, and the 14B at $\approx$200/hour; total local feature collection for the ladder was under 40 GPU-hours. Each item consumes exactly six judge calls, so feature collection for the API judges required $6\times6{,}620\approx40{,}000$ calls per API model (DeepSeek-V4 and GPT-5.5), plus $2\times898$ additional calls for the DeepSeek negative-control. The calibrator fit and all 20-seed analyses run in minutes on a CPU. This modest budget is intentional: CARE-Judge is designed to be reproducible on a single commodity GPU plus metered API access.
 
 \paragraph{Tie and invalid handling.}
-An output that cannot be parsed as $A$/$B$ is retried once. If it is still unparseable we record it as an explicit \texttt{invalid} state rather than silently mapping it to the base verdict: an \texttt{invalid} perturbation call counts as a \emph{disagreement} with the base verdict, so it \emph{lowers} the corresponding stability signal and can only push an item toward abstention. We deliberately avoid the tempting shortcut of mapping invalid$\to$base verdict, because that would artificially inflate measured stability (an unparseable output would be counted as agreement). Invalid rates are below 3\% for every judge--benchmark pair. For the preference benchmarks (TL;DR, LMArena) genuine ties in the human label are dropped before evaluation; JudgeBench and RewardBench carry objective correct/incorrect labels and contain no ties.
+An output that cannot be parsed as $A$/$B$ is retried once. If it is still unparseable we record it as an explicit \texttt{invalid} state rather than silently mapping it to the base verdict: an \texttt{invalid} perturbation call counts as a \emph{disagreement} with the base verdict, so it \emph{lowers} the corresponding stability signal and can only push an item toward abstention. We deliberately avoid the tempting shortcut of mapping invalid$\to$base verdict, because that would artificially inflate measured stability (an unparseable output would be counted as agreement). Genuine parse-invalid rates (the model returned an output we could not map to $A$/$B$) are below 3\% for every judge--benchmark pair. We distinguish these from \emph{transient API-service failures} (rate-limit/quota responses that return no model output): during GPT-5.5 collection a subset of calls failed this way, and because such failures reflect infrastructure rather than judge behavior we \emph{exclude} the affected items from GPT-5.5's analysis rather than count them as verdicts. The retained per-benchmark sample sizes for GPT-5.5 are JudgeBench 620, TL;DR 2{,}000, RewardBench 1{,}999, and LMArena 1{,}999 (Table~\ref{tab:main}); all other judges retain their full sets. For the preference benchmarks (TL;DR, LMArena) genuine ties in the human label are dropped before evaluation; JudgeBench and RewardBench carry objective correct/incorrect labels and contain no ties.
 
 \paragraph{Rubric variants and the negative control (full detail).}
 The $K{=}3$ rubric paraphrases used for the rubric-stability signal are reproduced verbatim in the released prompt file. They were written to hold the evaluation target (which response is better) fixed while varying wording. The negative-control experiment summarized in Section~\ref{sec:exp:main} used an \emph{intentionally non-equivalent} rubric set (one emphasizing brevity, one thoroughness, one formality) on both a mid-capability judge (DeepSeek-V4) and a near-random judge (Qwen2.5-1.5B), both on JudgeBench. The full per-condition counts are: \textbf{DeepSeek-V4}---equivalent set flip rate 12.8\% (46/359) vs.\ non-equivalent 28.0\% (151/539), a $2.2\times$ ratio; \textbf{Qwen2.5-1.5B}---equivalent 31.0\% (189/610) vs.\ non-equivalent 16.7\% (102/610), i.e.\ the non-equivalent set was if anything \emph{more} stable. The mid-capability judge moves when the criterion genuinely changes (so equivalent-rubric flips are a conservative floor on real instability), whereas the near-random judge latches onto surface features regardless of rubric content. This closes the loop on the competence-gated asymmetry.
@@ -79,9 +79,9 @@ Table~\ref{tab:threeway} reports the full three-way \emph{system} comparison sum
 \cmidrule(lr){2-5}\cmidrule(lr){6-9}
 Method & JB & TL;DR & RB & Arena & JB & TL;DR & RB & Arena \\
 \midrule
-\textbf{CARE (fusion)} & \textbf{.603} & \textbf{.675} & \textbf{.831} & \textbf{.678} & \textbf{.986} & \textbf{.862} & \textbf{.990} & \textbf{.845} \\
-SCOPE (bidir.) & .561 & .616 & .606 & .615 & .177 & .315 & .268 & .320 \\
-ToE (sim.\ agr.) & .510 & .519 & .513 & .517 & .494 & .500 & .500 & .502 \\
+\textbf{CARE (fusion)} & \textbf{.603} & \textbf{.675} & \textbf{.831} & \textbf{.678} & \textbf{.834} & \textbf{.667} & \textbf{.888} & \textbf{.645} \\
+SCOPE (bidir.) & .561 & .616 & .606 & .615 & .695 & .629 & .757 & .571 \\
+ToE (sim.\ agr.) & .510 & .519 & .513 & .517 & .526 & .511 & .499 & .510 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -250,10 +250,10 @@ Model & Data & \textbf{CARE} & SCOPE & MajVote & WtdVote \\
  & RB & \textbf{0.831} & 0.606 & 0.675 & 0.810 \\
  & Arena & \textbf{0.678} & 0.615 & 0.612 & 0.616 \\
 \midrule
-\multirow{4}{*}{GPT-5.5} & JB & \textbf{0.986} & 0.177 & 0.974 & 0.985 \\
- & TL;DR & 0.862 & 0.315 & 0.808 & \textbf{0.864} \\
- & RB & 0.990 & 0.268 & 0.959 & \textbf{0.991} \\
- & Arena & \textbf{0.845} & 0.320 & 0.804 & 0.845 \\
+\multirow{4}{*}{GPT-5.5} & JB & \textbf{0.834} & 0.695 & 0.583 & 0.806 \\
+ & TL;DR & 0.667 & 0.629 & 0.570 & \textbf{0.673} \\
+ & RB & 0.888 & 0.757 & 0.600 & \textbf{0.899} \\
+ & Arena & \textbf{0.645} & 0.571 & 0.568 & 0.643 \\
 \midrule
 \multirow{4}{*}{Qwen} & JB & 0.523 & \textbf{0.534} & 0.505 & 0.509 \\
  & TL;DR & \textbf{0.583} & 0.570 & 0.544 & 0.494 \\
@@ -278,10 +278,10 @@ Model & Data & \textbf{FULL} & protocol & conf & length \\
  & RB & \textbf{0.831} & 0.699 & 0.828 & 0.622 \\
  & Arena & \textbf{0.678} & 0.654 & 0.680 & 0.531 \\
 \midrule
-\multirow{4}{*}{GPT-5.5} & JB & 0.986 & 0.971 & \textbf{0.988} & 0.531 \\
- & TL;DR & 0.862 & 0.826 & \textbf{0.865} & 0.517 \\
- & RB & 0.990 & 0.971 & \textbf{0.991} & 0.502 \\
- & Arena & 0.845 & 0.815 & \textbf{0.849} & 0.503 \\
+\multirow{4}{*}{GPT-5.5} & JB & 0.834 & 0.692 & \textbf{0.847} & 0.510 \\
+ & TL;DR & 0.667 & 0.636 & \textbf{0.673} & 0.519 \\
+ & RB & 0.888 & 0.782 & \textbf{0.906} & 0.669 \\
+ & Arena & 0.645 & 0.598 & \textbf{0.647} & 0.505 \\
 \midrule
 \multirow{4}{*}{Qwen} & JB & 0.523 & \textbf{0.535} & 0.494 & 0.497 \\
  & TL;DR & \textbf{0.583} & 0.580 & 0.581 & 0.536 \\
