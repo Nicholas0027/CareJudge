@@ -49,7 +49,17 @@ elif JUDGE_NAME=='qwen':
 
 out=f'outputs/scale/{pfx}_{BENCH_NAME}_features.jsonl'
 os.makedirs('outputs/scale',exist_ok=True)
-done=sum(1 for _ in open(out)) if os.path.exists(out) else 0; items=items[done:]
+# Resume by ID (robust to rows deleted mid-file, e.g. after cleaning contaminated
+# API-error rows): collect exactly the items whose id is not already present.
+done_ids=set()
+if os.path.exists(out):
+    for _l in open(out):
+        _l=_l.strip()
+        if not _l: continue
+        try: done_ids.add(json.loads(_l)['id'])
+        except: pass
+items=[it for it in items if it.id not in done_ids]
+print(f'resume-by-id: {len(done_ids)} done, {len(items)} remaining',flush=True)
 def process(it):
     try:return it.id,collect_with_call_trace(it,j,R,k_self=3,temperature=0.7)
     except:return it.id,None
@@ -62,6 +72,6 @@ with ThreadPoolExecutor(max_workers=WORKERS)as ex:
                 iid,row=fut.result()
                 if row:f.write(json.dumps(row)+'\n');f.flush()
             except:pass
-            if(i+1)%50==0:print(f'  {done+i+1}/{done+len(items)}',flush=True)
+            if(i+1)%50==0:print(f'  {len(done_ids)+i+1}/{len(done_ids)+len(items)}',flush=True)
 elapsed=time.time()-t0
 print(f'DONE {JUDGE_NAME}/{BENCH_NAME} {len(items)} in {elapsed/60:.1f}min ({len(items)/elapsed*3600:.0f}/h)',flush=True)
