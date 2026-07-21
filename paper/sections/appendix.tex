@@ -324,3 +324,27 @@ Model & Data & \textbf{FULL} & protocol & conf & length \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{Length Bias by Judge and Benchmark}
+\label{app:length}
+
+Table~\ref{tab:lengthbias} reports how often each judge selects the \emph{longer} of the two responses, recovered by aligning the feature traces with the raw responses in \texttt{data/} (the \texttt{length\_gap} feature stores only the unsigned magnitude, so direction is recomputed here via \texttt{scripts/compute\_signal\_gaps.py}). Two patterns emerge. First, length preference is benchmark-driven: on the objectively-labeled JudgeBench and RewardBench every judge is near $50\%$ (no systematic length preference), whereas on the preference benchmarks TL;DR and LMArena all judges lean long, tracking the human label's own length correlation. Second, on LMArena the lean toward longer responses \emph{decreases} with judge accuracy ($67\%$ for Qwen2.5-1.5B down to $53\%$ for GPT-5.5), consistent with competence-gating: a stronger judge relies less on the length heuristic. This also explains why the length feature group is near-chance in the ablation (Table~\ref{tab:featgroup}).
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Percentage of decisions selecting the \emph{longer} response (ties excluded), by judge and benchmark. Values near $50\%$ indicate no systematic length preference; ``--'' marks judge--benchmark pairs not run.}
+\label{tab:lengthbias}
+\begin{tabular}{lrrrr}
+\toprule
+Judge & JB & TL;DR & RB & Arena \\
+\midrule
+Qwen2.5-1.5B & 52 & 60 & 57 & 67 \\
+DeepSeek-V4 & 46 & 59 & 48 & 66 \\
+Qwen2.5-7B & 48 & 57 & 46 & 61 \\
+GPT-5.5 & 44 & 58 & 43 & 53 \\
+Qwen2.5-14B & 47 & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
