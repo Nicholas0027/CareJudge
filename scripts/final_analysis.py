@@ -88,6 +88,17 @@ def selective(p_cal, y_cal, p_test, y_test, alpha=0.15):
 
 def scope_scores(rows):
     return np.array([(1.0-abs(float(r.get("feat_swap_conf_gap",0))))*float(r.get("feat_swap_consistency",0.5)) for r in rows])
+def conformal_scores(rows):
+    # SConU-style conformity: mean of the four agreement signals (base confidence,
+    # self-consistency, swap-consistency, rubric vote-share). Higher = more
+    # conformal. A distribution-free split-conformal threshold on this score is
+    # what the conformal baseline uses to accept/abstain; here we return the raw
+    # conformity score whose AUROC-vs-correctness is directly comparable to the
+    # learned fusion (CARE) and to SCOPE.
+    return np.array([np.mean([float(r.get("feat_base_conf",0.5)),
+                              float(r.get("feat_self_vote_share",0.5)),
+                              float(r.get("feat_swap_consistency",0.5)),
+                              float(r.get("feat_rubric_vote_share",0.5))]) for r in rows])
 def toe_scores(rows):
     return np.array([max(float(r.get("feat_rubric_vote_share",0.5)),float(r.get("feat_self_vote_share",0.5)),float(r.get("feat_swap_consistency",0.5))) for r in rows])
 def base_scores(rows):
