@@ -67,6 +67,56 @@ def main():
         so = sum(1 for r in rows if r["feat_swap_consistency"] == 0) / len(rows)
         sw_so = sum(1 for r in sw if r["feat_swap_consistency"] == 0) / len(sw)
         print(f"  swap-inconsistent: overall={so*100:.1f}%  among stable-wrong={sw_so*100:.1f}%")
+        # length bias needs the raw responses (data/*_2k.jsonl), aligned by id
+        print(length_bias_report())
+
+
+def _len_map(bench_file):
+    import json as _j
+    return {_j.loads(l)["id"]: _j.loads(l) for l in open(f"data/{bench_file}.jsonl")}
+
+
+def picks_longer(rows, dmap):
+    longer = tot = 0
+    for r in rows:
+        if r["pred"] not in ("A", "B"):
+            continue
+        d = dmap.get(r["id"])
+        if not d:
+            continue
+        la, lb = len(d["response_a"]), len(d["response_b"])
+        if la == lb:
+            continue
+        picked = la if r["pred"] == "A" else lb
+        other = lb if r["pred"] == "A" else la
+        tot += 1
+        longer += picked > other
+    return longer, tot
+
+
+def length_bias_report():
+    """Length-bias direction per judge/benchmark, and on the stable-wrong subset.
+
+    feat_length_gap_norm stores only |len(A)-len(B)| (unsigned), so direction is
+    recovered from the raw responses in data/*_2k.jsonl aligned by id.
+    """
+    files = {"judgebench": "judgebench_2k", "tldr": "tldr_2k",
+             "rewardbench": "rewardbench_2k", "lmaarena": "lmaarena_2k"}
+    out = ["\n[Length bias] % of decisions that pick the LONGER response:"]
+    for jk, jn in JUDGES:
+        for bk, bn in BENCHES:
+            rows = load(jk, bk)
+            if not rows:
+                continue
+            lo, to = picks_longer(rows, _len_map(files[bk]))
+            if to:
+                out.append(f"  {jn:13s}{bn:12s} {lo/to*100:5.1f}%  (n={to})")
+    # stable-wrong subset for the below-threshold judge
+    rows = load("qwen-1.5b", "judgebench") or []
+    sw = [r for r in rows if r["feat_rubric_flip"] == 0 and r["correct"] == 0]
+    lo, to = picks_longer(sw, _len_map("judgebench_2k"))
+    out.append(f"  Qwen-1.5B/JudgeBench stable-wrong: {lo/to*100:.1f}% longer (n={to})")
+    return "\n".join(out)
 
 
 if __name__ == "__main__":
