@@ -85,22 +85,36 @@ def gap_figure():
         "GPT-5.5/JB": (0.931, 0.667),
         "GPT-5.5/RB": (0.962, 0.692),
     }
+    # Refined blue/grey palette: rubric-stable (the signal we highlight) in a
+    # deep, low-saturation steel blue; rubric-unstable in a neutral grey so the
+    # eye reads the stable bars as the focus. Muted, editorial look.
+    STABLE_FILL, STABLE_EDGE = "#2F5D8A", "#20415F"   # steel blue
+    UNSTABLE_FILL, UNSTABLE_EDGE = "#BFC4CC", "#9AA0A8"  # neutral grey
     fig, ax = plt.subplots(figsize=(7.0, 2.6))
     labels = list(data.keys())
     stable = [data[k][0] for k in labels]
     unstable = [data[k][1] for k in labels]
     x = range(len(labels))
     w = 0.38
-    ax.bar([i - w/2 for i in x], stable, w, label="Rubric-stable", color=CB["green"])
-    ax.bar([i + w/2 for i in x], unstable, w, label="Rubric-unstable", color=CB["orange"])
-    ax.axhline(0.5, ls=":", color=CB["black"], lw=0.8, alpha=0.6)
-    ax.set_ylabel("Judge accuracy", fontsize=9, fontweight="bold")
+    ax.bar([i - w/2 for i in x], stable, w, label="Rubric-stable",
+           color=STABLE_FILL, edgecolor=STABLE_EDGE, linewidth=0.6, zorder=3)
+    ax.bar([i + w/2 for i in x], unstable, w, label="Rubric-unstable",
+           color=UNSTABLE_FILL, edgecolor=UNSTABLE_EDGE, linewidth=0.6, zorder=3)
+    ax.axhline(0.5, ls=(0, (4, 3)), color="#6B7078", lw=0.8, alpha=0.7, zorder=2)
+    ax.text(len(labels) - 0.5, 0.505, "chance", fontsize=6.5, color="#6B7078",
+            ha="right", va="bottom")
+    ax.set_ylabel("Judge accuracy", fontsize=9, fontweight="bold", color="#2B2B2B")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=7.5, rotation=15)
-    ax.set_ylim(0, 1.0); ax.grid(axis="y", alpha=0.25, lw=0.4)
-    # Place the legend above the axes (horizontal) so it never overlaps the bars.
+    ax.set_ylim(0, 1.0); ax.grid(axis="y", alpha=0.18, lw=0.4, color="#9AA0A8")
+    ax.set_axisbelow(True)
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+    for s in ("left", "bottom"):
+        ax.spines[s].set_color("#9AA0A8")
+    # Legend above the axes (horizontal) so it never overlaps the bars.
     ax.legend(fontsize=8, loc="lower center", bbox_to_anchor=(0.5, 1.02),
               ncol=2, frameon=False, borderaxespad=0.0)
-    ax.tick_params(labelsize=8)
+    ax.tick_params(labelsize=8, colors="#2B2B2B")
     fig.tight_layout()
     fig.savefig(OUT / "signal_gap.pdf", bbox_inches="tight")
     print("wrote signal_gap.pdf")
