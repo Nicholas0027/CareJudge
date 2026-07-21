@@ -56,14 +56,14 @@ Model & Dataset & $N$ & Cov.\ & Acc.\ & Viol.\ & base & swap & rubric & best-1 &
 \end{table*}
 
 \paragraph{Protocol instability and judge error (RQ1).}
-For DeepSeek-V4 (verdicts flip on 6--20\% of items), rubric and position-swap instability separate lower-accuracy subsets on all four benchmarks (Fig.~\ref{fig:gap}, Appendix~\ref{app:signals}): the RewardBench gap is largest, with rubric-stable verdicts at 93.7\% accuracy versus 66.4\% when unstable ($+27.4$pp), and all DeepSeek gaps are positive ($+4.1$ to $+27.4$pp). The relationship is capability-gated and can invert: for the frontier GPT-5.5 (rubric-flip $<$8\%) unstable items are not systematically wrong, and on RewardBench the gap reverses ($-5.3$pp rubric, $-14.2$pp position), as its rare disagreements fall on ambiguous pairs. The signal is thus a mid-accuracy warning rather than a universal one; the learned calibrator (RQ2) still recovers usable structure where a single raw gap is small or reversed.
+On the two judges with a per-signal subset breakdown (DeepSeek-V4 and GPT-5.5, on JudgeBench and TL;DR; Fig.~\ref{fig:gap}, Appendix~\ref{app:signals}), rubric- and position-stable verdicts are consistently more accurate than unstable ones. For DeepSeek-V4 the rubric gap is $+16.0$pp on JudgeBench ($0.700$ vs.\ $0.540$) and $+15.1$pp on TL;DR, and the position gap reaches $+54.0$pp on TL;DR ($0.783$ vs.\ $0.243$). The gap persists for the frontier GPT-5.5, but its unstable subset is small (rubric-flip $<$8\% of items), so the signal flags few verdicts and bounds how much it can add once a judge is near-saturated (RQ2). On the other benchmarks we rely on the matched-budget AUROC of the learned calibrator (Table~\ref{tab:main}), which fuses all three signal families rather than a single raw gap.
 
 \emph{Negative control.} To rule out that equivalent-rubric flips are mere wording noise, we contrast the $K{=}3$ equivalent paraphrases against an \emph{intentionally non-equivalent} rubric set (brevity/thoroughness/formality) on JudgeBench. On DeepSeek-V4 the non-equivalent set flips $2.2\times$ more often ($28.0\%$ vs.\ $12.8\%$), so equivalent-rubric flips are a conservative lower bound on real instability, not artifacts; the near-random Qwen-1.5B shows no such ordering ($31.0\%$ vs.\ $16.7\%$), being insensitive to what the rubric asks.
 
 \begin{figure}[tb]
 \centering
 \includegraphics[width=\columnwidth]{figures/signal_gap.pdf}
-\caption{Judge accuracy on rubric-stable (green) vs.\ rubric-unstable (orange) subsets, per judge--benchmark pair; the dotted line marks chance ($0.5$). The stable--unstable gap is positive for the mid-band judge and shrinks or reverses for the frontier judge (analyzed in \S\ref{sec:exp:main}).}
+\caption{Judge accuracy on rubric-stable (green) vs.\ rubric-unstable (orange) subsets, for the two API judges on JudgeBench and TL;DR; the dotted line marks chance ($0.5$). Rubric-stable verdicts are more accurate in every case; the frontier judge (GPT-5.5) keeps a positive gap but flags far fewer verdicts as unstable (analyzed in \S\ref{sec:exp:main}).}
 \label{fig:gap}
 \end{figure}
 
@@ -127,4 +127,4 @@ Qwen2.5-14B & 14B & \laddercraw & \laddercauroc \\
 \subsection{Robustness and Calibration}
 \label{sec:exp:robustness}
 
-Over 20 random splits on DeepSeek/TL;DR, fused AUROC is $0.675 \pm 0.016$ (CV 2.4\%); GPT-5.5's fused scores are well calibrated (ECE $\leq 0.06$) while DeepSeek-V4 is looser (ECE 0.16--0.29). Sweeping $\delta \in \{0.05, 0.10, 0.20\}$ and calibration-set size ($n_{\text{cal}} \in [200, 1000]$) leaves AUROC essentially unchanged ($0.676 \pm 0.001$), so CARE-Judge does not require a large labeled calibration set.
+Over 20 random splits on DeepSeek/TL;DR, fused AUROC is $0.675 \pm 0.016$ (CV 2.4\%); GPT-5.5's fused scores are well calibrated (ECE $\leq 0.06$) while DeepSeek-V4 is looser (ECE 0.16--0.29). Sweeping $\delta \in \{0.05, 0.10, 0.20\}$ and calibration-set size ($n_{\text{cal}} \in [200, 1000]$) leaves AUROC essentially unchanged ($0.676 \pm 0.001$), so CARE-Judge does not require a large labeled calibration set. Varying the risk budget $\alpha$ from $0.05$ to $0.30$ traces the expected coverage/accuracy tradeoff for the two API judges (Table~\ref{tab:alpha}), and the corresponding held-out risk--coverage curves are shown in Appendix~\ref{app:rcfig} (Figure~\ref{fig:rc}).
