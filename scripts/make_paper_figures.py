@@ -72,14 +72,18 @@ def gap_figure():
     on all four benchmarks plus the GPT-5.5/RewardBench inversion. No values
     are hand-set; each pair below matches an appendix row.
     """
-    # (stable_acc, unstable_acc) — rubric signal, from appendix Table tab:signals,
-    # itself taken verbatim from outputs/dual_api_full/results/*_signal_rates.csv.
-    # Only the judge-benchmark pairs with a real per-signal subset breakdown are shown.
+    # (stable_acc, unstable_acc) — rubric signal, recomputed from the per-item
+    # feature traces by scripts/compute_signal_gaps.py (authoritative; matches
+    # appendix Table tab:signals). Ordered by judge accuracy to show the
+    # competence gradient, including the below-threshold reversal
+    # (Qwen-1.5B/RewardBench, where stable < unstable).
     data = {
-        "DeepSeek/JB": (0.700, 0.540),
-        "DeepSeek/TL;DR": (0.689, 0.538),
-        "GPT-5.5/JB": (0.936, 0.811),
-        "GPT-5.5/TL;DR": (0.775, 0.345),
+        "Qwen-1.5B/JB": (0.511, 0.459),
+        "Qwen-1.5B/RB": (0.724, 0.833),      # below-threshold: reversal
+        "DeepSeek/RB": (0.937, 0.664),
+        "Qwen-7B/LMArena": (0.667, 0.496),
+        "GPT-5.5/JB": (0.931, 0.667),
+        "GPT-5.5/RB": (0.962, 0.692),
     }
     fig, ax = plt.subplots(figsize=(7.0, 2.6))
     labels = list(data.keys())

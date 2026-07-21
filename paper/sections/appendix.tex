@@ -227,21 +227,31 @@ The per-benchmark accuracy gaps summarized by Figure~\ref{fig:gap} (in the main 
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{Signal-level accuracy on stable vs.\ unstable subsets, for the two API judges on the two benchmarks with per-signal subset breakdowns (DeepSeek-V4 and GPT-5.5 on JudgeBench and TL;DR; $n$ is the subset size). Columns report the two subset accuracies and their gap per signal.}
+\caption{Signal-level accuracy on stable vs.\ unstable subsets, recomputed from the per-item feature traces (\texttt{scripts/compute\_signal\_gaps.py}) for all four primary judges. Gap $=$ stable $-$ unstable accuracy. Gaps are positive throughout for the mid-accuracy and frontier judges; the only reversals are Qwen2.5-1.5B on RewardBench (rubric $-0.109$, position $-0.110$), the below-threshold regime where the signal inverts (Section~\ref{sec:exp:stablewrong}).}
 \label{tab:signals}
 \begin{tabular}{lllrrr}
 \toprule
 Signal & Model & Dataset & Stable & Unstable & Gap \\
 \midrule
-\multirow{4}{*}{Rubric} & DeepSeek-V4 & JudgeBench & 0.700 & 0.540 & +0.160 \\
- & DeepSeek-V4 & TL;DR & 0.689 & 0.538 & +0.151 \\
- & GPT-5.5 & JudgeBench & 0.936 & 0.811 & +0.125 \\
- & GPT-5.5 & TL;DR & 0.775 & 0.345 & +0.430 \\
+\multirow{8}{*}{Rubric}
+ & Qwen2.5-1.5B & JudgeBench & 0.511 & 0.459 & $+0.052$ \\
+ & Qwen2.5-1.5B & RewardBench & 0.724 & 0.833 & $-0.109$ \\
+ & DeepSeek-V4 & JudgeBench & 0.689 & 0.648 & $+0.041$ \\
+ & DeepSeek-V4 & TL;DR & 0.708 & 0.555 & $+0.153$ \\
+ & DeepSeek-V4 & RewardBench & 0.937 & 0.664 & $+0.274$ \\
+ & DeepSeek-V4 & LMArena & 0.749 & 0.478 & $+0.271$ \\
+ & Qwen2.5-7B & LMArena & 0.667 & 0.496 & $+0.171$ \\
+ & GPT-5.5 & RewardBench & 0.962 & 0.692 & $+0.270$ \\
 \midrule
-\multirow{4}{*}{Position} & DeepSeek-V4 & JudgeBench & 0.713 & 0.589 & +0.124 \\
- & DeepSeek-V4 & TL;DR & 0.783 & 0.243 & +0.540 \\
- & GPT-5.5 & JudgeBench & 0.927 & 0.797 & +0.130 \\
- & GPT-5.5 & TL;DR & 0.773 & 0.387 & +0.386 \\
+\multirow{8}{*}{Position}
+ & Qwen2.5-1.5B & JudgeBench & 0.553 & 0.469 & $+0.084$ \\
+ & Qwen2.5-1.5B & RewardBench & 0.713 & 0.823 & $-0.110$ \\
+ & DeepSeek-V4 & JudgeBench & 0.728 & 0.575 & $+0.153$ \\
+ & DeepSeek-V4 & TL;DR & 0.746 & 0.518 & $+0.228$ \\
+ & DeepSeek-V4 & LMArena & 0.772 & 0.528 & $+0.244$ \\
+ & Qwen2.5-7B & TL;DR & 0.739 & 0.523 & $+0.216$ \\
+ & GPT-5.5 & JudgeBench & 0.929 & 0.621 & $+0.308$ \\
+ & GPT-5.5 & LMArena & 0.729 & 0.524 & $+0.205$ \\
 \bottomrule
 \end{tabular}
 \end{table}
