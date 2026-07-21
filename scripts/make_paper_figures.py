@@ -101,8 +101,8 @@ def gap_figure():
     ax.bar([i + w/2 for i in x], unstable, w, label="Rubric-unstable",
            color=UNSTABLE_FILL, edgecolor=UNSTABLE_EDGE, linewidth=0.6, zorder=3)
     ax.axhline(0.5, ls=(0, (4, 3)), color="#6B7078", lw=0.8, alpha=0.7, zorder=2)
-    ax.text(len(labels) - 0.5, 0.505, "chance", fontsize=6.5, color="#6B7078",
-            ha="right", va="bottom")
+    ax.text(len(labels) - 0.5, 0.515, "random guessing (0.5)", fontsize=6.5,
+            color="#6B7078", ha="right", va="bottom")
     ax.set_ylabel("Judge accuracy", fontsize=9, fontweight="bold", color="#2B2B2B")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=7.5, rotation=15)
     ax.set_ylim(0, 1.0); ax.grid(axis="y", alpha=0.18, lw=0.4, color="#9AA0A8")
