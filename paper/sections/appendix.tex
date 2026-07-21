@@ -29,21 +29,21 @@
 \begin{table*}[t]
 \centering
 \small
-\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 5 seeds---fewer than the 20 seeds used for the main tables because this sweep spans six $\alpha$ levels, and the qualitative trend is stable across seeds---\emph{pooled} across seeds). We show the two API judges (DeepSeek-V4, GPT-5.5), for which the full six-level sweep was run; the ladder judges abstain at zero coverage across most of this $\alpha$ range (Table~\ref{tab:main}) and are omitted here rather than shown as all-``--'' rows. Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage). Coverage tracks the risk budget $\alpha$ but is not strictly monotone: because the accepted prefix is chosen data-dependently on each split, relaxing $\alpha$ occasionally selects a different threshold that lowers pooled coverage.}
+\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 20 seeds \emph{pooled} across seeds, recomputed from the per-item feature traces at each of the six $\alpha$ levels, consistent with the $\alpha{=}0.15$ column of Table~\ref{tab:main}). We show the two API judges (DeepSeek-V4, GPT-5.5), which have non-trivial coverage across this range; the near-chance ladder judges abstain at zero coverage across most of it (Table~\ref{tab:main}) and are omitted rather than shown as all-``--'' rows. Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage) and ``$<$.01'' a positive coverage below $0.005$. Coverage rises with the risk budget $\alpha$ but is not strictly monotone: because the accepted prefix is chosen data-dependently on each split, relaxing $\alpha$ occasionally selects a different threshold that shifts pooled coverage.}
 \label{tab:alpha}
 \begin{tabular}{llcccccc}
 \toprule
 Model & Dataset & $\alpha{=}0.05$ & $\alpha{=}0.10$ & $\alpha{=}0.15$ & $\alpha{=}0.20$ & $\alpha{=}0.25$ & $\alpha{=}0.30$ \\
 \midrule
-\multirow{4}{*}{DeepSeek-V4} & JudgeBench & --/-- & .03/.96 & .03/.93 & .03/.93 & .24/.78 & .46/.71 \\
- & TL;DR & --/-- & --/-- & .09/.84 & .13/.85 & .27/.79 & .67/.73 \\
- & RewardBench & .82/.97 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 \\
- & LMArena & --/-- & --/-- & .07/.89 & .05/.90 & .63/.78 & .97/.73 \\
+\multirow{4}{*}{DeepSeek-V4} & JudgeBench & --/-- & .01/.96 & .01/.92 & .04/.88 & .15/.76 & .51/.72 \\
+ & TL;DR & --/-- & $<$.01/.82 & .08/.83 & .32/.81 & .59/.77 & .82/.72 \\
+ & RewardBench & .78/.96 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 & 1.00/.93 \\
+ & LMArena & --/-- & .01/.89 & .08/.87 & .45/.82 & .77/.77 & .96/.73 \\
 \midrule
-\multirow{4}{*}{GPT-5.5} & JudgeBench & --/-- & .25/.94 & .32/.90 & .39/.88 & .42/.82 & .44/.79 \\
- & TL;DR & --/-- & .02/.96 & .06/.98 & .18/.87 & .59/.79 & .73/.74 \\
- & RewardBench & .73/.96 & .79/.92 & .82/.88 & .86/.84 & .91/.79 & .97/.74 \\
- & LMArena & --/-- & --/-- & .05/.91 & .09/.88 & .39/.79 & .63/.75 \\
+\multirow{4}{*}{GPT-5.5} & JudgeBench & .52/.97 & .95/.93 & .99/.92 & .99/.92 & .99/.92 & .99/.92 \\
+ & TL;DR & .03/.92 & .08/.89 & .22/.86 & .50/.82 & .82/.77 & .99/.73 \\
+ & RewardBench & .99/.96 & 1.00/.96 & 1.00/.96 & 1.00/.96 & 1.00/.96 & 1.00/.96 \\
+ & LMArena & $<$.01/.90 & .02/.91 & .13/.85 & .34/.81 & .59/.77 & .88/.73 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -302,14 +302,14 @@ Model & Data & \textbf{CARE} & SCOPE & MajVote & WtdVote \\
 \toprule
 Model & Data & \textbf{FULL} & protocol & conf & length \\
 \midrule
-\multirow{4}{*}{Qwen2.5-1.5B} & JB & 0.523 & \textbf{0.535} & 0.494 & 0.497 \\
+\multirow{4}{*}{Qwen2.5-1.5B} & JB & 0.523 & \textbf{0.534} & 0.495 & 0.497 \\
  & TL;DR & \textbf{0.583} & 0.580 & 0.581 & 0.536 \\
  & RB & \textbf{0.713} & 0.659 & 0.631 & 0.609 \\
  & Arena & 0.578 & 0.579 & \textbf{0.587} & 0.535 \\
 \midrule
-\multirow{4}{*}{DeepSeek-V4} & JB & \textbf{0.603} & 0.587 & 0.623 & 0.509 \\
+\multirow{4}{*}{DeepSeek-V4} & JB & \textbf{0.603} & 0.586 & 0.623 & 0.509 \\
  & TL;DR & 0.675 & 0.660 & \textbf{0.683} & 0.548 \\
- & RB & \textbf{0.831} & 0.699 & 0.828 & 0.622 \\
+ & RB & \textbf{0.831} & 0.691 & 0.828 & 0.622 \\
  & Arena & \textbf{0.678} & 0.654 & 0.680 & 0.531 \\
 \midrule
 \multirow{4}{*}{Qwen2.5-7B} & JB & 0.548 & \textbf{0.557} & 0.537 & 0.506 \\
@@ -342,7 +342,7 @@ Judge & JB & TL;DR & RB & Arena \\
 \midrule
 Qwen2.5-1.5B & 52 & 60 & 57 & 67 \\
 DeepSeek-V4 & 46 & 59 & 48 & 66 \\
-Qwen2.5-7B & 48 & 57 & 46 & 61 \\
+Qwen2.5-7B & 48 & 58 & 46 & 61 \\
 GPT-5.5 & 44 & 58 & 43 & 53 \\
 Qwen2.5-14B & 47 & -- & -- & -- \\
 \bottomrule
