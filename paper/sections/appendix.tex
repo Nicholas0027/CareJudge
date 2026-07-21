@@ -29,7 +29,7 @@
 \begin{table*}[t]
 \centering
 \small
-\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 5 seeds---fewer than the 20 seeds used for the main tables because this sweep spans six $\alpha$ levels, and the qualitative trend is stable across seeds---\emph{pooled} across seeds). Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage). Coverage is \emph{positively correlated} with the risk budget $\alpha$ but not strictly monotone: because the accepted prefix is chosen data-dependently on each split, relaxing $\alpha$ occasionally selects a different threshold that lowers pooled coverage. We report the trend as-is rather than enforcing monotonicity.}
+\caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 5 seeds---fewer than the 20 seeds used for the main tables because this sweep spans six $\alpha$ levels, and the qualitative trend is stable across seeds---\emph{pooled} across seeds). We show the two API judges (DeepSeek-V4, GPT-5.5), for which the full six-level sweep was run; the ladder judges abstain at zero coverage across most of this $\alpha$ range (Table~\ref{tab:main}) and are omitted here rather than shown as all-``--'' rows. Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage). Coverage tracks the risk budget $\alpha$ but is not strictly monotone: because the accepted prefix is chosen data-dependently on each split, relaxing $\alpha$ occasionally selects a different threshold that lowers pooled coverage.}
 \label{tab:alpha}
 \begin{tabular}{llcccccc}
 \toprule
@@ -61,7 +61,7 @@ All local judges (the Qwen2.5 ladder) were run on a single 32\,GB consumer GPU (
 An output that cannot be parsed as $A$/$B$ is retried once. If it is still unparseable we record it as an explicit \texttt{invalid} state rather than silently mapping it to the base verdict: an \texttt{invalid} perturbation call counts as a \emph{disagreement} with the base verdict, so it \emph{lowers} the corresponding stability signal and can only push an item toward abstention. We avoid mapping invalid$\to$base verdict, because that would inflate measured stability (an unparseable output would be counted as agreement). Genuine parse-invalid rates (the model returned an output we could not map to $A$/$B$) are below 3\% for every judge--benchmark pair. We distinguish these from \emph{transient API-service failures} (rate-limit/quota responses that return no model output): during GPT-5.5 collection a subset of calls failed this way, and because such failures reflect infrastructure rather than judge behavior we \emph{exclude} the affected items from GPT-5.5's analysis rather than count them as verdicts. The retained per-benchmark sample sizes for GPT-5.5 are JudgeBench 620, TL;DR 2{,}000, RewardBench 1{,}999, and LMArena 1{,}999 (Table~\ref{tab:main}); all other judges retain their full sets. For the preference benchmarks (TL;DR, LMArena) genuine ties in the human label are dropped before evaluation; JudgeBench and RewardBench carry objective correct/incorrect labels and contain no ties.
 
 \paragraph{Rubric variants and the negative control (full detail).}
-The $K{=}3$ rubric paraphrases used for the rubric-stability signal are reproduced verbatim in the released prompt file. They were written to hold the evaluation target (which response is better) fixed while varying wording. The negative-control experiment summarized in Section~\ref{sec:exp:main} used an \emph{intentionally non-equivalent} rubric set (one emphasizing brevity, one thoroughness, one formality) on both a mid-capability judge (DeepSeek-V4) and a near-random judge (Qwen2.5-1.5B), both on JudgeBench. The full per-condition counts are: \textbf{DeepSeek-V4}---equivalent set flip rate 12.8\% (46/359) vs.\ non-equivalent 28.0\% (151/539), a $2.2\times$ ratio; \textbf{Qwen2.5-1.5B}---equivalent 31.0\% (189/610) vs.\ non-equivalent 16.7\% (102/610), i.e.\ the non-equivalent set was if anything \emph{more} stable. The mid-capability judge moves when the criterion changes (so equivalent-rubric flips are a conservative floor on real instability), whereas the near-random judge responds to surface features regardless of rubric content, consistent with the competence-gated asymmetry.
+The $K{=}3$ rubric paraphrases used for the rubric-stability signal are reproduced verbatim in the released prompt file. They were written to hold the evaluation target (which response is better) fixed while varying wording. The negative-control experiment summarized in Section~\ref{sec:exp:main} used an \emph{intentionally non-equivalent} rubric set (one emphasizing brevity, one thoroughness, one formality) on both a mid-accuracy judge (DeepSeek-V4) and a near-random judge (Qwen2.5-1.5B), both on JudgeBench. The full per-condition counts are: \textbf{DeepSeek-V4}---equivalent set flip rate 12.8\% (46/359) vs.\ non-equivalent 28.0\% (151/539), a $2.2\times$ ratio; \textbf{Qwen2.5-1.5B}---equivalent 31.0\% (189/610) vs.\ non-equivalent 16.7\% (102/610), i.e.\ the non-equivalent set was if anything \emph{more} stable. The mid-accuracy judge moves when the criterion changes (so equivalent-rubric flips are a conservative floor on real instability), whereas the near-random judge responds to surface features regardless of rubric content, consistent with the competence-gated asymmetry.
 
 \section{Head-to-Head System Comparison (Full Table)}
 \label{app:threeway}
@@ -71,17 +71,33 @@ Table~\ref{tab:threeway} reports the full three-way \emph{system} comparison sum
 \centering
 \small
 \setlength{\tabcolsep}{3.5pt}
-\caption{Three-way system comparison: held-out AUROC at the matched six-call budget (20 seeds, strict 40/30/30 split). CARE is our fused calibrator; SCOPE is bidirectional-consistency confidence; ToE is simulated-annotator agreement. Best per column in \textbf{bold}. Against full systems (not isolated raw signals) CARE wins all eight pairs.}
+\caption{Three-way system comparison: held-out AUROC at the matched six-call budget (20 seeds, strict 40/30/30 split), all five judges. CARE is our fused calibrator; SCOPE is bidirectional-consistency confidence; ToE is simulated-annotator agreement at $N{=}0$ dedicated annotators. Best per row in \textbf{bold}. CARE is best on 14 of the 17 judge--benchmark pairs; the three exceptions are all on JudgeBench for a Qwen judge, where SCOPE's bidirectional score is marginally higher and the judge itself is near its accuracy floor.}
 \label{tab:threeway}
-\begin{tabular}{lrrrrrrrr}
+\begin{tabular}{llrrr}
 \toprule
-& \multicolumn{4}{c}{DeepSeek-V4} & \multicolumn{4}{c}{GPT-5.5} \\
-\cmidrule(lr){2-5}\cmidrule(lr){6-9}
-Method & JB & TL;DR & RB & Arena & JB & TL;DR & RB & Arena \\
+Judge & Data & \textbf{CARE} & SCOPE & ToE \\
 \midrule
-\textbf{CARE (fusion)} & \textbf{.603} & \textbf{.675} & \textbf{.831} & \textbf{.678} & \textbf{.834} & \textbf{.667} & \textbf{.888} & \textbf{.645} \\
-SCOPE (bidir.) & .561 & .616 & .606 & .615 & .695 & .629 & .757 & .571 \\
-ToE (sim.\ agr.) & .510 & .519 & .513 & .517 & .526 & .511 & .499 & .510 \\
+Qwen2.5-1.5B & JB & 0.523 & \textbf{0.534} & 0.526 \\
+Qwen2.5-1.5B & TL;DR & \textbf{0.583} & 0.570 & 0.525 \\
+Qwen2.5-1.5B & RB & \textbf{0.713} & 0.425 & 0.492 \\
+Qwen2.5-1.5B & Arena & \textbf{0.578} & 0.563 & 0.527 \\
+\midrule
+DeepSeek-V4 & JB & \textbf{0.603} & 0.561 & 0.510 \\
+DeepSeek-V4 & TL;DR & \textbf{0.675} & 0.616 & 0.519 \\
+DeepSeek-V4 & RB & \textbf{0.831} & 0.606 & 0.513 \\
+DeepSeek-V4 & Arena & \textbf{0.678} & 0.615 & 0.517 \\
+\midrule
+Qwen2.5-7B & JB & 0.548 & \textbf{0.578} & 0.508 \\
+Qwen2.5-7B & TL;DR & \textbf{0.636} & 0.616 & 0.504 \\
+Qwen2.5-7B & RB & \textbf{0.687} & 0.605 & 0.507 \\
+Qwen2.5-7B & Arena & \textbf{0.599} & 0.588 & 0.508 \\
+\midrule
+GPT-5.5 & JB & \textbf{0.834} & 0.695 & 0.526 \\
+GPT-5.5 & TL;DR & \textbf{0.667} & 0.629 & 0.511 \\
+GPT-5.5 & RB & \textbf{0.888} & 0.757 & 0.499 \\
+GPT-5.5 & Arena & \textbf{0.645} & 0.571 & 0.510 \\
+\midrule
+Qwen2.5-14B & JB & 0.539 & \textbf{0.569} & 0.505 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -198,7 +214,7 @@ LMArena $\to$ RewardBench & 0.228 & 0.998 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/risk_coverage.pdf}
-\caption{Held-out risk--coverage curves (logistic fusion). Lower is better; the dashed line marks the $\alpha{=}0.15$ risk budget. GPT-5.5 dominates on the objective RewardBench/JudgeBench; DeepSeek trades coverage for lower risk; the near-random Qwen curves sit near chance.}
+\caption{Held-out risk--coverage curves (logistic fusion); lower selective risk at a given coverage is better, and the dashed line marks the $\alpha{=}0.15$ risk budget. Curves are shown per judge on JudgeBench and TL;DR.}
 \label{fig:rc}
 \end{figure}
 
@@ -211,7 +227,7 @@ The per-benchmark accuracy gaps summarized by Figure~\ref{fig:gap} (in the main 
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\caption{Signal-level accuracy: stable vs.\ unstable subsets, for judge--benchmark pairs with $\geq$60\% raw accuracy. DeepSeek-V4 shows consistent positive gaps; GPT-5.5's rare instabilities do not track error (RewardBench).}
+\caption{Signal-level accuracy on stable vs.\ unstable subsets, for judge--benchmark pairs with $\geq$60\% raw accuracy. Columns report the two subset accuracies and their gap per signal.}
 \label{tab:signals}
 \begin{tabular}{lllrrr}
 \toprule
@@ -239,7 +255,7 @@ Signal & Model & Dataset & Stable & Unstable & Gap \\
 \centering
 \small
 \setlength{\tabcolsep}{3.2pt}
-\caption{Ensemble baselines vs.\ CARE (held-out AUROC, 20 seeds). CARE wins or ties in 9/12 pairs; weighted vote is competitive for GPT-5.5 (uses confidence implicitly) but lacks risk control.}
+\caption{Ensemble baselines vs.\ CARE (held-out AUROC, 20 seeds), all four non-frontier/frontier judges. CARE is best or tied-best in 12 of 16 pairs; weighted vote is competitive for GPT-5.5 (it uses confidence implicitly) but has no risk-control mechanism.}
 \label{tab:ensemble}
 \begin{tabular}{llrrrr}
 \toprule
@@ -255,10 +271,15 @@ Model & Data & \textbf{CARE} & SCOPE & MajVote & WtdVote \\
  & RB & 0.888 & 0.757 & 0.600 & \textbf{0.899} \\
  & Arena & \textbf{0.645} & 0.571 & 0.568 & 0.643 \\
 \midrule
-\multirow{4}{*}{Qwen} & JB & 0.523 & \textbf{0.534} & 0.505 & 0.509 \\
+\multirow{4}{*}{Qwen2.5-1.5B} & JB & 0.523 & \textbf{0.534} & 0.505 & 0.509 \\
  & TL;DR & \textbf{0.583} & 0.570 & 0.544 & 0.494 \\
  & RB & \textbf{0.713} & 0.425 & 0.538 & 0.620 \\
  & Arena & \textbf{0.578} & 0.563 & 0.559 & 0.494 \\
+\midrule
+\multirow{4}{*}{Qwen2.5-7B} & JB & 0.548 & \textbf{0.578} & 0.555 & 0.531 \\
+ & TL;DR & \textbf{0.636} & 0.616 & 0.523 & 0.562 \\
+ & RB & \textbf{0.687} & 0.605 & 0.602 & 0.624 \\
+ & Arena & \textbf{0.599} & 0.588 & 0.569 & 0.531 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -267,7 +288,7 @@ Model & Data & \textbf{CARE} & SCOPE & MajVote & WtdVote \\
 \centering
 \small
 \setlength{\tabcolsep}{3.5pt}
-\caption{Feature-group ablation (held-out AUROC, 20 seeds). ``FULL'' = all 13 features; each ablation uses only that group. Confidence dominates for GPT-5.5; protocol for Qwen; length is near-chance everywhere.}
+\caption{Feature-group ablation (held-out AUROC, 20 seeds). ``FULL'' = all 13 features; each ablation uses only that group. Confidence dominates for GPT-5.5; protocol features carry the Qwen judges; length is near-chance everywhere.}
 \label{tab:featgroup}
 \begin{tabular}{llrrrr}
 \toprule
@@ -283,10 +304,15 @@ Model & Data & \textbf{FULL} & protocol & conf & length \\
  & RB & 0.888 & 0.782 & \textbf{0.906} & 0.669 \\
  & Arena & 0.645 & 0.598 & \textbf{0.647} & 0.505 \\
 \midrule
-\multirow{4}{*}{Qwen} & JB & 0.523 & \textbf{0.535} & 0.494 & 0.497 \\
+\multirow{4}{*}{Qwen2.5-1.5B} & JB & 0.523 & \textbf{0.535} & 0.494 & 0.497 \\
  & TL;DR & \textbf{0.583} & 0.580 & 0.581 & 0.536 \\
  & RB & \textbf{0.713} & 0.659 & 0.631 & 0.609 \\
  & Arena & 0.578 & 0.579 & \textbf{0.587} & 0.535 \\
+\midrule
+\multirow{4}{*}{Qwen2.5-7B} & JB & 0.548 & \textbf{0.557} & 0.537 & 0.506 \\
+ & TL;DR & \textbf{0.636} & 0.629 & 0.634 & 0.535 \\
+ & RB & \textbf{0.687} & 0.615 & 0.685 & 0.493 \\
+ & Arena & 0.599 & \textbf{0.603} & 0.587 & 0.520 \\
 \bottomrule
 \end{tabular}
 \end{table}

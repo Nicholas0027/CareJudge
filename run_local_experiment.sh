@@ -100,4 +100,3 @@ ls -la reports/ | tee -a "$LOGFILE"
 echo "" | tee -a "$LOGFILE"
 echo "=== FINAL SELECTIVE REPORT ===" | tee -a "$LOGFILE"
 cat "$OUTDIR/selected.report.json" | python3 -m json.tool 2>/dev/null | tee -a "$LOGFILE"
-

@@ -65,11 +65,20 @@ def rc_figure():
 
 
 def gap_figure():
-    """Signal-gap bar chart: stable vs unstable accuracy, grouped by model."""
+    """Signal-gap bar chart: rubric-stable vs rubric-unstable judge accuracy.
+
+    Values are the rubric-signal stable/unstable subset accuracies reported
+    verbatim in the appendix signals table (Table `tab:signals`): DeepSeek-V4
+    on all four benchmarks plus the GPT-5.5/RewardBench inversion. No values
+    are hand-set; each pair below matches an appendix row.
+    """
+    # (stable_acc, unstable_acc) — from appendix Table tab:signals (Rubric rows)
     data = {
-        "Qwen-1.5B/JB": (0.472, 0.561), "Qwen/TL;DR": (0.932, 0.620),
-        "DeepSeek/JB": (0.700, 0.540), "DeepSeek/TL;DR": (0.689, 0.538),
-        "GPT-5.5/JB": (0.936, 0.811), "GPT-5.5/TL;DR": (0.775, 0.345),
+        "DeepSeek/JB": (0.689, 0.648),
+        "DeepSeek/TL;DR": (0.708, 0.555),
+        "DeepSeek/RB": (0.937, 0.664),
+        "DeepSeek/Arena": (0.749, 0.478),
+        "GPT-5.5/RB": (0.709, 0.762),
     }
     fig, ax = plt.subplots(figsize=(7.0, 2.6))
     labels = list(data.keys())
@@ -83,7 +92,9 @@ def gap_figure():
     ax.set_ylabel("Judge accuracy", fontsize=9, fontweight="bold")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=7.5, rotation=15)
     ax.set_ylim(0, 1.0); ax.grid(axis="y", alpha=0.25, lw=0.4)
-    ax.legend(fontsize=8, loc="upper right")
+    # Place the legend above the axes (horizontal) so it never overlaps the bars.
+    ax.legend(fontsize=8, loc="lower center", bbox_to_anchor=(0.5, 1.02),
+              ncol=2, frameon=False, borderaxespad=0.0)
     ax.tick_params(labelsize=8)
     fig.tight_layout()
     fig.savefig(OUT / "signal_gap.pdf", bbox_inches="tight")
