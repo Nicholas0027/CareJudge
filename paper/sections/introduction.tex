@@ -15,8 +15,8 @@ We organize our study around three questions: \emph{(RQ1)} does per-instance pro
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth,height=0.24\textheight,keepaspectratio]{figures/overview.pdf}
-\caption{Overview of CARE-Judge. Six judge calls per item yield three protocol-stability feature families (rubric perturbation, position swap, self-consistency) together with confidence and length baselines ($\boldsymbol\phi(x)$). A correctness calibrator fit on TRAIN and an exact Clopper--Pearson threshold $\hat\lambda$ selected on CAL produce an accept/abstain decision on held-out TEST. The lower panel summarizes when the signal is useful: it improves selective judging across competent judges, adding the most for mid-accuracy judges and little for an already-saturated frontier judge, while a judge below the competence floor sits near chance, carries no usable signal, and is abstained on automatically.}
+\includegraphics[width=\textwidth]{figures/overview.pdf}
+\caption{Overview of CARE-Judge. The judge is probed with six protocol perturbations per item (base verdict, position swap, rubric paraphrases, self-consistency samples), from which three protocol-stability feature families are extracted together with confidence and length baselines ($\boldsymbol\phi(x)$). A correctness calibrator $\hat p(\text{correct}\mid\boldsymbol\phi)$ is fit on TRAIN and an acceptance threshold $\hat\lambda$ is selected on CAL via an exact Clopper--Pearson bound at risk level $(\alpha,\delta)$, yielding an accept/abstain decision on held-out TEST.}
 \label{fig:overview}
 \end{figure*}
 
