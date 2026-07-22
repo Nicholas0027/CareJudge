@@ -42,7 +42,7 @@ We form a set of $S$ judgments under the base rubric that pools the deterministi
 In all reported experiments $S=3$ (one $\tau{=}0$ base verdict and two $\tau{=}0.7$ samples). An optional adaptive early-stopping rule to reduce cost was disabled in the main experiments (Appendix~\ref{app:repro}).
 
 \paragraph{Feature Vector.}
-CARE-Judge uses six raw judge calls per item---one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict)---and forms a $13$-dimensional feature vector grouped into three families (full definitions in Appendix~\ref{app:features}, Table~\ref{tab:featdef}),
+CARE-Judge uses six raw judge calls per item: one base ($\tau{=}0$), two self-consistency samples ($\tau{=}0.7$), one position swap, and two additional rubric paraphrases (the base rubric doubling as the third rubric verdict). From these it forms a $13$-dimensional feature vector grouped into three families (full definitions in Appendix~\ref{app:features}, Table~\ref{tab:featdef}),
 \begin{equation}
 \begin{aligned}
     \boldsymbol{\phi}(x) = \big[\,
