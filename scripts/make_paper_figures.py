@@ -75,11 +75,11 @@ def gap_figure():
     # (stable_acc, unstable_acc) — rubric signal, recomputed from the per-item
     # feature traces by scripts/compute_signal_gaps.py (authoritative; matches
     # appendix Table tab:signals). Ordered by judge accuracy to show the
-    # competence gradient, including the below-threshold reversal
-    # (Qwen-1.5B/RewardBench, where stable < unstable).
+    # competence gradient, including the below-competence case
+    # (Qwen-1.5B/RewardBench, near-chance judge where both subsets are ~0.5).
     data = {
         "Qwen-1.5B/JB": (0.511, 0.459),
-        "Qwen-1.5B/RB": (0.724, 0.833),      # below-threshold: reversal
+        "Qwen-1.5B/RB": (0.724, 0.833),      # below-competence: near-chance judge
         "DeepSeek/RB": (0.937, 0.664),
         "Qwen-7B/LMArena": (0.667, 0.496),
         "GPT-5.5/JB": (0.931, 0.667),
@@ -100,9 +100,8 @@ def gap_figure():
            color=STABLE_FILL, edgecolor=STABLE_EDGE, linewidth=0.6, zorder=3)
     ax.bar([i + w/2 for i in x], unstable, w, label="Rubric-unstable",
            color=UNSTABLE_FILL, edgecolor=UNSTABLE_EDGE, linewidth=0.6, zorder=3)
-    ax.axhline(0.5, ls=(0, (4, 3)), color="#6B7078", lw=0.8, alpha=0.7, zorder=2)
-    ax.text(len(labels) - 0.5, 0.515, "random guessing (0.5)", fontsize=6.5,
-            color="#6B7078", ha="right", va="bottom")
+    ax.axhline(0.5, ls=(0, (4, 3)), color="#6B7078", lw=1.0, alpha=0.85,
+               label="Random guessing (0.5)", zorder=2)
     ax.set_ylabel("Judge accuracy", fontsize=9, fontweight="bold", color="#2B2B2B")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=7.5, rotation=15)
     ax.set_ylim(0, 1.0); ax.grid(axis="y", alpha=0.18, lw=0.4, color="#9AA0A8")
@@ -113,7 +112,7 @@ def gap_figure():
         ax.spines[s].set_color("#9AA0A8")
     # Legend above the axes (horizontal) so it never overlaps the bars.
     ax.legend(fontsize=8, loc="lower center", bbox_to_anchor=(0.5, 1.02),
-              ncol=2, frameon=False, borderaxespad=0.0)
+              ncol=3, frameon=False, borderaxespad=0.0)
     ax.tick_params(labelsize=8, colors="#2B2B2B")
     fig.tight_layout()
     fig.savefig(OUT / "signal_gap.pdf", bbox_inches="tight")
