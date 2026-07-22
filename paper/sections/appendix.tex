@@ -25,8 +25,9 @@
 
 \section{Alpha-Sweep Risk--Coverage Tradeoff}
 \label{app:alpha}
+Table~\ref{tab:alpha} traces how coverage and accepted accuracy vary with the risk budget $\alpha$ for the two API judges, extending the single $\alpha{=}0.15$ operating point of Table~\ref{tab:main} to the full $0.05$--$0.30$ range.
 
-\begin{table*}[t]
+\begin{table}[t]
 \centering
 \small
 \caption{Alpha-sweep risk-coverage tradeoff (logistic fusion, 20 seeds \emph{pooled} across seeds, recomputed from the per-item feature traces at each of the six $\alpha$ levels, consistent with the $\alpha{=}0.15$ column of Table~\ref{tab:main}). We show the two API judges (DeepSeek-V4, GPT-5.5), which have non-trivial coverage across this range; the near-chance ladder judges abstain at zero coverage across most of it (Table~\ref{tab:main}) and are omitted rather than shown as all-``--'' rows. Each cell reports coverage\,/\,accepted accuracy; ``--'' denotes safe abstention (zero coverage) and ``$<$.01'' a positive coverage below $0.005$. Coverage rises with the risk budget $\alpha$ but is not strictly monotone: because the accepted prefix is chosen data-dependently on each split, relaxing $\alpha$ occasionally selects a different threshold that shifts pooled coverage.}
@@ -46,7 +47,7 @@ Model & Dataset & $\alpha{=}0.05$ & $\alpha{=}0.10$ & $\alpha{=}0.15$ & $\alpha{
  & LMArena & $<$.01/.90 & .02/.91 & .13/.85 & .34/.81 & .59/.77 & .88/.73 \\
 \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
 
 \section{Reproducibility Details}
 \label{app:repro}
