@@ -54,7 +54,7 @@ CARE-Judge uses six raw judge calls per item: one base ($\tau{=}0$), two self-co
 \end{aligned}
     \label{eq:features}
 \end{equation}
-The three protocol-stability families (position, rubric, self-consistency) are the contributed signal; the confidence and length families are standard baselines the calibrator may exploit where informative. We \emph{exclude} the simulated-annotator signal from $\boldsymbol\phi$ (a disabled $N{=}0$ feature would only add a spurious degree of freedom) and instead report Trust-or-Escalate as a dedicated, leakage-controlled baseline in the head-to-head comparison (Section~\ref{sec:exp:comparison}, Appendix~\ref{app:repro}).
+The three protocol-stability families (position, rubric, self-consistency) are the contributed signal; the confidence and length families are standard baselines the calibrator may exploit where informative. We exclude the simulated-annotator signal from $\boldsymbol\phi$ (a disabled $N{=}0$ feature would only add a spurious degree of freedom) and instead report Trust-or-Escalate as a dedicated, leakage-controlled baseline in the head-to-head comparison (Section~\ref{sec:exp:comparison}, Appendix~\ref{app:repro}).
 
 \subsection{Correctness Calibration}
 \label{sec:method:calibration}
@@ -69,7 +69,7 @@ Given a risk tolerance $\alpha$ and error level $\delta$, we select an acceptanc
     P\!\left(P\!\left(\hat{f}(x) \neq y \mid \hat{c}(x) \geq \hat{\lambda}\right) \leq \alpha\right) \geq 1 - \delta,
     \label{eq:guarantee}
 \end{equation}
-with the outer probability over the calibration draw. We select $\hat{\lambda}$ by an \emph{empirical prefix search}: sort $D_{\text{cal}}$ by descending confidence and, among prefixes of size $\geq m$, take the largest whose $(1{-}\delta)$ upper bound on accepted-set error is $\leq\alpha$. Because the acceptance set is chosen data-dependently this is not exact family-wise control; we treat Eq.~\eqref{eq:guarantee} as a design target and validate it \emph{empirically} via the realized violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over many held-out splits (Section~\ref{sec:experiments}). We use the \emph{exact} one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
+with the outer probability over the calibration draw. We select $\hat{\lambda}$ by an \emph{empirical prefix search}: sort $D_{\text{cal}}$ by descending confidence and, among prefixes of size $\geq m$, take the largest whose $(1{-}\delta)$ upper bound on accepted-set error is $\leq\alpha$. Because the acceptance set is chosen data-dependently this is not exact family-wise control; we treat Eq.~\eqref{eq:guarantee} as a design target and validate it empirically via the realized violation frequency $\Pr_{\text{seed}}(\hat R_{\text{test}}>\alpha)$ over many held-out splits (Section~\ref{sec:experiments}). We use the exact one-sided Clopper--Pearson upper bound~\citep{clopper1934use}:
 \begin{equation}
     \text{CP}_{\text{upper}}(e, n, \delta) = \sup\!\left\{p : P\!\left(\text{Bin}(n, p) \leq e\right) \geq \delta\right\},
     \label{eq:cp}
