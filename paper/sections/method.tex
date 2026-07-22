@@ -4,7 +4,7 @@
 \label{sec:method}
 
 CARE-Judge converts an LLM judge $f$ into a \emph{selective evaluator} $(\hat{f}, \hat{c})$ that either outputs a judgment $\hat{f}(x)$ or abstains, based on a confidence measure $\hat{c}(x)$ and a risk-controlled threshold $\hat{\lambda}$.
-The framework has three components: (1)~multi-signal protocol-stability feature extraction, (2)~learned correctness calibration, and (3)~empirical risk-controlled threshold selection with an exact Clopper--Pearson bound, validated by measured risk-violation rates rather than a new finite-sample theorem.
+The framework has three components: (1)~multi-signal protocol-stability feature extraction, (2)~learned correctness calibration, and (3)~risk-controlled threshold selection with an exact Clopper--Pearson bound, validated by measured risk-violation rates.
 
 \subsection{Protocol-Stability Features}
 \label{sec:method:features}
