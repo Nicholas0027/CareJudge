@@ -15,7 +15,7 @@ We organize our study around three questions: \emph{(RQ1)} does per-instance pro
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/overview.pdf}
+\includegraphics[width=0.58\textwidth]{figures/overview.pdf}
 \caption{Overview of CARE-Judge. The judge is probed with six protocol perturbations per item (base verdict, position swap, rubric paraphrases, self-consistency samples), from which three protocol-stability feature families are extracted together with confidence and length baselines ($\boldsymbol\phi(x)$). A correctness calibrator $\hat p(\text{correct}\mid\boldsymbol\phi)$ is fit on TRAIN and an acceptance threshold $\hat\lambda$ is selected on CAL via an exact Clopper--Pearson bound at risk level $(\alpha,\delta)$, yielding an accept/abstain decision on held-out TEST.}
 \label{fig:overview}
 \end{figure*}
